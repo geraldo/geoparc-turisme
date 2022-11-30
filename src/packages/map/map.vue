@@ -75,7 +75,6 @@
     Tile as TileLayer, 
     Vector as VectorLayer
   } from 'ol/layer';
-  import { Draw, Translate } from 'ol/interaction';
   import { ScaleLine } from 'ol/control';
   import { Point, Polygon, LineString } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
@@ -85,22 +84,13 @@
   import { unByKey } from 'ol/Observable';
   import { easeOut } from 'ol/easing';
   import { 
-    GPX,
     GeoJSON,
-    IGC,
-    KML,
-    TopoJSON,
-    GML,
-    WMSCapabilities,
-    WKT
   } from 'ol/format';
-  import GML32 from 'ol/format/GML32';
 
   import Bar from 'ol-ext/control/Bar';
   import Button from 'ol-ext/control/Button';
   import Toggle from 'ol-ext/control/Toggle';
   import Overlay from 'ol-ext/control/Overlay';
-  import DropFile from 'ol-ext/interaction/DropFile';
 
   import LayerSwitcher from 'ol-layerswitcher';
   import proj4 from 'proj4';
@@ -343,7 +333,6 @@
         qgisSources: {},
         mousePosition: null,
         rasterLayer: null,
-        cadastreLayer: null,
 
         baseLayers: new LayerGroup({
           title: 'Capes de referència',
@@ -578,122 +567,6 @@
          *****************************************/
         pageData.map.on('click', function(evt) {
           selectFeatureInfo(evt.coordinate);
-        });
-
-        /*
-         * DropFile Interaction
-         *****************************************/
-        let dropFileSource = new VectorSource({ wrapX: false });
-        let dropFileLayer = new VectorLayer({
-          source: dropFileSource,
-        });
-        pageData.map.addLayer(dropFileLayer);
-
-        let dropInteraction = new DropFile({
-          formatConstructors: [
-            GPX,
-            GeoJSON,
-            KML,
-            TopoJSON,
-            GML
-          ],
-          accept: [
-            "gpx",
-            "json",
-            "geojson",
-            "kml",
-            "topojson",
-            "gml"
-          ]
-        });
-        pageData.map.addInteraction(dropInteraction);
-        let loading = 0;
-        
-        // Drag and drop
-        dropInteraction.on('loadstart', function (e) {
-          if (!loading) dropFileSource.clear();
-          
-          loading++; 
-          $(".loading").show();
-          $(".loading p").html("LOADING ("+loading+")");
-
-          // shape file
-          // https://gis.stackexchange.com/a/368103/60146
-          if (e.filetype === "application/zip") {
-            console.log("file dropped -> loading SHP file");
-
-            const files = event.dataTransfer.files;
-            for (let i = 0, ii = files.length; i < ii; ++i) {
-              const file = files.item(i);
-              loadshp({url: file, encoding: 'utf-8'}, function(geojson) {
-                const features = new GeoJSON().readFeatures(
-                  geojson,
-                  { featureProjection: pageData.map.getView().getProjection() }
-                );
-                const vectorSource = new VectorSource({
-                  features: features
-                });
-                pageData.map.addLayer(
-                  new VectorLayer({
-                    source: vectorSource
-                  })
-                );
-                //pageData.map.getView().fit(vectorSource.getExtent(), { padding: [100,100,100,100] });
-              });
-            }
-            loading--;
-            $(".loading").hide();
-          }
-        });
-
-        dropInteraction.on('loadend', function (e) {
-          if (e.file.type === "application/gml+xml") {
-            console.log("file dropped -> loading GML file");
-
-            let gmlFormat = new GML32();
-            let features = gmlFormat.readFeatures(e.result, {
-              dataProjection: pageData.proj25831,
-              featureProjection: 'EPSG:3857'
-            });
-            
-            const vectorSource = new VectorSource({
-              features: features
-            });
-            pageData.map.addLayer(
-              new VectorLayer({
-                source: vectorSource
-              })
-            );
-            pageData.map.getView().fit(vectorSource.getExtent(), { padding: [100,100,100,100] });
-
-            loading--;
-            $(".loading").hide();
-          }
-        });
-
-        dropInteraction.on('addfeatures', function(event) {
-          // geojson, KML, etc.
-          console.log("file dropped -> loading Vector features from GeoJSON, KML, etc. file");
-
-          let features = event.features;
-          loading--; 
-
-          $(".loading p").html("LOADING ("+loading+")");
-          $(".loading span").html(features.length);
-
-          setTimeout(function(){
-            dropFileSource.addFeatures(features);
-            
-            if (!loading) $(".loading").hide();
-
-            let vext = pageData.map.getView().getProjection().getExtent();
-            let extent = dropFileSource.getExtent();
-            if (extent[0]<vext[0]) extent[0] = vext[0];
-            if (extent[1]<vext[1]) extent[1] = vext[1];
-            if (extent[2]>vext[2]) extent[2] = vext[2];
-            if (extent[3]>vext[3]) extent[3] = vext[3];
-            pageData.map.getView().fit(extent, pageData.map.getSize(), { padding: [100,100,100,100] });
-          },500);
         });
 
         $(document).keyup(function(e) {
