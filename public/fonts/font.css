@@ -1,0 +1,41 @@
+@font-face {
+    font-family: 'graphic-light';
+    src: url('/fonts/Graphik-Light.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'graphic-medium';
+    src: url('/fonts/Graphik-Medium.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'graphic-regular';
+    src: url('/fonts/Graphik-Regular.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'graphic-regular-italic';
+    src: url('/fonts/Graphik-RegularItalic.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'graphic-semibold';
+    src: url('/fonts/Graphik-Semibold.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'graphic-semibold-italic';
+    src: url('/fonts/Graphik-SemiboldItalic.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
