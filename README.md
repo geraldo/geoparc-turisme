@@ -1,6 +1,6 @@
-# Geoparc Planejament
+# Geoparc Turisme
 
-Internal web for Geoparc Orìgens - planejament.
+Public web for Geoparc Orìgens - turisme.
 
 ## Customize configuration
 

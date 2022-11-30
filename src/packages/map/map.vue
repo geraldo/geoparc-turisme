@@ -60,61 +60,6 @@
     </div>
   </div>
 
-  <div id="windowDocs" class="window">
-    <h2>
-      <i class="fa fa-file-text-o"></i>
-      <span class="title">Informació Planejament</span>
-    </h2>
-    <div class="content">
-      <p>La documentació disponible en aquest lloc web no té cap valor normatiu. Només serveix de consulta i referència, i conté algunes interpretacions per poder fer la consulta telemàtica. Els únics documents amb valor normatiu són els propis expedients urbanístics aprovats definitivament i sempre i quan no hagin estat subjectes a una sentència ferma emesa per un tribunal de justícia.</p>
-      <p>Els documents oficials, amb validesa normativa es troben a la Direcció General d’Urbanisme de la Generalitat de Catalunya, que disposa de l'original d’aquests documents. També es pot consultar una còpia en PDF en aquest enllaç:</p>
-      <p><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=loadSenseCriteris" target="_blank"><img src="/registre.png"></a> <a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=loadSenseCriteris" target="_blank">Registre del planejament urbanístic de Catalunya</a></p>
-      <p>L'Ajuntament disposa, a més, d'una còpia en PDF estructurada del contingut del POUM defintivament aprovat per a la seva consulta en aquest enllaç:</p>
-      <p><a href="#" class="normativa-button"><img src="/pdf.png"></a> <a href="#" class="normativa-button">Normativa urbanística completa</a></p>
-    </div>
-  </div>
-
-  <div id="windowNormativa" class="window">
-    <h2>
-      <i class="fa fa-file-text-o"></i>
-      <span class="title">Normativa urbanística completa</span>
-    </h2>
-    <div class="content">
-      <div class="row">
-        <!--<iframe src="/geoparc-planejament/normativas/" width="100%" height="575px" frameborder="0"></iframe>-->
-        <div class="tree">
-          <ul>
-            <li class="active"><a>Documentació aprovació definitiva</a>
-              <ul>
-                <!--<li><a>Generic</a></li>-->
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25001" target="rpuc">Abella de la Conca</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25002" target="rpuc">Àger</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25039" target="rpuc">Baix Pallars</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25062" target="rpuc">Camarasa</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25077" target="rpuc">Coll de Nargó</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25098" target="rpuc">Gavet de la Conca</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25115" target="rpuc">Isona i Conca Dellà</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25128" target="rpuc">Llimiana</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25161" target="rpuc">Conca de Dalt</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25171" target="rpuc">la Pobla de Segur</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25190" target="rpuc">Salàs de Pallars</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25196" target="rpuc">Sant Esteve de la Sarga</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25201" target="rpuc">Sarroca de Bellera</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25202" target="rpuc">Senterada</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25215" target="rpuc">Talarn</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25227" target="rpuc">la Torre de Cabdella</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25234" target="rpuc">Tremp</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25250" target="rpuc">Vilanova de Meià</a></li>
-                <li><a href="https://dtes.gencat.cat/rpucportal/AppJava/cercaExpedient.do?reqCode=cerca&fromPage=load&municipiSel=25904" target="rpuc">Castell de Mur</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <div class="rpucframe"><iframe name="rpuc" width="100%" height="575px" frameborder="0"></iframe></div>
-      </div>
-    </div>
-  </div>
-
   <div id="windowFeature" class="window">
     <h2>
       <i class="fa fa-file-text-o"></i>
@@ -414,7 +359,7 @@
 
         qgisServerURL: 'https://mapa.psig.es/qgisserver/cgi-bin/qgis_mapserv.fcgi',
         mapproxyServerURL: 'https://mapa.psig.es/mapproxy/service?',
-        qgisProjectFile: '/home/ubuntu/geoparc-planejament/geoparc-planejament.qgs',
+        qgisProjectFile: '/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs',
 
         qgisLayers: new LayerGroup({
           title: 'Capes temàtiques',
@@ -540,8 +485,6 @@
         windowLayers: null,
         windowSearch: null,
         windowPrint: null,
-        windowDocs: null,
-        windowNormativa: null,
         windowFeature: null,
         layersToggle: new Toggle({ 
           html: '<i class="fa fa-align-justify fa-lg"></i>',
@@ -585,20 +528,6 @@
             else {
               pageData.windowPrint.hide();
               cancelPrintBox();
-            }
-          }
-        }),
-        docsToggle: new Toggle({ 
-          html: '<i class="fa fa-file-text-o fa-lg"></i>',
-          title: 'Informació Planejament',
-          className: "docsToggle",
-          onToggle: function(active) {
-            if (active) {
-              hideWindows("docs");
-              pageData.windowDocs.show();
-            }
-            else {
-              pageData.windowDocs.hide();
             }
           }
         }),
@@ -1089,7 +1018,7 @@
             //console.log(url);
 
             $.ajax({
-              url: 'https://mapa.psig.es/geoparc-planejament/getUrlCadastre.php',
+              url: 'https://mapa.psig.es/geoparc-turisme/getUrlCadastre.php',
               type: 'get',
               data: {
                 url: url
@@ -1581,26 +1510,6 @@
         })
         pageData.map.addControl(pageData.windowPrint);
 
-        pageData.windowDocs = new Overlay({
-          closeBox : true,
-          className: "slide-left window docsWindow",
-          content: document.getElementById("windowDocs")
-        });
-        pageData.map.addControl(pageData.windowDocs);
-
-        $(".normativa-button").on("click", function(){
-          pageData.windowDocs.hide();
-          pageData.windowNormativa.show();
-          return false;
-        });
-
-        pageData.windowNormativa = new Overlay({
-          closeBox : true,
-          className: "slide-left window normativaWindow",
-          content: document.getElementById("windowNormativa")
-        });
-        pageData.map.addControl(pageData.windowNormativa);
-
         pageData.windowFeature = new Overlay({
           closeBox : true,
           className: "slide-right window infoWindow",
@@ -1646,39 +1555,14 @@
         actionBar.addControl(pageData.layersToggle);
         actionBar.addControl(pageData.searchToggle);
         actionBar.addControl(pageData.printToggle);
-        actionBar.addControl(pageData.docsToggle);
-
-        // normativas tree view
-        $('.tree li').each( function() {
-          if( $(this).children('ul').length > 0) {
-            $(this).addClass('parent');
-            $(this).children('ul').slideToggle('fast');
-          }
-        });
-     
-        $('.tree li.parent > a').click(function() {
-          $(this).parent().toggleClass('active');
-          $(this).parent().children('ul').slideToggle('fast');
-        });
-     
-        $('#all').click(function() {
-          $('.tree li').each(function() {
-            $(this).toggleClass('active');
-            $(this).children('ul').slideToggle('fast');
-          });
-        });
       }
 
       function hideWindows(activeToggle) {
         pageData.windowLayers.hide();
         pageData.windowSearch.hide();
         pageData.windowPrint.hide();
-        pageData.windowDocs.hide();
-        pageData.windowNormativa.hide();
-
-        if (activeToggle !== "docs")
-          pageData.docsToggle.setActive(false);
-        else if (activeToggle !== "layers")
+        
+        if (activeToggle !== "layers")
           pageData.layersToggle.setActive(false);
         else if (activeToggle !== "search")
           pageData.searchToggle.setActive(false);
@@ -1697,7 +1581,7 @@
       onMounted(()=>{
 
         // load layers configuration file
-        $.getJSON( "js/data/geoparc-planejament.qgs.json", function() {})
+        $.getJSON( "js/data/geoparc-turisme.qgs.json", function() {})
         .done(function(data) {
           initMap(data);
           initMenu();
@@ -1899,10 +1783,6 @@ h3 {
   padding: 20px;
 }
 
-#windowNormativa .content {
-  padding: 0;
-}
-
 .window .content p {
   margin-top: 0;
 }
@@ -1919,11 +1799,6 @@ h3 {
 #windowFeature, 
 #windowLayers {
   height: 550px;
-}
-
-.ol-overlay.normativaWindow {
-  width: 1160px;
-  height: 600px;
 }
 
 #windowFeature .content,
