@@ -12,26 +12,6 @@
     </div>
   </div>
 
-  <div id="windowSearch" class="window">
-    <h2>
-      <i class="fa fa-file-text-o"></i>
-      <span class="title">Cercadors</span>
-    </h2>
-    <div class="content">
-      <h3 class="titleCatastro">Cerca per referència cadastral</h3>
-      <p class="introCatastro">Introduïu la referència cadastral i premeu el botó Buscar parcel·la (Ex 6307611CG2760N0001WO)</p>
-      <p>
-        <label class="labelReferencia" for="searchReferencia">Referència</label> <input type="text" id="searchReferencia" />
-      </p>
-      <p>
-        <button type="button" class="btn btn-default btnReferencia" id="searchReferenciaBtn">Cercar parcel·la</button>
-      </p>
-      <p>
-        <span id="searchMsg"></span>
-      </p>
-    </div>
-  </div>
-
   <div id="windowPrint" class="window">
     <h2>
       <i class="fa fa-print"></i>
@@ -67,7 +47,6 @@
     </h2>
     <div class="content">
       <div class="content-layers"></div>
-      <div class="content-catastro"></div>
       <div class="content-limits"></div>
       <div class="content-coord"></div>
     </div>
@@ -314,18 +293,15 @@
           });
         }
 
-        else if (lyr.get('showlegend') || lyr.get('title') === 'Cadastre') {
+        else if (lyr.get('showlegend')) {
           // show legend
           var img = document.createElement('img');
           img.className = 'legend';
-          if (lyr.get('title') === 'Cadastre') {
-            img.src = 'https://ovc.catastro.meh.es/Cartografia/WMS/simbolos.png?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=Catastro&FORMAT=image/png&SLD_VERSION=1.1.0';
-          } 
-          else /*if (!lyr.get('mapproxy') && lyr.get('mapproxy') !== undefined)*/ {
+          /*if (!lyr.get('mapproxy') && lyr.get('mapproxy') !== undefined) {*/
             // dynamic from qgis server
             img.src = map.get("qgisServerURL") + '?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER='+lyrTitle+'&FORMAT=image/png&SLD_VERSION=1.1.0&LAYERTITLE=false&SYMBOLWIDTH=4&ITEMFONTSIZE=10&BOXSPACE=1&MAP='+map.get("qgisProjectFile");
-          }
-          /*else {
+          /*}
+          else {
             // static from directory
             img.src = "legend/"+lyr.get('mapproxy')+'.png';
           }*/
@@ -480,10 +456,8 @@
             })
           ]
         }),
-        parcelSource: new VectorSource(),
 
         windowLayers: null,
-        windowSearch: null,
         windowPrint: null,
         windowFeature: null,
         layersToggle: new Toggle({ 
@@ -498,20 +472,6 @@
             else {
               pageData.windowLayers.hide();
               $(".layersToggle").removeClass("ol-active");
-            }
-          }
-        }),
-        searchToggle: new Toggle({ 
-          html: '<i class="fa fa-search fa-lg"></i>',
-          title: 'Cercadors',
-          className: "searchToggle",
-          onToggle: function(active) {
-            if (active) {
-              hideWindows("search");
-              pageData.windowSearch.show();
-            }
-            else {
-              pageData.windowSearch.hide();
             }
           }
         }),
@@ -560,21 +520,6 @@
        *****************************************/
       function loadLayers(layersData) {
         let layers = [];
-
-        pageData.cadastreLayer = new TileLayer({
-          title: 'Cadastre',
-          visible: false,
-          showlegend: true,
-          source: new TileWMS({
-            url: 'http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx',
-            params: {
-              'LAYERS': 'catastro', 
-              'TILED': true,
-              'SRS': 'EPSG:3857'
-            }
-          })
-        });
-        layers.push(pageData.cadastreLayer);
 
         layersData.slice().reverse().forEach(function(layer, i) {
 
@@ -677,22 +622,6 @@
         pageData.map.set("qgisServerURL", pageData.qgisServerURL);
         pageData.map.set("qgisProjectFile", pageData.qgisProjectFile);
 
-        // search tool
-        pageData.map.addLayer(
-          new VectorLayer({
-            source: pageData.parcelSource,
-            style: new Style({
-              stroke: new Stroke({
-                color: 'yellow',
-              width: 2
-              }),
-              fill: new Fill({
-                color: 'rgba(255, 255, 0, 0.1)'
-              })
-            })
-          })
-        );
-
         // measure tool
         pageData.map.addLayer(
           new VectorLayer({
@@ -721,9 +650,6 @@
          * Interaction
          *****************************************/
         pageData.map.on('click', function(evt) {
-          // hide selected catastro feature
-          pageData.parcelSource.clear();
-
           if (!pageData.measureActive) {
             selectFeatureInfo(evt.coordinate);
           }
@@ -856,9 +782,6 @@
               pageData.iconPoint.setCoordinates([]);
             }
 
-            // hide selected catastro feature
-            pageData.parcelSource.clear();
-
             // hide printable area
             if (!$(".printWindow").is(':visible'))
               cancelPrintBox();
@@ -882,11 +805,6 @@
         $("#windowPrint").on("click", ".btn-print", function(){
           printMap();
         });
-
-        $("#windowSearch").on("click", ".btnReferencia", function(){
-          if ($("#searchReferencia").val() !== "")
-            searchCatastro($("#searchReferencia").val());
-        });
       }
 
       function selectFeatureInfo(coordinates) {
@@ -895,7 +813,6 @@
         showIcon(coordinates);
 
         $("#windowFeature .content-layers").empty();
-        $("#windowFeature .content-catastro").empty();
         $("#windowFeature .content-limits").empty();
         $("#windowFeature .content-coord").empty();
 
@@ -1004,33 +921,6 @@
             }
           }
         });
-
-        if (pageData.cadastreLayer.getVisible()) {
-
-          const url = pageData.cadastreLayer.getSource().getFeatureInfoUrl(
-            coordinates,
-            pageData.map.getView().getResolution(), 
-            pageData.map.getView().getProjection(),
-            {'INFO_FORMAT': 'text/xml'}
-          );
-          
-          if (url) {
-            //console.log(url);
-
-            $.ajax({
-              url: 'https://mapa.psig.es/geoparc-turisme/getUrlCadastre.php',
-              type: 'get',
-              data: {
-                url: url
-              },
-              dataType: 'html',
-              success: function(response){
-                let html = "<h3>Cadastre</h3>" + response;
-                $('#windowFeature .content-catastro').append(html);
-              }
-            });
-          }
-        }
 
         addCoordinatesInfo(coordinates);
         pageData.windowFeature.show();
@@ -1225,52 +1115,6 @@
         console.log(url);
 
         window.open(url, "Geoparc Orígens als Pirineus Catalans");
-      }
-
-      function searchCatastro(refcat) {
-        let catastroUrl = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?service=wfs&version=2&request=getfeature&STOREDQUERIE_ID=GetParcel&srsname=EPSG::25831&refcat='+refcat;
-        catastroUrl = 'nocors.php?url=' + encodeURIComponent(catastroUrl);
-
-        fetch(catastroUrl)
-          .then((response) => response.text())
-          .then((xml) => {
-            let xmlDoc = $.parseXML(xml), 
-              $xml = $(xmlDoc);
-
-            let parcel = $xml.find('cp\\:CadastralParcel');
-            let coords = $(parcel.find('gml\\:posList'));
-
-            let coordsWKT = coords.text().split(' ');
-
-            let coordsStr = '';
-            for (let i=0; i<coordsWKT.length; i+=2) {
-              coordsStr += coordsWKT[i]+' '+coordsWKT[i+1]+',';
-            }
-            coordsStr = coordsStr.slice(0, coordsStr.length-1);
-
-            const wkt = 'POLYGON(('+coordsStr+'))';
-
-            let feature = new WKT().readFeature(wkt, {
-              dataProjection: pageData.proj25831,
-              featureProjection: 'EPSG:3857',
-            });
-            pageData.parcelSource.clear();
-            pageData.parcelSource.addFeature(feature);
-
-            pageData.map.getView().fit(feature.getGeometry().getExtent(), {
-              padding: [200, 200, 200, 200],
-              duration: 2000,
-              easing: easeOut
-            });
-
-            // add reference point
-            let reference = $xml.find('cp\\:referencePoint'),
-                coordsRef = $(reference.find('gml\\:pos')),
-                coordsArr = coordsRef.text().split(' ');
-            coordsArr = [parseFloat(coordsArr[0]), parseFloat(coordsArr[1])];
-            coordsArr = transform(coordsArr, getProjection('EPSG:25831'), 'EPSG:3857');
-            selectFeatureInfo(coordsArr);
-          });
       }
 
       /*
@@ -1496,13 +1340,6 @@
 
         LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true, groupSelectStyle: 'none' });
 
-        pageData.windowSearch = new Overlay({
-          closeBox : true,
-          className: "slide-left window searchWindow",
-          content: document.getElementById("windowSearch")
-        })
-        pageData.map.addControl(pageData.windowSearch);
-
         pageData.windowPrint = new Overlay({
           closeBox : true,
           className: "slide-left window printWindow",
@@ -1553,19 +1390,15 @@
         actionBar.addControl(logoUnescoBtn);
 
         actionBar.addControl(pageData.layersToggle);
-        actionBar.addControl(pageData.searchToggle);
         actionBar.addControl(pageData.printToggle);
       }
 
       function hideWindows(activeToggle) {
         pageData.windowLayers.hide();
-        pageData.windowSearch.hide();
         pageData.windowPrint.hide();
         
         if (activeToggle !== "layers")
           pageData.layersToggle.setActive(false);
-        else if (activeToggle !== "search")
-          pageData.searchToggle.setActive(false);
         else if (activeToggle !== "print")
           pageData.printToggle.setActive(false);
       }
@@ -1891,10 +1724,6 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 .layer-switcher li label {
   padding-left: 1.5em;
-}
-
-#searchMsg {
-  color: #ff0000;
 }
 
 .measureBar.ol-control.ol-bar {
