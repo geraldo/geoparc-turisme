@@ -422,41 +422,6 @@
           ]
         }),
 
-        generalLayers: new LayerGroup({
-          title: 'Capes generals',
-          layers: [
-            new TileLayer({
-              title: 'Mapa Urbanístic de Catalunya (qualificació, sectors)',
-              visible: false,
-              type: 'personal',
-              source: new TileWMS({
-                url: 'https://dtes.gencat.cat/webmap/MUC/service.svc/get',
-                  params: {
-                    'LAYERS': 'MUC_4QUAL, MUC_3SECT', 
-                    'TILED': true,
-                  },
-                  projection: 'EPSG:25831',
-                  //serverType: 'geoserver'
-              })
-            }),
-
-            new TileLayer({
-              title: 'Mapa Urbanístic de Catalunya (classificació)',
-              visible: false,
-              type: 'personal',
-              source: new TileWMS({
-                url: 'https://dtes.gencat.cat/webmap/MUC/service.svc/get',
-                params: {
-                  'LAYERS': 'MUC_2CLAS', 
-                  'TILED': true,
-                },
-                projection: 'EPSG:25831',
-                //serverType: 'geoserver'
-              })
-            })
-          ]
-        }),
-
         windowLayers: null,
         windowPrint: null,
         windowFeature: null,
@@ -500,19 +465,6 @@
         printLayer: null,
         translatePrintBox: null,
         printTemplate: "plantilla_DIN_A4_horitzontal",
-
-        // vars for measure functions
-        measureActive: false,
-        measureSource: new VectorSource(),
-        mainBar: null, 
-        subBar: null, 
-        mainToggle: null,
-        drawInteraction: null,
-        measureTooltip: null,
-        measureTooltipElement: null,
-        helpTooltip: null,
-        helpTooltipElement: null,
-        sketch: null,
       });
 
       /*
@@ -600,7 +552,6 @@
           target: pageData.mapEle,
           layers: [
             pageData.baseLayers,
-            //pageData.generalLayers,
             pageData.qgisLayers,
           ],
           view: new View({
@@ -622,37 +573,11 @@
         pageData.map.set("qgisServerURL", pageData.qgisServerURL);
         pageData.map.set("qgisProjectFile", pageData.qgisProjectFile);
 
-        // measure tool
-        pageData.map.addLayer(
-          new VectorLayer({
-            source: pageData.measureSource,
-            style: new Style({
-              fill: new Fill({
-                color: 'rgba(255, 255, 255, 0.2)'
-              }),
-              stroke: new Stroke({
-                color: '#ffcc33',
-                width: 2
-              }),
-              image: new Circle({
-                radius: 7,
-                fill: new Fill({
-                    color: '#ffcc33'
-                })
-              })
-            })
-          })
-        );
-
-        initMeasureBar();
-
         /*
          * Interaction
          *****************************************/
         pageData.map.on('click', function(evt) {
-          if (!pageData.measureActive) {
-            selectFeatureInfo(evt.coordinate);
-          }
+          selectFeatureInfo(evt.coordinate);
         });
 
         /*
@@ -773,8 +698,6 @@
 
         $(document).keyup(function(e) {
           if (e.keyCode === 27) { // escape
-
-            removeMeasure();
 
             // hide feature window
             pageData.windowFeature.hide();
@@ -1116,216 +1039,6 @@
 
         window.open(url, "Geoparc Orígens als Pirineus Catalans");
       }
-
-      /*
-       * Measure bar
-       *****************************************/
-      function initMeasureBar() {
-        pageData.subBar = new Bar({ 
-          toggleOne: true,
-          autoDeactivate: true,
-          controls: [ 
-            new Toggle({ 
-              html:'<i class="fg-measure-line"></i>',
-              onToggle: function(b) { 
-                pageData.measureActive = b;
-                enableInteraction(b, true);
-              } 
-            }),
-            new Toggle({ 
-              html:'<i class="fg-measure-area"></i>', 
-              onToggle: function(b) { 
-                pageData.measureActive = b;
-                enableInteraction(b, false);
-              }
-            })
-          ]
-        });
-        pageData.mainToggle = new Toggle({ 
-          html: '<i class="fg-measure"></i>',
-          bar: pageData.subBar,
-          onToggle: function(b) {
-            if (!b) {
-              removeMeasure();
-              //this.toggle();
-            }
-          }
-        });
-        pageData.mainBar = new Bar({ 
-          autoDeactivate: true,
-          controls: [pageData.mainToggle],
-          className: "ol-top ol-right measureBar"
-        });
-        pageData.map.addControl( pageData.mainBar );
-      }
-
-      function enableInteraction(enable, distance) {
-        enable ? addInteraction(distance) : removeMeasure();
-      }
-
-      function addInteraction(distance) {
-        let type = (distance ? 'LineString' : 'Polygon');
-
-        if (pageData.drawInteraction)
-          pageData.map.removeInteraction(pageData.drawInteraction);
-
-        pageData.drawInteraction = new Draw({
-          source: pageData.measureSource,
-          type: type,
-          style: new Style({
-            fill: new Fill({
-              color: 'rgba(255, 255, 255, 0.2)'
-            }),
-            stroke: new Stroke({
-              color: 'rgba(0, 0, 0, 0.5)',
-              lineDash: [10, 10],
-              width: 2
-            }),
-            image: new Circle({
-              radius: 5,
-              stroke: new Stroke({
-                color: 'rgba(0, 0, 0, 0.7)'
-              }),
-              fill: new Fill({
-                color: 'rgba(255, 255, 255, 0.2)'
-              })
-            })
-          })
-        });
-
-        pageData.map.addInteraction(pageData.drawInteraction);
-
-        createMeasureTooltip();
-        createHelpTooltip();
-
-        let listener;
-
-        pageData.drawInteraction.on('drawstart', function(evt) {
-          pageData.sketch = evt.feature;
-          let tooltipCoord = evt.coordinate;
-
-          listener = pageData.sketch.getGeometry().on('change', function(evt) {
-            let geom = evt.target;
-            let output;
-            if (geom instanceof Polygon) {
-              output = formatArea(geom);
-              tooltipCoord = geom.getInteriorPoint().getCoordinates();
-            } else if (geom instanceof LineString) {
-              output = formatLength(geom);
-              tooltipCoord = geom.getLastCoordinate();
-            }
-            pageData.measureTooltipElement.innerHTML = output;
-            pageData.measureTooltip.setPosition(tooltipCoord);
-          });
-        }, this);
-
-        pageData.drawInteraction.on('drawend', function() {
-          pageData.measureTooltipElement.className = 'tooltip tooltip-static';
-          pageData.measureTooltip.setOffset([0, -7]);
-          pageData.sketch = null;
-          pageData.measureTooltipElement = null;
-          createMeasureTooltip();
-          unByKey(listener);
-        }, this);
-      }
-
-      function removeMeasure() {
-        // hide measure tools
-        pageData.measureActive = false;
-        if (pageData.drawInteraction)
-          pageData.map.removeInteraction(pageData.drawInteraction);
-        if (pageData.measureTooltip)
-          pageData.map.removeOverlay(pageData.measureTooltip);
-        if (pageData.helpTooltip)
-          removeHelpTooltip();
-        $('.tooltip').addClass('hidden');
-        pageData.mainToggle.setActive(false);
-        pageData.measureSource.clear();
-      }
-
-      function createHelpTooltip() {
-        removeHelpTooltip();
-        pageData.helpTooltipElement = document.createElement('div');
-        pageData.helpTooltipElement.className = 'tooltip hidden';
-        pageData.helpTooltip = new OverlayOL({
-          element: pageData.helpTooltipElement,
-          offset: [15, 0],
-          positioning: 'center-left'
-        });
-        pageData.map.addOverlay(pageData.helpTooltip);
-
-        pageData.map.getViewport().addEventListener('mouseout', helpTooltipEventListener);
-      }
-
-      let helpTooltipEventListener = function() {
-        pageData.helpTooltipElement.classList.add('hidden');
-      }
-
-      function removeHelpTooltip() {
-        pageData.map.removeOverlay(pageData.helpTooltip);
-        pageData.map.getViewport().removeEventListener('mouseout', helpTooltipEventListener);
-      }
-
-      function createMeasureTooltip() {
-        if (pageData.measureTooltipElement) {
-          pageData.measureTooltipElement.parentNode.removeChild(pageData.measureTooltipElement);
-        }
-        pageData.measureTooltipElement = document.createElement('div');
-        pageData.measureTooltipElement.className = 'tooltip tooltip-measure';
-        pageData.measureTooltip = new OverlayOL({
-          element: pageData.measureTooltipElement,
-          offset: [0, -15],
-          positioning: 'bottom-center'
-        });
-        pageData.map.addOverlay(pageData.measureTooltip);
-      }
-
-      let pointerMoveHandler = function(evt) {
-        if (evt.dragging) {
-          return;
-        }
-
-        if (sketch) {
-          let geom = (sketch.getGeometry());
-          if (geom instanceof Polygon) {
-            helpMsg = continuePolygonMsg;
-          } else if (geom instanceof LineString) {
-            helpMsg = continueLineMsg;
-          }
-        }
-
-        if (helpTooltipElement && helpTooltipElement !== undefined) {
-          helpTooltipElement.innerHTML = helpMsg;
-          helpTooltip.setPosition(evt.coordinate);
-          helpTooltipElement.classList.remove('hidden');
-        }
-      };
-
-      let formatLength = function(line) {
-        let length = getLength(line);
-        let output;
-        if (length > 100) {
-          output = (Math.round(length / 1000 * 100) / 100) +
-              ' ' + 'km';
-        } else {
-          output = (Math.round(length * 100) / 100) +
-              ' ' + 'm';
-        }
-        return output;
-      };  
-
-      let formatArea = function(polygon) {
-        let area = getArea(polygon);
-        let output;
-        if (area > 10000) {
-          output = (Math.round(area / 1000000 * 100) / 100) +
-              ' ' + 'km<sup>2</sup>';
-        } else {
-          output = (Math.round(area * 100) / 100) +
-              ' ' + 'm<sup>2</sup>';
-        }
-        return output;
-      };
 
       /*
        * Menu
@@ -1724,46 +1437,6 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 .layer-switcher li label {
   padding-left: 1.5em;
-}
-
-.measureBar.ol-control.ol-bar {
-  top: 4em !important;
-  min-height: 1.8em !important;
-}
-.measureBar .ol-option-bar button {
-  background-color: transparent;
-}
-.tooltip {
-  position: relative;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 0;
-  color: white;
-  padding: 4px 8px;
-  opacity: 0.7;
-  white-space: nowrap;
-}
-.tooltip-measure {
-  opacity: 1;
-  font-weight: bold;
-}
-.tooltip-static {
-  background-color: #ffcc33;
-  color: #4f1c23;
-  border: 1px solid white;
-}
-.tooltip-measure:before,
-.tooltip-static:before {
-  border-top: 6px solid rgba(0, 0, 0, 0.5);
-  border-right: 6px solid transparent;
-  border-left: 6px solid transparent;
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  margin-left: -7px;
-  left: 50%;
-}
-.tooltip-static:before {
-  border-top-color: #ffcc33;
 }
 .hidden {
   display: none;
