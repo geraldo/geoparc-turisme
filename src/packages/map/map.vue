@@ -75,7 +75,7 @@
     Tile as TileLayer, 
     Vector as VectorLayer
   } from 'ol/layer';
-  import { ScaleLine } from 'ol/control';
+  import { ScaleLine, FullScreen, defaults as defaultControls } from 'ol/control';
   import { Point, Polygon, LineString } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
   import { register } from 'ol/proj/proj4';
@@ -539,6 +539,7 @@
         pageData.mapEle = document.getElementById('map');
         pageData.map = new Map({
           target: pageData.mapEle,
+          controls: defaultControls().extend([new FullScreen()]),
           layers: [
             pageData.baseLayers,
             pageData.qgisLayers,
@@ -1049,6 +1050,7 @@
 .ol-zoom {
   left: auto;
   right: .5em;
+  top: 3em;
 }
 
 .logo button {
