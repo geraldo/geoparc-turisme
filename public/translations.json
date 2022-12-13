@@ -1,0 +1,20 @@
+{
+  "ca": {
+    "translation": {
+      "gui": {
+        "windowLayersTitle": "Gestor de capes",
+        "windowTableTitle": "Llistat",
+        "windowFeatureTitle": "Features"
+      }
+    }
+  },
+  "es": {
+    "translation": {
+      "gui": {
+        "windowLayersTitle": "Gestor de capas",
+        "windowTableTitle": "Listado",
+        "windowFeatureTitle": "Features"
+      }
+    }
+  }
+}

@@ -12,31 +12,13 @@
     </div>
   </div>
 
-  <div id="windowPrint" class="window">
+  <div id="windowTable" class="window">
     <h2>
-      <i class="fa fa-print"></i>
-      <span class="title">Impressió</span>
+      <i class="fa fa-table"></i>
+      <span class="title">Llistat</span>
     </h2>
     <div class="content">
-      <p>Selecciona el paper i escala d'impressió</p>
-      <p><select id="printSize" name="printSize">
-        <option value="a4_hor" data-dim="[297,188]" selected="selected">DIN A4</option>
-        <option value="a3_hor" data-dim="[420,275]">DIN A3</option>
-      </select></p>
-      <p><select id="printScale" name="printScale">
-        <option value="200">1:200</option>
-        <option value="500">1:500</option>
-        <option value="1000" selected="selected">1:1.000</option>
-        <option value="2000">1:2.000</option>
-        <option value="5000">1:5.000</option>
-        <option value="10000">1:10.000</option>
-        <option value="25000">1:25.000</option>
-        <option value="50000">1:50.000</option>
-      </select></p>
-      <p>
-        <button type="button" class="btn btn-default btn-cancel">Cancel·lar</button> 
-        <button type="button" class="btn btn-default btn-print">Imprimir</button>
-      </p>
+      
     </div>
   </div>
 
@@ -95,6 +77,9 @@
   import LayerSwitcher from 'ol-layerswitcher';
   import proj4 from 'proj4';
   import $ from 'jquery';
+  import Cookies from 'js-cookie';
+  import i18next from 'i18next';
+
 
 
   function makeSafeForCSS(name) {
@@ -412,7 +397,7 @@
         }),
 
         windowLayers: null,
-        windowPrint: null,
+        windowTable: null,
         windowFeature: null,
         layersToggle: new Toggle({ 
           html: '<i class="fa fa-align-justify fa-lg"></i>',
@@ -429,31 +414,40 @@
             }
           }
         }),
-        printToggle: new Toggle({ 
-          html: '<i class="fa fa-print fa-lg"></i>',
-          title: 'Impressió',
-          className: "printToggle",
+        tableToggle: new Toggle({ 
+          html: '<i class="fa fa-table fa-lg"></i>',
+          title: 'Llistat',
+          className: "tableToggle",
           onToggle: function(active) {
             if (active) {
-              hideWindows("print");
-              pageData.windowPrint.show();
-              selectPrintTemplate();
+              hideWindows("table");
+              pageData.windowTable.show();
             }
             else {
-              pageData.windowPrint.hide();
-              cancelPrintBox();
+              pageData.windowTable.hide();
+              $(".tableToggle").removeClass("ol-active");
             }
+          }
+        }),
+        caToggle: new Toggle({ 
+          html: 'CA',
+          className: "lang ca",
+          title: "Català",
+          onToggle: function() {
+            i18next.changeLanguage('ca');
+          }
+        }),
+        esToggle: new Toggle({ 
+          html: 'ES',
+          className: "lang es",
+          title: "Castellano",
+          onToggle: function() {
+            i18next.changeLanguage('es');
           }
         }),
 
         iconLayer: null,
-        iconPoint: null,
-
-        // vars for print
-        printSource: null,
-        printLayer: null,
-        translatePrintBox: null,
-        printTemplate: "plantilla_DIN_A4_horitzontal",
+        iconPoint: null
       });
 
       /*
@@ -578,29 +572,7 @@
             if (pageData.iconLayer) {
               pageData.iconPoint.setCoordinates([]);
             }
-
-            // hide printable area
-            if (!$(".printWindow").is(':visible'))
-              cancelPrintBox();
           }
-        });
-
-        $("#windowPrint").on("change", "#printSize", function(){
-          selectPrintTemplate();
-        });
-        $("#windowPrint").on("change", "#printScale", function(){
-          selectPrintTemplate();
-        });
-        $("#windowPrint").on("click", ".btn-cancel", function(){
-          cancelPrintBox();
-          pageData.windowPrint.hide();
-          pageData.printToggle.setActive(false);
-        });
-        $(".printWindow").on("click", ".ol-closebox", function(){
-          cancelPrintBox();
-        });
-        $("#windowPrint").on("click", ".btn-print", function(){
-          printMap();
         });
       }
 
@@ -788,133 +760,6 @@
       }
 
       /*
-       * Print
-       *****************************************/
-      function selectPrintTemplate() {
-        // select values
-        let paper = $("#printSize").val(),
-            dim = $("#printSize option:selected").data("dim"),
-            scale = parseInt($("#printScale").val()),
-            resolution = 120;
-
-        if (paper === "a4_hor") {
-          pageData.printTemplate = "plantilla_DIN_A4_horitzontal";
-        }
-        else if (paper === "a3_hor") {
-          pageData.printTemplate = "plantilla_DIN_A3_horitzontal";
-        }
-
-        console.log(paper, dim, scale, pageData.printTemplate);
-
-        if (pageData.printSource) {
-          pageData.printSource.clear();
-        }
-        initPrintBox();
-
-        return false;
-      }
-
-      // actual screen scale
-      // https://gis.stackexchange.com/questions/242424/how-to-get-map-units-to-find-current-scale-in-openlayers
-      function screenScale() {
-        let unit = pageData.map.getView().getProjection().getUnits(),
-            resolution = pageData.map.getView().getResolution(),
-            inchesPerMetre = 39.3700787,
-            dpi = 96;
-
-        return resolution * METERS_PER_UNIT[unit] * inchesPerMetre * dpi;
-      }
-
-      // print map resolution in m/px
-      // https://gis.stackexchange.com/questions/158435/how-to-get-current-scale-in-openlayers-3#answer-158518
-      function printResolution(scale) {
-        let unit = pageData.map.getView().getProjection().getUnits(),
-            inchesPerMetre = 39.3700787,
-            dpi = 120;
-
-        return scale / (METERS_PER_UNIT[unit] * inchesPerMetre * dpi);
-      }
-
-      function initPrintBox() {
-
-        let size = $("#printSize option:selected").data("dim"),
-            scale = $("#printScale").val(),
-            w = Number(size[0])*printResolution(scale)/screenScale()*18000,
-            h = Number(size[1])*printResolution(scale)/screenScale()*18000;
-
-        let bounds = pageData.map.getView().calculateExtent([w,h]),
-            printBox = [
-              [bounds[0], bounds[1]],
-              [bounds[0], bounds[3]],
-              [bounds[2], bounds[3]],
-              [bounds[2], bounds[1]],
-              [bounds[0], bounds[1]]
-            ],
-            printPolygon = new Polygon([printBox]),
-            printFeature = new Feature(printPolygon);
-
-        /*printFeature.on('change',function(){
-          console.log('Feature Moved To:' + this.getGeometry().getCoordinates());
-        },printFeature);*/
-
-        pageData.printSource = new VectorSource({wrapX: false});
-        pageData.printSource.addFeature(printFeature);
-
-        pageData.printLayer = new VectorLayer({
-          source: pageData.printSource,
-          zIndex: 1000,
-          style: new Style({
-            fill: new Fill({
-              color: 'rgba(88,38,123,0.3)' 
-            }),
-            stroke: new Stroke({
-              color: 'rgb(88,38,123)',
-              width: 2
-            })
-          })
-        });
-        pageData.map.addLayer(pageData.printLayer);
-
-        // make box draggable
-        pageData.translatePrintBox = new Translate({
-          layer: [pageData.printLayer]
-        });
-
-        pageData.printLayer.setVisible(true);
-        pageData.map.addInteraction(pageData.translatePrintBox);
-      }
-
-      function cancelPrintBox() {
-        if (pageData.printSource) {
-          pageData.map.removeInteraction(pageData.translatePrintBox);
-          pageData.printSource.clear();
-          pageData.printLayer.setVisible(false);
-        }
-      }
-
-      function printMap() {
-        // print selected area
-        $(this).attr("target", "_blank");
-
-        // get visible layers
-        let visibleLayers = [];
-        LayerSwitcherWithLegend.forEachRecursive(pageData.map, function(layer) {
-          if (layer.getVisible()) {
-            if (layer.get("qgisname"))
-              visibleLayers.push(layer.get("title"));
-            else if (layer.get('type') === 'base' && layer.get("title") !== 'Ningú')
-              visibleLayers.push("¡" + layer.get("title"));
-          }
-        });
-
-        let url = pageData.qgisServerURL + '?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetPrint&FORMAT=pdf&TRANSPARENT=true&LAYERS=' + visibleLayers.toString()+'&CRS=EPSG:3857&map0:STYLES=&map0:extent=' + pageData.printSource.getExtent()+'&TEMPLATE=' + pageData.printTemplate + '&DPI=120&map0:scale=' + $("#printScale").val() + "&MAP=" + pageData.qgisProjectFile;
-
-        console.log(url);
-
-        window.open(url, "Geoparc Orígens als Pirineus Catalans");
-      }
-
-      /*
        * Menu
        *****************************************/
       function initMenu() {
@@ -927,12 +772,12 @@
 
         LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true, groupSelectStyle: 'none' });
 
-        pageData.windowPrint = new Overlay({
+        pageData.windowTable = new Overlay({
           closeBox : true,
-          className: "slide-left window printWindow",
-          content: document.getElementById("windowPrint")
+          className: "slide-left window tableWindow",
+          content: document.getElementById("windowTable")
         })
-        pageData.map.addControl(pageData.windowPrint);
+        pageData.map.addControl(pageData.windowTable);
 
         pageData.windowFeature = new Overlay({
           closeBox : true,
@@ -977,23 +822,127 @@
         actionBar.addControl(logoUnescoBtn);
 
         actionBar.addControl(pageData.layersToggle);
-        actionBar.addControl(pageData.printToggle);
+        actionBar.addControl(pageData.tableToggle);
+
+        let languageBar = new Bar({ toggleOne: true, group: true });
+        menuBar.addControl(languageBar);
+        languageBar.addControl(pageData.caToggle);
+        languageBar.addControl(pageData.esToggle);
       }
 
       function hideWindows(activeToggle) {
         pageData.windowLayers.hide();
-        pageData.windowPrint.hide();
+        pageData.windowTable.hide();
         
         if (activeToggle !== "layers")
           pageData.layersToggle.setActive(false);
-        else if (activeToggle !== "print")
-          pageData.printToggle.setActive(false);
+        else if (activeToggle !== "table")
+          pageData.tableToggle.setActive(false);
+      }
+
+      /*
+       * Cookies
+       *****************************************/
+      function initCookies() {
+        /*if (Cookies.get('showinfo') === undefined || Cookies.get('showinfo') === "true") {
+          docsToggle.setActive(true);
+          windowDocs.show();
+        }
+        else {
+          $('#showinfo').prop('checked', true);
+        }
+
+        $('#showinfo').change(function() {
+          Cookies.set('showinfo', !this.checked, pageData.cookieOptions);
+        });*/
+
+        $.ajax({
+          url: './translations.json',
+          dataType: 'json',
+          success: function(response){
+            let lang = getCookies();
+
+            i18next.init({
+              lng: lang,
+              debug: true,
+              resources: response
+            }).then(function(t) {
+
+              translateContent();
+
+              i18next.on('languageChanged', () => {
+                Cookies.set('lang', i18next.language, pageData.cookieOptions);
+                //console.log(i18next.language, Cookies.get('lang'));
+
+                translateContent();
+              });
+            });
+          }
+        });
+      }
+
+      function getCookies() {
+        let lang = 'ca';
+
+        if (Cookies.get('lang') === undefined) {
+          /*let userLang = navigator.language || navigator.userLanguage;
+          if (userLang === 'ca' || userLang == 'es') {
+            lang = userLang;
+          }*/
+          Cookies.set('lang', lang, pageData.cookieOptions);
+        }
+        else {
+          lang = Cookies.get('lang');
+        }
+
+        //let userLang = navigator.language || navigator.userLanguage;
+        //console.log("The language is: " + lang + " (Browser language:" + userLang + ")");
+
+        if (lang === "ca")
+          pageData.caToggle.setActive(true);
+        else if (lang === "es")
+          pageData.esToggle.setActive(true);
+        else if (lang === "fr")
+          pageData.frToggle.setActive(true);
+        else
+          pageData.enToggle.setActive(true);
+
+        return lang;
+      }
+
+      function translateContent() {
+        // menu
+        pageData.layersToggle.setTitle(i18next.t('gui.windowLayersTitle'));
+        pageData.tableToggle.setTitle(i18next.t('gui.windowTableTitle'));
+
+        // windows
+        $("#windowLayers .title").text(i18next.t('gui.windowLayersTitle'));
+        $("#windowTable .title").text(i18next.t('gui.windowTableTitle'));
+        $("#windowFeature .title").text(i18next.t('gui.windowFeatureTitle'));
+
+        // layerswitcher
+        /*circulacioLayer.set("title", i18next.t('switcher.circulacioLayer'));
+        xarxaResidualLayer.set("title", i18next.t('switcher.xarxaResidualLayer'));
+        xarxaPluvialLayer.set("title", i18next.t('switcher.xarxaPluvialLayer'));
+        parcellesLayer.set("title", i18next.t('switcher.parcellesLayer'));
+        tramsLayer.set("title", i18next.t('switcher.tramsLayer'));
+        barrisLayer.set("title", i18next.t('switcher.barrisLayer'));
+        topoLayer.set("title", i18next.t('switcher.topoLayer'));
+        catastroLayer.set("title", i18next.t('switcher.catastroLayer'));
+        baseLayers.set("title", i18next.t('switcher.baseLayers'));
+        topoBaseLayer.set("title", i18next.t('switcher.topoBaseLayer'));
+        ortoLayer.set("title", i18next.t('switcher.ortoLayer'));
+        osmLayer.set("title", i18next.t('switcher.osmLayer'));
+        ninguLayer.set("title", i18next.t('switcher.ninguLayer'));
+        LayerSwitcher.renderPanel(map, document.getElementById("layerSwitcher"), { reverse: true });*/
       }
 
       /*
        * Init
        *****************************************/
-      function init() {
+      function initGui() {
+        initMenu();
+        initCookies();
         pageData.windowLayers.show();
         pageData.layersToggle.setActive(true);
       }
@@ -1004,8 +953,7 @@
         $.getJSON( "js/data/geoparc-turisme.qgs.json", function() {})
         .done(function(data) {
           initMap(data);
-          initMenu();
-          init();
+          initGui();
         })
         .fail(function() {
           console.log( "error loading JSON file" );
@@ -1333,10 +1281,6 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   box-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
-#printSize, #printScale {
-  width: 100%;
-}
-
 .btn {
   border-radius: 0;
   box-shadow: none;
@@ -1354,65 +1298,8 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   cursor: pointer;
 }
 
-/* iframe and tree view */
-.rpucframe {
-  width: 960px;
-  margin-left: 200px;
-}
-.tree {
-  font-size: 14px;
-  width: 200px;
-  float: left;
-}
-.tree ul {
-  list-style: none outside none;
-  padding: 0;
-}
-.tree li a {
-  line-height: 16px;
-}
-.tree > ul > li > a {
-  color: #3B4C56;
-  display: block;
-  font-weight: normal;
-  position: relative;
-  text-decoration: none;
-}
-.tree li.parent > a {
-  padding: 0 0 0 28px;
-}
-.tree li.parent > a:before {
-  background-image: url("/jstree.png");
-  background-position: -3px -7px;
-  content: "";
-  display: block;
-  height: 25px;
-  left: 0;
-  position: absolute;
-  top: 2px;
-  vertical-align: middle;
-  width: 18px;
-}
-.tree ul li.active > a:before {
-  background-position: -35px -7px;
-}
-.tree ul li ul {
-  border-left: 1px solid #D9DADB;
-  display: none;
-  margin: 0 0 0 12px;
-  overflow: hidden;
-  padding: 0 0 0 25px;
-}
-.tree ul li ul li {
-  position: relative;
-}
-.tree ul li ul li:before {
-  border-bottom: 1px dashed #E2E2E3;
-  content: "";
-  left: -20px;
-  position: absolute;
-  top: 12px;
-  width: 15px;
+.lang button {
+  color: black;
 }
 
 @media only screen and (max-width: 420px) {

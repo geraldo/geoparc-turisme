@@ -9,7 +9,9 @@
   "dependencies": {
     "font-awesome": "^4.7.0",
     "font-gis": "^1.0.5",
+    "i18next": "^22.4.5",
     "jquery": "^3.6.1",
+    "js-cookie": "^3.0.1",
     "ol": "latest",
     "ol-ext": "^4.0.3",
     "ol-layerswitcher": "latest",
