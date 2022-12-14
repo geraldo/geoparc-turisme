@@ -73,6 +73,7 @@
   import Button from 'ol-ext/control/Button';
   import Toggle from 'ol-ext/control/Toggle';
   import Overlay from 'ol-ext/control/Overlay';
+  import GeolocationButton from 'ol-ext/control/GeolocationButton';
 
   import LayerSwitcher from 'ol-layerswitcher';
   import proj4 from 'proj4';
@@ -553,7 +554,12 @@
         pageData.mapEle = document.getElementById('map');
         pageData.map = new Map({
           target: pageData.mapEle,
-          controls: defaultControls().extend([new FullScreen()]),
+          controls: defaultControls().extend([
+            new FullScreen(),
+            new GeolocationButton({
+              delay: 5000
+            })
+          ]),
           layers: [
             pageData.baseLayers,
             pageData.qgisLayers,
@@ -1018,7 +1024,12 @@
 .ol-zoom {
   left: auto;
   right: .5em;
-  top: 3em;
+  top: 4.5em;
+}
+
+.ol-geobt {
+  top: 2.5em !important;
+  bottom: auto !important;
 }
 
 .logo button {
@@ -1098,10 +1109,6 @@
 .ol-zoom .ol-zoom-in,
 .ol-zoom .ol-zoom-out {
   border-radius: 0;
-}
-
-.ol-control.ol-bar .ol-control.ol-button.twitter {
-  margin-left: 15px;
 }
 
 .ol-control.ol-bar.ol-left .ol-group .ol-control:last-child > button {
