@@ -367,7 +367,7 @@
             }),
 
             new TileLayer({
-              title: 'Topográfic (ICGC)',
+              title: 'Topogràfic (ICGC)',
               type: 'base',
               visible: false,
               source: new TileWMS({
@@ -381,15 +381,35 @@
             }),
 
             new TileLayer({
-              title: 'Topográfic gris (ICGC)',
+              title: 'Topogràfic gris (ICGC)',
               type: 'base',
-              visible: true,
+              visible: false,
               source: new TileWMS({
                 url: 'https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wms/service?',
                 params: {
                   'LAYERS': 'topogris', 
                   'VERSION': '1.1.1'
                 },
+                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
+               })
+            }),
+
+            new TileLayer({
+              title: 'Topogràfic Web (ICGC)',
+              type: 'base',
+              visible: true,
+              source: new xyzSource({
+                url: 'https://tilemaps.icgc.cat/mapfactory/wmts/topo_suau/CAT3857/{z}/{x}/{y}.png',
+                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
+               })
+            }),
+
+            new TileLayer({
+              title: 'Topogràfic Web mon max 14 (ICGC)',
+              type: 'base',
+              visible: false,
+              source: new xyzSource({
+                url: 'https://tilemaps.icgc.cat/mapfactory/wmts/osm_suau/CAT3857_15/{z}/{x}/{y}.png',
                 attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
                })
             }),
