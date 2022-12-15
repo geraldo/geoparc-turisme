@@ -313,8 +313,27 @@
         mapproxyServerURL: 'https://mapa.psig.es/mapproxy/service?',
         qgisProjectFile: '/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs',
 
-        qgisLayers: new LayerGroup({
+        qgisWmsLayers: new LayerGroup({
           title: 'Capes temàtiques',
+        }),
+        qgisWfsLayers: new LayerGroup({
+          title: 'Capes temàtiques (WFS)',
+          layers: [
+            /*new VectorLayer({
+              source: new VectorSource({
+                format: new GeoJSON(),
+                //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
+                url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
+              })
+            }),
+            new VectorLayer({
+              source: new VectorSource({
+                format: new GeoJSON(),
+                //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
+                url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
+              })
+            })*/
+          ]
         }),
         qgisSources: {},
         mousePosition: null,
@@ -474,7 +493,7 @@
       /*
        * Load QGIS Server/Mapproxy layers
        *****************************************/
-      function loadLayers(layersData) {
+      function loadWmsLayers(layersData) {
         let layers = [];
 
         layersData.slice().reverse().forEach(function(layer, i) {
@@ -549,7 +568,7 @@
         proj4.defs("EPSG:25831","+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
         register(proj4);
 
-        pageData.qgisLayers.setLayers(new Collection(loadLayers(layersData)));
+        pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
 
         pageData.mapEle = document.getElementById('map');
         pageData.map = new Map({
@@ -562,7 +581,8 @@
           ]),
           layers: [
             pageData.baseLayers,
-            pageData.qgisLayers,
+            pageData.qgisWmsLayers,
+            pageData.qgisWfsLayers,
           ],
           view: new View({
             center: fromLonLat([pageData.center[0].lng, pageData.center[0].lat]),
@@ -611,7 +631,7 @@
         $("#windowFeature .content-limits").empty();
         $("#windowFeature .content-coord").empty();
 
-        pageData.qgisLayers.getLayers().forEach(function(layerObj) {
+        pageData.qgisWmsLayers.getLayers().forEach(function(layerObj) {
 
           //console.log(layerObj.get('qgisname'), layerObj.getVisible());
 
