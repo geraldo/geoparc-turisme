@@ -7,6 +7,8 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
+    "datatables.net": "^1.13.1",
+    "datatables.net-dt": "^1.13.1",
     "font-awesome": "^4.7.0",
     "font-gis": "^1.0.5",
     "i18next": "^22.4.5",

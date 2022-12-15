@@ -12,13 +12,23 @@
     </div>
   </div>
 
-  <div id="windowTable" class="window">
+  <div id="windowTablePois" class="window">
     <h2>
       <i class="fa fa-table"></i>
-      <span class="title">Llistat</span>
+      <span class="title">Llistat POIs</span>
     </h2>
     <div class="content">
-      
+      <div id="datatable-pois"></div>
+    </div>
+  </div>
+
+  <div id="windowTableRutas" class="window">
+    <h2>
+      <i class="fa fa-table"></i>
+      <span class="title">Llistat Georutes</span>
+    </h2>
+    <div class="content">
+      <div id="datatable-rutas"></div>
     </div>
   </div>
 
@@ -80,7 +90,7 @@
   import $ from 'jquery';
   import Cookies from 'js-cookie';
   import i18next from 'i18next';
-
+  import DataTable from 'datatables.net';
 
 
   function makeSafeForCSS(name) {
@@ -437,7 +447,8 @@
         }),
 
         windowLayers: null,
-        windowTable: null,
+        windowTablePois: null,
+        windowTableRutas: null,
         windowFeature: null,
         layersToggle: new Toggle({ 
           html: '<i class="fa fa-align-justify fa-lg"></i>',
@@ -454,18 +465,33 @@
             }
           }
         }),
-        tableToggle: new Toggle({ 
-          html: '<i class="fa fa-table fa-lg"></i>',
-          title: 'Llistat',
-          className: "tableToggle",
+        tableTogglePois: new Toggle({ 
+          html: '<i class="fa fa-map-marker fa-lg"></i>',
+          title: 'Llistat POIs',
+          className: "tableTogglePois",
           onToggle: function(active) {
             if (active) {
-              hideWindows("table");
-              pageData.windowTable.show();
+              hideWindows("tablePois");
+              pageData.windowTablePois.show();
             }
             else {
-              pageData.windowTable.hide();
-              $(".tableToggle").removeClass("ol-active");
+              pageData.windowTablePois.hide();
+              $(".tableTogglePois").removeClass("ol-active");
+            }
+          }
+        }),
+        tableToggleRutas: new Toggle({ 
+          html: '<i class="fa fa-map-o fa-lg"></i>',
+          title: 'Llistat Georutes',
+          className: "tableToggleRutas",
+          onToggle: function(active) {
+            if (active) {
+              hideWindows("tableRutas");
+              pageData.windowTableRutas.show();
+            }
+            else {
+              pageData.windowTableRutas.hide();
+              $(".tableToggleRutas").removeClass("ol-active");
             }
           }
         }),
@@ -568,7 +594,7 @@
         proj4.defs("EPSG:25831","+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
         register(proj4);
 
-        pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
+        //pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
 
         pageData.mapEle = document.getElementById('map');
         pageData.map = new Map({
@@ -818,12 +844,19 @@
 
         LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true, groupSelectStyle: 'none' });
 
-        pageData.windowTable = new Overlay({
+        pageData.windowTablePois = new Overlay({
           closeBox : true,
           className: "slide-left window tableWindow",
-          content: document.getElementById("windowTable")
+          content: document.getElementById("windowTablePois")
         })
-        pageData.map.addControl(pageData.windowTable);
+        pageData.map.addControl(pageData.windowTablePois);
+
+        pageData.windowTableRutas = new Overlay({
+          closeBox : true,
+          className: "slide-left window tableWindow",
+          content: document.getElementById("windowTableRutas")
+        })
+        pageData.map.addControl(pageData.windowTableRutas);
 
         pageData.windowFeature = new Overlay({
           closeBox : true,
@@ -868,7 +901,8 @@
         actionBar.addControl(logoUnescoBtn);
 
         actionBar.addControl(pageData.layersToggle);
-        actionBar.addControl(pageData.tableToggle);
+        actionBar.addControl(pageData.tableTogglePois);
+        actionBar.addControl(pageData.tableToggleRutas);
 
         let languageBar = new Bar({ toggleOne: true, group: true });
         menuBar.addControl(languageBar);
@@ -878,12 +912,15 @@
 
       function hideWindows(activeToggle) {
         pageData.windowLayers.hide();
-        pageData.windowTable.hide();
+        pageData.windowTablePois.hide();
+        pageData.windowTableRutas.hide();
         
         if (activeToggle !== "layers")
           pageData.layersToggle.setActive(false);
-        else if (activeToggle !== "table")
-          pageData.tableToggle.setActive(false);
+        else if (activeToggle !== "tablePois")
+          pageData.tableTogglePois.setActive(false);
+        else if (activeToggle !== "tableRutas")
+          pageData.tableToggleRutas.setActive(false);
       }
 
       /*
@@ -959,11 +996,13 @@
       function translateContent() {
         // menu
         pageData.layersToggle.setTitle(i18next.t('gui.windowLayersTitle'));
-        pageData.tableToggle.setTitle(i18next.t('gui.windowTableTitle'));
+        pageData.tableTogglePois.setTitle(i18next.t('gui.windowTablePoisTitle'));
+        pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
 
         // windows
         $("#windowLayers .title").text(i18next.t('gui.windowLayersTitle'));
-        $("#windowTable .title").text(i18next.t('gui.windowTableTitle'));
+        $("#windowTablePois .title").text(i18next.t('gui.windowTablePoisTitle'));
+        $("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
         $("#windowFeature .title").text(i18next.t('gui.windowFeatureTitle'));
 
         // layerswitcher
@@ -984,6 +1023,52 @@
       }
 
       /*
+       * Datatables
+       *****************************************/
+      function initDtPois() {
+        $('#datatable-pois').html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="pois-table"></table>');
+        let datatable = $('#pois-table').DataTable({
+          info: false,
+          responsible: true,
+          search: true,
+          ajax: { 
+            url :"https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs&limit=1000", type : "GET",
+            dataSrc: 'features'
+          },
+          columns: [
+            { "data": "properties.nom_cat", "title" : "Nom"},
+            { "data": "properties.descripcio_cat", "title" : "Descripció"},
+            { "data": "properties.imatge_1", "title" : "Imatge"},
+            { "data": "properties.nom_ruta_cat", "title" : "Georuta"},
+            { "data": "properties.tematica_1_cat", "title" : "Temática"},
+            { "data": "properties.tipus_cat", "title" : "Tipus"},
+          ],
+        })
+      }
+
+      function initDtRutes() {
+        $('#datatable-rutas').html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="rutas-table"></table>');
+        let datatable = $('#rutas-table').DataTable({
+          info: false,
+          responsible: true,
+          search: true,
+          ajax: { 
+            url :"https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.json?MAP=/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs&limit=1000", type : "GET",
+            dataSrc: 'features'
+          },
+          columns: [
+            { "data": "properties.georuta_cat", "title" : "Nom"},
+            { "data": "properties.descripcio_cat", "title" : "Descripció"},
+            { "data": "properties.desnivell_m", "title" : "Desnivell"},
+            { "data": "properties.dificultat_cat", "title" : "Dificultat"},
+            { "data": "properties.distancia_km", "title" : "Distancia"},
+            { "data": "properties.tipologia_cat", "title" : "Tipología"},
+            { "data": "properties.modalitat_cat", "title" : "Modalitat"},
+          ],
+        })
+      }
+
+      /*
        * Init
        *****************************************/
       function initGui() {
@@ -1000,6 +1085,8 @@
         .done(function(data) {
           initMap(data);
           initGui();
+          initDtPois();
+          initDtRutes();
         })
         .fail(function() {
           console.log( "error loading JSON file" );
@@ -1077,7 +1164,7 @@
   top: .5em;
   border: 2px solid #b2b019;
   border-radius: 0;
-  width: 440px;
+  width: 540px;
   max-width: 95%;
 }
 .ol-touch .ol-control.ol-bar.ol-top.ol-left, .ol-touch .ol-control.ol-bar.ol-top.ol-right {
@@ -1136,7 +1223,7 @@
 }
 
 .ol-overlay.window { 
-  width: 444px;
+  width: 544px;
   max-width: 95%;
   background: #fff;
   color: #333;
@@ -1146,6 +1233,7 @@
   top: 6em;
   height: auto;
   min-height: 500px;
+  max-height: 100%;
   bottom: unset;
   border: 2px solid #b2b019;
 }
@@ -1207,14 +1295,21 @@ h3 {
   margin-left: 5px;
 }
 
-#windowDocs .label,
-#windowApp .label {
-  font-style: italic;
-}
-
 #windowFeature, 
 #windowLayers {
   height: 550px;
+}
+
+.window.tableWindow {
+  width: 100%;
+}
+#pois-table,
+#rutas-table {
+  width: 100% !important;
+}
+.window.tableWindow .content {
+  overflow: scroll;
+  max-height: 600px;
 }
 
 #windowFeature .content,

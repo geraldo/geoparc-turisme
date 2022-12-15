@@ -3,7 +3,8 @@
     "translation": {
       "gui": {
         "windowLayersTitle": "Gestor de capes",
-        "windowTableTitle": "Llistat",
+        "windowTablePoisTitle": "Llistat POIs",
+        "windowTableRutasTitle": "Llistat Georutes",
         "windowFeatureTitle": "Features"
       }
     }
@@ -12,7 +13,8 @@
     "translation": {
       "gui": {
         "windowLayersTitle": "Gestor de capas",
-        "windowTableTitle": "Listado",
+        "windowTablePoisTitle": "Listado POIs",
+        "windowTableRutasTitle": "Listado Georutas",
         "windowFeatureTitle": "Features"
       }
     }
