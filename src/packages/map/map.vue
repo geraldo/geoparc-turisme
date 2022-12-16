@@ -321,7 +321,7 @@
 
         qgisServerURL: 'https://mapa.psig.es/qgisserver/cgi-bin/qgis_mapserv.fcgi',
         mapproxyServerURL: 'https://mapa.psig.es/mapproxy/service?',
-        qgisProjectFile: '/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs',
+        qgisProjectFile: '/home/geoparc/geoparc-turisme/geoparc-turisme.qgs',
 
         qgisWmsLayers: new LayerGroup({
           title: 'Capes temàtiques',
@@ -333,14 +333,14 @@
               source: new VectorSource({
                 format: new GeoJSON(),
                 //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
-                url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
+                url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
               })
             }),
             new VectorLayer({
               source: new VectorSource({
                 format: new GeoJSON(),
                 //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
-                url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
+                url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
               })
             })*/
           ]
@@ -1032,7 +1032,7 @@
           responsible: true,
           search: true,
           ajax: { 
-            url :"https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs&limit=1000", type : "GET",
+            url :"https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000", type : "GET",
             dataSrc: 'features'
           },
           columns: [
@@ -1053,7 +1053,7 @@
           responsible: true,
           search: true,
           ajax: { 
-            url :"https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.json?MAP=/home/ubuntu/geoparc-turisme/geoparc-turisme.qgs&limit=1000", type : "GET",
+            url :"https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000", type : "GET",
             dataSrc: 'features'
           },
           columns: [
