@@ -329,7 +329,8 @@
         qgisWfsLayers: new LayerGroup({
           title: 'Capes temàtiques (WFS)',
           layers: [
-            /*new VectorLayer({
+            new VectorLayer({
+              title: 'POIs',
               source: new VectorSource({
                 format: new GeoJSON(),
                 //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
@@ -337,12 +338,13 @@
               })
             }),
             new VectorLayer({
+              title: 'Georutes',
               source: new VectorSource({
                 format: new GeoJSON(),
                 //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
                 url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
               })
-            })*/
+            })
           ]
         }),
         qgisSources: {},
@@ -594,7 +596,7 @@
         proj4.defs("EPSG:25831","+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
         register(proj4);
 
-        //pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
+        pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
 
         pageData.mapEle = document.getElementById('map');
         pageData.map = new Map({
@@ -608,7 +610,7 @@
           layers: [
             pageData.baseLayers,
             pageData.qgisWmsLayers,
-            pageData.qgisWfsLayers,
+            //pageData.qgisWfsLayers,
           ],
           view: new View({
             center: fromLonLat([pageData.center[0].lng, pageData.center[0].lat]),
@@ -763,7 +765,6 @@
           }
         });
 
-        addCoordinatesInfo(coordinates);
         pageData.windowFeature.show();
       }
 
@@ -791,16 +792,6 @@
           }) !== undefined);
         }
         return false;
-      }
-
-      // add coordinates to info window
-      function addCoordinatesInfo(coordinates) {
-        $("#windowFeature .content-coord").append('<h3>Coordenades identificades</h3>');
-        $("#windowFeature .content-coord").append('<ul class="list">');
-
-        let coords = transform(coordinates, 'EPSG:3857', getProjection('EPSG:25831'));
-      
-        $("#windowFeature .content-coord .list").append('<li><em>EPSG 25831</em>: X=' + coords[0].toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' Y=' + coords[1].toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 0, maximumFractionDigits: 0 }) + '</li>');
       }
 
       // draw icon on coord
@@ -837,7 +828,7 @@
       function initMenu() {
         pageData.windowLayers = new Overlay({
           closeBox : true,
-          className: "slide-left window layersWindow",
+          className: "slide-right window layersWindow",
           content: document.getElementById("windowLayers")
         })
         pageData.map.addControl(pageData.windowLayers);
@@ -846,21 +837,21 @@
 
         pageData.windowTablePois = new Overlay({
           closeBox : true,
-          className: "slide-left window tableWindow",
+          className: "slide-right window tableWindow",
           content: document.getElementById("windowTablePois")
         })
         pageData.map.addControl(pageData.windowTablePois);
 
         pageData.windowTableRutas = new Overlay({
           closeBox : true,
-          className: "slide-left window tableWindow",
+          className: "slide-right window tableWindow",
           content: document.getElementById("windowTableRutas")
         })
         pageData.map.addControl(pageData.windowTableRutas);
 
         pageData.windowFeature = new Overlay({
           closeBox : true,
-          className: "slide-right window infoWindow",
+          className: "slide-left window infoWindow",
           content: document.getElementById("windowFeature")
         })
         pageData.map.addControl(pageData.windowFeature);
@@ -871,12 +862,35 @@
         });
 
         let menuBar = new Bar({
-          className: "ol-top ol-left menuBar"
+          className: "ol-top ol-right menuBar"
         });
         pageData.map.addControl(menuBar);
 
         let actionBar = new Bar({ toggleOne: true, group: true });
         menuBar.addControl(actionBar);
+
+        actionBar.addControl(pageData.layersToggle);
+        actionBar.addControl(pageData.tableTogglePois);
+        actionBar.addControl(pageData.tableToggleRutas);
+
+        let languageBar = new Bar({ 
+          toggleOne: true, 
+          group: true,
+          className: "langBar"
+        });
+        menuBar.addControl(languageBar);
+        languageBar.addControl(pageData.caToggle);
+        languageBar.addControl(pageData.esToggle);
+
+        /*let logoUnescoBtn = new Button({ 
+          html: '<img src="logo-unesco.png" />',
+          className: "logo logo2",
+          title: "UNESCO Global Geoparks",
+          handleClick: function() { 
+            window.location.href = "https://en.unesco.org/global-geoparks";
+          }
+        });
+        actionBar.addControl(logoUnescoBtn);
 
         let logoBtn = new Button({ 
           html: '<img src="logo-geoparc.jpg" />',
@@ -888,26 +902,7 @@
             window.location.href = "https://www.geoparcorigens.cat/";
           }
         });
-        actionBar.addControl(logoBtn);
-
-        let logoUnescoBtn = new Button({ 
-          html: '<img src="logo-unesco.png" />',
-          className: "logo logo2",
-          title: "UNESCO Global Geoparks",
-          handleClick: function() { 
-            window.location.href = "https://en.unesco.org/global-geoparks";
-          }
-        });
-        actionBar.addControl(logoUnescoBtn);
-
-        actionBar.addControl(pageData.layersToggle);
-        actionBar.addControl(pageData.tableTogglePois);
-        actionBar.addControl(pageData.tableToggleRutas);
-
-        let languageBar = new Bar({ toggleOne: true, group: true });
-        menuBar.addControl(languageBar);
-        languageBar.addControl(pageData.caToggle);
-        languageBar.addControl(pageData.esToggle);
+        actionBar.addControl(logoBtn);*/
       }
 
       function hideWindows(activeToggle) {
@@ -1128,13 +1123,30 @@
   color: #4f1c23;
 }
 
+.ol-zoom,
+.ol-geobt,
+.ol-full-screen,
+.ol-attribution {
+  left: .5em;
+}
+
 .ol-zoom {
-  left: auto;
-  right: .5em;
   top: 4.5em;
 }
 
+.ol-geobt,
+.ol-full-screen,
+.ol-attribution {
+  right: auto;
+}
+
+.ol-attribution {
+  bottom: 3em;
+}
+
 .ol-geobt {
+  left: .5em !important;
+  right: auto !important;
   top: 2.5em !important;
   bottom: auto !important;
 }
@@ -1157,20 +1169,21 @@
 .ol-control.ol-toggle button {
   cursor: pointer;
 }
-.ol-control.ol-bar.ol-left .ol-group {
+.ol-control.ol-bar.ol-right .ol-group {
   margin: 0;
 }
-.menuBar.ol-control.ol-bar.ol-top.ol-left {
-  top: .5em;
+.menuBar.ol-control.ol-bar.ol-top.ol-right {
+  top: 0;
+  right: 0;
   border: 2px solid #b2b019;
   border-radius: 0;
-  width: 540px;
+  width: 440px;
   max-width: 95%;
 }
-.ol-touch .ol-control.ol-bar.ol-top.ol-left, .ol-touch .ol-control.ol-bar.ol-top.ol-right {
+.ol-touch .ol-control.ol-bar.ol-top.ol-right, .ol-touch .ol-control.ol-bar.ol-top.ol-right {
   top: .5em;
 }
-.menuBar.ol-control.ol-bar.ol-left .ol-control,
+.menuBar.ol-control.ol-bar.ol-right .ol-control,
 .menuBar.ol-control.ol-bar.ol-right .ol-control {
   display: inline-block;
 }
@@ -1196,6 +1209,10 @@
   color: #4f1c23;
 }
 
+.langBar {
+  float: right;
+}
+
 .ol-control button {
   cursor: pointer;
   background-color: #aaa;
@@ -1218,19 +1235,19 @@
   border-radius: 0;
 }
 
-.ol-control.ol-bar.ol-left .ol-group .ol-control:last-child > button {
+.ol-control.ol-bar.ol-right .ol-group .ol-control:last-child > button {
   border-radius: 0;
 }
 
 .ol-overlay.window { 
-  width: 544px;
+  width: 444px;
   max-width: 95%;
   background: #fff;
   color: #333;
   padding: 0.5em;
   -webkit-transition: all 0.25s;
   transition: all 0.25s;
-  top: 6em;
+  top: 3em;
   height: auto;
   min-height: 500px;
   max-height: 100%;
@@ -1239,12 +1256,12 @@
 }
 
 .ol-overlay.window {
-  left: 0.5em;
+  right: 0;
+  left: auto;
   padding: 0;
 }
 .ol-overlay.infoWindow {
-  left: auto;
-  right: 0.5em;
+  left: 3em;
   padding: 0;
 }
 .ol-touch .ol-overlay.infoWindow {
@@ -1445,7 +1462,7 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 
 @media only screen and (max-width: 420px) {
-  .menuBar.ol-control.ol-bar.ol-top.ol-left {
+  .menuBar.ol-control.ol-bar.ol-top.ol-right {
     max-width: 85%;
   }
   .menuBar.ol-control.ol-bar .ol-control.ol-toggle.layersToggle {
