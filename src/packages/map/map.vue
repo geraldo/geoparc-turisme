@@ -3,10 +3,6 @@
   <div class="loading"><p></p><span></span></div>
 
   <div id="windowLayers" class="window">
-    <h2>
-      <i class="fa fa-file-text-o"></i>
-      <span class="title">Capes</span>
-    </h2>
     <div class="content">
       <div id="layerSwitcher" class="layer-switcher"></div>
     </div>
@@ -78,6 +74,8 @@
   import { 
     GeoJSON,
   } from 'ol/format';
+  import { Select } from 'ol/interaction';
+  import { pointerMove } from 'ol/events/condition';
 
   import Bar from 'ol-ext/control/Bar';
   import Button from 'ol-ext/control/Button';
@@ -86,6 +84,7 @@
   import GeolocationButton from 'ol-ext/control/GeolocationButton';
 
   import LayerSwitcher from 'ol-layerswitcher';
+  import Popup from 'ol-popup';
   import proj4 from 'proj4';
   import $ from 'jquery';
   import Cookies from 'js-cookie';
@@ -324,37 +323,44 @@
         qgisProjectFile: '/home/geoparc/geoparc-turisme/geoparc-turisme.qgs',
 
         qgisWmsLayers: new LayerGroup({
-          title: 'Capes temàtiques',
+          title: 'Capes temàtiques'
         }),
         qgisWfsLayers: new LayerGroup({
-          title: 'Capes temàtiques (WFS)',
-          layers: [
-            new VectorLayer({
-              title: 'POIs',
-              source: new VectorSource({
-                format: new GeoJSON(),
-                //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
-                url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
-              })
-            }),
-            new VectorLayer({
-              title: 'Georutes',
-              source: new VectorSource({
-                format: new GeoJSON(),
-                //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
-                url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
-              })
-            })
-          ]
+          title: 'Capes turisme'
         }),
+        poisLayer: new VectorLayer({
+          title: 'POIs',
+          source: new VectorSource({
+            format: new GeoJSON(),
+            //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' +qgisProjectFile+'&limit=1000'
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
+          }),
+          style: iconStyleFunction
+        }),
+
+        rutasLayer: new VectorLayer({
+          title: 'Georutes',
+          source: new VectorSource({
+            format: new GeoJSON(),
+            //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
+          }),
+          /*style: new Style({
+            stroke: new Stroke({
+              width: 3,
+              color: 'red'
+            })
+          })*/
+        }),
+
         qgisSources: {},
         mousePosition: null,
         rasterLayer: null,
 
         baseLayers: new LayerGroup({
-          title: 'Capes de referència',
+          //title: 'Capes de referència',
           layers: [
-            new TileLayer({
+            /*new TileLayer({
               title: 'Fons blanc',
               type: 'base',
               source: null,
@@ -424,27 +430,30 @@
                 },
                 attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
                })
-            }),
+            }),*/
 
-            new TileLayer({
-              title: 'Topogràfic Web (ICGC)',
+            new LayerGroup({
+              //title: 'Topogràfic (ICGC)',
               type: 'base',
-              visible: true,
-              source: new xyzSource({
-                url: 'https://tilemaps.icgc.cat/mapfactory/wmts/topo_suau/CAT3857/{z}/{x}/{y}.png',
-                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-               })
-            }),
+              layers: [
 
-            new TileLayer({
-              title: 'Topogràfic Web mon max 14 (ICGC)',
-              type: 'base',
-              visible: false,
-              source: new xyzSource({
-                url: 'https://tilemaps.icgc.cat/mapfactory/wmts/osm_suau/CAT3857_15/{z}/{x}/{y}.png',
-                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-               })
-            }),
+                new TileLayer({
+                  minZoom: 14,
+                  source: new xyzSource({
+                    url: 'https://tilemaps.icgc.cat/mapfactory/wmts/topo_suau/CAT3857/{z}/{x}/{y}.png',
+                    attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
+                   })
+                }),
+
+                new TileLayer({
+                  maxZoom: 14,
+                  source: new xyzSource({
+                    url: 'https://tilemaps.icgc.cat/mapfactory/wmts/osm_suau/CAT3857_15/{z}/{x}/{y}.png',
+                    attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
+                   })
+                })
+              ]
+            })
           ]
         }),
 
@@ -452,21 +461,6 @@
         windowTablePois: null,
         windowTableRutas: null,
         windowFeature: null,
-        layersToggle: new Toggle({ 
-          html: '<i class="fa fa-align-justify fa-lg"></i>',
-          title: 'Gestor de capes',
-          className: "layersToggle",
-          onToggle: function(active) {
-            if (active) {
-              hideWindows("layers");
-              pageData.windowLayers.show();
-            }
-            else {
-              pageData.windowLayers.hide();
-              $(".layersToggle").removeClass("ol-active");
-            }
-          }
-        }),
         tableTogglePois: new Toggle({ 
           html: '<i class="fa fa-map-marker fa-lg"></i>',
           title: 'Llistat POIs',
@@ -515,7 +509,11 @@
         }),
 
         iconLayer: null,
-        iconPoint: null
+        iconPoint: null,
+        tooltip: new Popup(),
+        popup: new Popup({
+          className: "featurePopup"
+        }),
       });
 
       /*
@@ -526,66 +524,64 @@
 
         layersData.slice().reverse().forEach(function(layer, i) {
 
-          let name = null, 
-            url = null;
+          if (layer.name !== "origens_turisme" && layer.name !== "Georutes") {
 
-          if (layer.mapproxy) {
-            name = layer.mapproxy;  // mapproxy
-            url = pageData.mapproxyServerURL;
-          }
-          else {
-            name = layer.name;  // qgis
-            url = pageData.qgisServerURL;
-          }
+            let name = null, 
+              url = null;
 
-          let layerSource = new TileWMS({
-            url: url,
-            projection: 'EPSG:3857',
-            params: {
-              'LAYERS': name,
-              'TRANSPARENT': true,
-              'VERSION': '1.3.0',
-              'MAP': pageData.qgisProjectFile
-            },
-            serverType: 'qgis',
-            crossOrigin: 'Anonymous'
-          });
+            if (layer.mapproxy) {
+              name = layer.mapproxy;  // mapproxy
+              url = pageData.mapproxyServerURL;
+            }
+            else {
+              name = layer.name;  // qgis
+              url = pageData.qgisServerURL;
+            }
 
-          // save qgisSource to query layer
-          pageData.qgisSources[layer.qgisname] = new TileWMS({
-            url: pageData.qgisServerURL,
-            projection: 'EPSG:3857',
-            params: {
-              'LAYERS': layer.name,
-              'TRANSPARENT': true,
-              'VERSION': '1.3.0',
-            },
-            serverType: 'qgis',
-            crossOrigin: 'Anonymous'
-          });
-
-          let newLayer = 
-            new TileLayer({
-              qgisname: layer.qgisname,
-              mapproxy: layer.mapproxy,
-              type: layer.type,
-              source: layerSource,
-              showlegend: layer.showlegend,
-              visible: layer.visible,
-              hidden: layer.hidden,
-              children: layer.children,
-              fields: layer.fields,
-              indentifiable: layer.indentifiable,
+            let layerSource = new TileWMS({
+              url: url,
+              projection: 'EPSG:3857',
+              params: {
+                'LAYERS': name,
+                'TRANSPARENT': true,
+                'VERSION': '1.3.0',
+                'MAP': pageData.qgisProjectFile
+              },
+              serverType: 'qgis',
+              crossOrigin: 'Anonymous'
             });
 
-          // save reference to raster layer to get pixel values
-          if (layer.name === "Zones a gestionar o protegir") {
-            pageData.rasterLayer = newLayer;
-          }
+            // save qgisSource to query layer
+            pageData.qgisSources[layer.qgisname] = new TileWMS({
+              url: pageData.qgisServerURL,
+              projection: 'EPSG:3857',
+              params: {
+                'LAYERS': layer.name,
+                'TRANSPARENT': true,
+                'VERSION': '1.3.0',
+              },
+              serverType: 'qgis',
+              crossOrigin: 'Anonymous'
+            });
 
-          if (!layer.name.startsWith("@"))
-            newLayer.set("title", layer.name);
-          layers.push(newLayer);
+            let newLayer = 
+              new TileLayer({
+                qgisname: layer.qgisname,
+                mapproxy: layer.mapproxy,
+                type: layer.type,
+                source: layerSource,
+                showlegend: layer.showlegend,
+                visible: layer.visible,
+                hidden: layer.hidden,
+                children: layer.children,
+                fields: layer.fields,
+                indentifiable: layer.indentifiable,
+              });
+
+            if (!layer.name.startsWith("@"))
+              newLayer.set("title", layer.name);
+            layers.push(newLayer);
+          }
         });
 
         return layers;
@@ -610,7 +606,7 @@
           layers: [
             pageData.baseLayers,
             pageData.qgisWmsLayers,
-            //pageData.qgisWfsLayers,
+            pageData.qgisWfsLayers,
           ],
           view: new View({
             center: fromLonLat([pageData.center[0].lng, pageData.center[0].lat]),
@@ -631,12 +627,136 @@
         pageData.map.set("qgisServerURL", pageData.qgisServerURL);
         pageData.map.set("qgisProjectFile", pageData.qgisProjectFile);
 
+        // add vector layers
+        pageData.qgisWfsLayers.setLayers(new Collection([pageData.rutasLayer, pageData.poisLayer]));
+        pageData.map.addOverlay(pageData.tooltip);
+        pageData.map.addOverlay(pageData.popup);
+
+
         /*
          * Interaction
          *****************************************/
         pageData.map.on('click', function(evt) {
-          selectFeatureInfo(evt.coordinate);
+          pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+            pageData.map.getView().fit(feature.getGeometry().getExtent(), {
+              easing: easeOut,
+              duration: 2000
+            });
+            return true;
+          }, {
+            layerFilter: function(layer) {
+              return layer === pageData.rutasLayer;
+            },
+            hitTolerance: 5
+          });
+
+          if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+            layerFilter: function(layer) {
+              return layer === pageData.poisLayer;
+            },
+            hitTolerance: 5
+          })) {
+            let title = "",
+                description = "",
+                foto = "",
+                autor = "";
+            pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+              title = feature.get('nom_cat');
+              description = feature.get('description_cat');
+              foto = feature.get('imatge_1');
+              autor = feature.get('autor');
+              return true;
+            }, {
+              hitTolerance: 5
+            });
+            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><p>' + foto + '</p><img src="fotos/' + foto + '"/><p>' + autor + '</p></div>');
+            pageData.tooltip.hide();
+          }
+          else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+            layerFilter: function(layer) {
+              return layer === pageData.rutasLayer;
+            },
+            hitTolerance: 5
+          })) {
+            let title = "",
+                description = "",
+                distancia = "",
+                desnivel = "",
+                tipologia = "",
+                modalidad = "",
+                dificultad = "";
+            pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+              title = feature.get('georuta_cat');
+              description = feature.get('descripcio_cat');
+              distancia = feature.get('distancia_km') + " km";
+              desnivel = feature.get('desnivell_m');
+              tipologia = feature.get('tipologia_cat');
+              modalidad = feature.get('modalitat_cat');
+              dificultad = feature.get('dificultat_cat');
+              return true;
+            }, {
+              hitTolerance: 5
+            });
+            pageData.popup.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2><p>' + description + '</p><p>' + distancia + '</p><p>' + desnivel + '</p><p>' + tipologia + '</p><p>' + modalidad + '</p><p>' + dificultad + '</p></div>');
+            pageData.tooltip.hide();
+          }
+          else
+            pageData.popup.hide();
         });
+
+        pageData.map.on('pointermove', function(evt) {
+          pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
+            layerFilter: function(layer) {
+              return layer === pageData.poisLayer || layer === pageData.rutasLayer;
+            },
+            hitTolerance: 5
+          }) ? 'pointer' : '';
+
+          if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+            layerFilter: function(layer) {
+              return layer === pageData.poisLayer;
+            },
+            hitTolerance: 5
+          })) {
+            let title = "",
+                foto = "";
+            pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+              title = feature.get('nom_cat');
+              foto = feature.get('imatge_1');
+              return true;
+            }, {
+              hitTolerance: 5
+            });
+            pageData.tooltip.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + foto + '</p><img src="fotos/' + foto + '"/></div>');
+          }
+          else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+            layerFilter: function(layer) {
+              return layer === pageData.rutasLayer;
+            },
+            hitTolerance: 5
+          })) {
+            let title = "";
+            pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+              title = feature.get('georuta_cat');
+              return true;
+            }, {
+              hitTolerance: 5
+            });
+            pageData.tooltip.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2></div>');
+          }
+          else
+            pageData.tooltip.hide();
+        });
+
+        // select interaction working on "mouseover"
+        let selectMove = new Select({
+          condition: pointerMove,
+          layers: [
+            pageData.poisLayer
+          ],
+          style: iconHighlightStyleFunction
+        });
+        pageData.map.addInteraction(selectMove);
 
         $(document).keyup(function(e) {
           if (e.keyCode === 27) { // escape
@@ -650,7 +770,7 @@
         });
       }
 
-      function selectFeatureInfo(coordinates) {
+      /*function selectFeatureInfo(coordinates) {
 
         //console.log(coordinates);
         showIcon(coordinates);
@@ -807,7 +927,7 @@
               ]
             }),
             style: new Style({
-              image: new Icon(/** @type {olx.style.IconOptions} */ ({
+              image: new Icon(({
                 anchor: [0.5, 0],
                 anchorOrigin: 'bottom-left',
                 color: [255,0,0,1],
@@ -820,7 +940,32 @@
         else {
           pageData.iconPoint.setCoordinates(coord);
         }
+      }*/
+
+
+      /*
+       * Icon styles
+       *****************************************/
+      function iconStyleFunction(feature, resolution) {
+        return new Style({
+          image: new Icon({
+            //size: [20, 20],
+            scale: 0.1,
+            src: "icons/" + feature.get('tipus_cat') + ".png"
+          })
+        });
       }
+
+      function iconHighlightStyleFunction(feature, resolution) {
+        return new Style({
+          image: new Icon({
+            //size: [20, 20],
+            scale: 0.2,
+            src: "icons/" + feature.get('tipus_cat') + ".png"
+          })
+        });
+      }
+
 
       /*
        * Menu
@@ -869,7 +1014,6 @@
         let actionBar = new Bar({ toggleOne: true, group: true });
         menuBar.addControl(actionBar);
 
-        actionBar.addControl(pageData.layersToggle);
         actionBar.addControl(pageData.tableTogglePois);
         actionBar.addControl(pageData.tableToggleRutas);
 
@@ -906,13 +1050,10 @@
       }
 
       function hideWindows(activeToggle) {
-        pageData.windowLayers.hide();
         pageData.windowTablePois.hide();
         pageData.windowTableRutas.hide();
         
-        if (activeToggle !== "layers")
-          pageData.layersToggle.setActive(false);
-        else if (activeToggle !== "tablePois")
+        if (activeToggle !== "tablePois")
           pageData.tableTogglePois.setActive(false);
         else if (activeToggle !== "tableRutas")
           pageData.tableToggleRutas.setActive(false);
@@ -990,12 +1131,10 @@
 
       function translateContent() {
         // menu
-        pageData.layersToggle.setTitle(i18next.t('gui.windowLayersTitle'));
         pageData.tableTogglePois.setTitle(i18next.t('gui.windowTablePoisTitle'));
         pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
 
         // windows
-        $("#windowLayers .title").text(i18next.t('gui.windowLayersTitle'));
         $("#windowTablePois .title").text(i18next.t('gui.windowTablePoisTitle'));
         $("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
         $("#windowFeature .title").text(i18next.t('gui.windowFeatureTitle'));
@@ -1070,7 +1209,6 @@
         initMenu();
         initCookies();
         pageData.windowLayers.show();
-        pageData.layersToggle.setActive(true);
       }
 
       onMounted(()=>{
@@ -1177,8 +1315,9 @@
   right: 0;
   border: 2px solid #b2b019;
   border-radius: 0;
-  width: 440px;
+  width: 340px;
   max-width: 95%;
+  background: #b2b019;
 }
 .ol-touch .ol-control.ol-bar.ol-top.ol-right, .ol-touch .ol-control.ol-bar.ol-top.ol-right {
   top: .5em;
@@ -1190,19 +1329,16 @@
 .menuBar.ol-control.ol-bar .ol-control.ol-toggle {
   margin: 6px;
 }
-.menuBar.ol-control.ol-bar .ol-control.ol-toggle.layersToggle {
-  margin-left: 20px;
-}
 .menuBar.ol-bar .ol-control button {
   background-color: transparent;
 }
 .menuBar.ol-control.ol-bar .ol-toggle.ol-active > button,
 .menuBar.ol-control.ol-bar .ol-toggle.ol-active button:hover i {
   background-color: transparent;
-  color: #b2b019;
+  color: white;
 }
 .ol-control.ol-bar .ol-toggle.ol-active > button {
-  background-color: #b2b019;
+  background-color: white;
 }
 .ol-control button i {
   pointer-events: none;
@@ -1240,14 +1376,14 @@
 }
 
 .ol-overlay.window { 
-  width: 444px;
+  width: 344px;
   max-width: 95%;
   background: #fff;
   color: #333;
   padding: 0.5em;
   -webkit-transition: all 0.25s;
   transition: all 0.25s;
-  top: 3em;
+  top: 2em;
   height: auto;
   min-height: 500px;
   max-height: 100%;
@@ -1277,6 +1413,9 @@
 .ol-overlay.window .ol-closebox:before { 
   content: "\f00d";
   font-family: FontAwesome;
+}
+.ol-overlay.window.layersWindow .ol-closebox { 
+  display: none;
 }
 #menu { 
   padding-top: 1.5em;
@@ -1318,7 +1457,9 @@ h3 {
 }
 
 .window.tableWindow {
-  width: 100%;
+  width: 90%;
+  top: 100px;
+  right: 50px;
 }
 #pois-table,
 #rutas-table {
@@ -1461,12 +1602,87 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   color: black;
 }
 
+.ol-popup {
+    display: none;
+    position: absolute;
+    background-color: white;
+    padding: 15px 25px 15px 15px;
+    border: 1px solid #cccccc;
+    bottom: 12px;
+    left: -50px;
+}
+
+.ol-popup:after, .ol-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ol-popup:after {
+    border-top-color: white;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+}
+
+.ol-popup:before {
+    border-top-color: #cccccc;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+}
+
+.ol-popup-content {
+    min-width: 170px;
+    max-height: 300px;
+    overflow-x: auto;
+}
+
+.featurePopup .ol-popup-content {
+    min-width: 570px;
+    max-height: 400px;
+    overflow-x: auto;
+    overflow-y: scroll;
+}
+
+.featurePopup .ol-popup-closer {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 150%;
+    padding: 0 4px;
+    color: gray;
+    text-decoration: none;
+}
+
+.featurePopup .ol-popup-closer:after {
+    content: "\2716";
+}
+
+.ol-popup div.infoResult {
+    min-width: 130px;
+}
+
+.ol-popup div.infoResult p {
+    padding: 0.1em;
+    margin: 0;
+}
+
+.ol-popup-content h3 {
+    margin: 0.25em 0;
+}
+
+.ol-popup.marker {
+    margin-bottom: 30px;
+}
+
 @media only screen and (max-width: 420px) {
   .menuBar.ol-control.ol-bar.ol-top.ol-right {
     max-width: 85%;
-  }
-  .menuBar.ol-control.ol-bar .ol-control.ol-toggle.layersToggle {
-    margin-left: 20px;
   }
 }
 </style>
