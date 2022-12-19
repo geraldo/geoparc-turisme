@@ -6,6 +6,10 @@
         "windowTablePoisTitle": "Llistat POIs",
         "windowTableRutasTitle": "Llistat Georutes",
         "windowFeatureTitle": "Features"
+      },
+      "switcher": {
+        "wmsGroup": "Capes turisme",
+        "wfsGroup": "Capes temàtiques"
       }
     }
   },
@@ -16,6 +20,10 @@
         "windowTablePoisTitle": "Listado POIs",
         "windowTableRutasTitle": "Listado Georutas",
         "windowFeatureTitle": "Features"
+      },
+      "switcher": {
+        "wmsGroup": "Capas turismo",
+        "wfsGroup": "Capas temáticas"
       }
     }
   }

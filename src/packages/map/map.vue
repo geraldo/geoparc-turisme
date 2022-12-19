@@ -1140,20 +1140,9 @@
         $("#windowFeature .title").text(i18next.t('gui.windowFeatureTitle'));
 
         // layerswitcher
-        /*circulacioLayer.set("title", i18next.t('switcher.circulacioLayer'));
-        xarxaResidualLayer.set("title", i18next.t('switcher.xarxaResidualLayer'));
-        xarxaPluvialLayer.set("title", i18next.t('switcher.xarxaPluvialLayer'));
-        parcellesLayer.set("title", i18next.t('switcher.parcellesLayer'));
-        tramsLayer.set("title", i18next.t('switcher.tramsLayer'));
-        barrisLayer.set("title", i18next.t('switcher.barrisLayer'));
-        topoLayer.set("title", i18next.t('switcher.topoLayer'));
-        catastroLayer.set("title", i18next.t('switcher.catastroLayer'));
-        baseLayers.set("title", i18next.t('switcher.baseLayers'));
-        topoBaseLayer.set("title", i18next.t('switcher.topoBaseLayer'));
-        ortoLayer.set("title", i18next.t('switcher.ortoLayer'));
-        osmLayer.set("title", i18next.t('switcher.osmLayer'));
-        ninguLayer.set("title", i18next.t('switcher.ninguLayer'));
-        LayerSwitcher.renderPanel(map, document.getElementById("layerSwitcher"), { reverse: true });*/
+        pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
+        pageData.qgisWfsLayers.set("title", i18next.t('switcher.wfsGroup'));
+        LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true, groupSelectStyle: 'none' });
       }
 
       /*
