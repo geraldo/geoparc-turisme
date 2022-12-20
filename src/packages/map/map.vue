@@ -707,7 +707,7 @@
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><p>' + foto + '</p><img src="fotos/' + foto + '"/><p>' + autor + '</p></div>');
+            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img style="max-width:500px" src="fotos/' + foto + '"/><p>' + autor + '</p></div>');
             pageData.tooltip.hide();
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
@@ -765,7 +765,7 @@
             }, {
               hitTolerance: 5
             });
-            pageData.tooltip.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + foto + '</p><img src="fotos/' + foto + '"/></div>');
+            pageData.tooltip.show(evt.coordinate, '<div><h2>' + title + '</h2><img style="max-width:200px" src="fotos/' + foto + '"/></div>');
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
