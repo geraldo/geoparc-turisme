@@ -173,10 +173,11 @@
     }
 
     static renderLayer_(map, lyr, idx, options, render) {
-      const li = document.createElement('li');
-      const lyrTitle = lyr.get('title');
-      const checkboxId = LayerSwitcher.uuid();
-      const label = document.createElement('label');
+      const li = document.createElement('li'),
+            lyrTitle = lyr.get('title'),
+            checkboxId = LayerSwitcher.uuid(),
+            label = document.createElement('label');
+
       if (lyr instanceof LayerGroup && !lyr.get('combine')) {
         const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
         li.classList.add('group');
@@ -330,10 +331,14 @@
           title: 'Capes turisme'
         }),
         poisLayer: new VectorLayer({
-          title: 'POIs'
+          title: 'origens_turisme',
+          vectorial: true,
+          showlegend: true
         }),
         rutasLayer: new VectorLayer({
-          title: 'Georutes'
+          title: 'Georutes',
+          vectorial: true,
+          showlegend: true
         }),
 
         qgisSources: {},
@@ -493,7 +498,9 @@
 
         iconLayer: null,
         iconPoint: null,
-        tooltip: new Popup(),
+        tooltip: new Popup({
+          className: "featureTooltip"
+        }),
         popup: new Popup({
           className: "featurePopup"
         }),
@@ -785,7 +792,7 @@
           layers: [
             pageData.poisLayer
           ],
-          style: iconHighlightStyleFunction
+          //style: iconHighlightStyleFunction
         });
         pageData.map.addInteraction(selectMove);
 
@@ -816,13 +823,20 @@
       }
 
       function iconHighlightStyleFunction(feature, resolution) {
-        return new Style({
+        let style = feature.getStyle();
+        try {
+          console.log(style.getImage());
+          return style.getImage().setScale(style.getImage().getScale()*2);
+        }
+        catch(e) {}
+
+        /*return new Style({
           image: new Icon({
             //size: [20, 20],
             scale: 0.2,
             src: "icons/" + feature.get('tipus_cat') + ".png"
           })
-        });
+        });*/
       }
 
 
@@ -1020,7 +1034,7 @@
           columns: [
             { "data": "properties.nom_cat", "title" : "Nom"},
             { "data": "properties.descripcio_cat", "title" : "Descripció"},
-            { "data": "properties.imatge_1", "title" : "Imatge"},
+            { "data": "properties.imatge_1", "title" : "Imatge", "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
             { "data": "properties.nom_ruta_cat", "title" : "Georuta"},
             { "data": "properties.tematica_1_cat", "title" : "Temática"},
             { "data": "properties.tipus_cat", "title" : "Tipus"},
@@ -1041,9 +1055,9 @@
           columns: [
             { "data": "properties.georuta_cat", "title" : "Nom"},
             { "data": "properties.descripcio_cat", "title" : "Descripció"},
-            { "data": "properties.desnivell_m", "title" : "Desnivell"},
+            { "data": "properties.desnivell_m", "title" : "Desnivell [m]"},
             { "data": "properties.dificultat_cat", "title" : "Dificultat"},
-            { "data": "properties.distancia_km", "title" : "Distancia"},
+            { "data": "properties.distancia_km", "title" : "Distancia [km]", "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
             { "data": "properties.tipologia_cat", "title" : "Tipología"},
             { "data": "properties.modalitat_cat", "title" : "Modalitat"},
           ],
@@ -1488,6 +1502,13 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
     min-width: 170px;
     max-height: 300px;
     overflow-x: auto;
+}
+
+.featurePopup {
+  z-index: 2;
+}
+.featureTooltip {
+  z-index: 3;
 }
 
 .featurePopup .ol-popup-content {
