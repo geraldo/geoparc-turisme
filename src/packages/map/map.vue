@@ -67,7 +67,7 @@
   import { Point, Polygon, LineString } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
   import { register } from 'ol/proj/proj4';
-  import { Projection, get as getProjection, transform, fromLonLat, toLonLat, METERS_PER_UNIT } from 'ol/proj';
+  import { Projection, get as getProjection, getPointResolution, transform, fromLonLat, toLonLat, METERS_PER_UNIT } from 'ol/proj';
   import { getLength, getArea } from 'ol/sphere';
   import { unByKey } from 'ol/Observable';
   import { easeOut } from 'ol/easing';
@@ -85,6 +85,7 @@
 
   import LayerSwitcher from 'ol-layerswitcher';
   import Popup from 'ol-popup';
+  import SLDReader from '@nieuwlandgeo/sldreader';
   import proj4 from 'proj4';
   import $ from 'jquery';
   import Cookies from 'js-cookie';
@@ -329,28 +330,10 @@
           title: 'Capes turisme'
         }),
         poisLayer: new VectorLayer({
-          title: 'POIs',
-          source: new VectorSource({
-            format: new GeoJSON(),
-            //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' +qgisProjectFile+'&limit=1000'
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
-          }),
-          style: iconStyleFunction
+          title: 'POIs'
         }),
-
         rutasLayer: new VectorLayer({
-          title: 'Georutes',
-          source: new VectorSource({
-            format: new GeoJSON(),
-            //url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP='+qgisProjectFile+'&limit=1000'
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=/home/geoparc/geoparc-turisme/geoparc-turisme.qgs&limit=1000'
-          }),
-          /*style: new Style({
-            stroke: new Stroke({
-              width: 3,
-              color: 'red'
-            })
-          })*/
+          title: 'Georutes'
         }),
 
         qgisSources: {},
@@ -524,8 +507,10 @@
 
         layersData.slice().reverse().forEach(function(layer, i) {
 
-          if (layer.name !== "origens_turisme" && layer.name !== "Georutes") {
-
+          if (layer.vectorial) {
+            loadWfsLayer(layer);            
+          }
+          else {
             let name = null, 
               url = null;
 
@@ -585,6 +570,52 @@
         });
 
         return layers;
+      }
+
+      function loadWfsLayer(layer) {
+        let vectorSource = new VectorSource({
+          format: new GeoJSON(),
+          url: 'https://mapa.psig.es/qgisserver/wfs3/collections/' + layer.name + '/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000'
+        });
+
+        if (layer.name === "origens_turisme") {
+          pageData.poisLayer.setSource(vectorSource);
+          fetch("js/data/" + layer.name + ".sld")
+            .then(response => response.text())
+            .then(sld => applyVectorStyle(pageData.poisLayer, sld));
+        }
+        else if (layer.name === "Georutes") {
+          pageData.rutasLayer.setSource(vectorSource);
+          fetch("js/data/" + layer.name + ".sld")
+            .then(response => response.text())
+            .then(sld => applyVectorStyle(pageData.rutasLayer, sld));
+        }
+      }
+
+      function applyVectorStyle(vectorLayer, sld) {
+
+        const sldObject = SLDReader.Reader(sld),
+              sldLayer = SLDReader.getLayer(sldObject),
+              style = SLDReader.getStyle(sldLayer);
+
+        //console.log(sldLayer.name, style);
+
+        if (style.hasOwnProperty("featuretypestyles") && style.featuretypestyles.length > 0) {
+
+          const featureTypeStyle = style.featuretypestyles[0];
+
+          vectorLayer.setStyle(SLDReader.createOlStyleFunction(featureTypeStyle, {
+            // Use the convertResolution option to calculate a more accurate resolution.
+            convertResolution: viewResolution => {
+              const viewCenter = pageData.map.getView().getCenter();
+              return getPointResolution(pageData.map.getView().getProjection(), viewResolution, viewCenter);
+            },
+            // If you use point icons with an ExternalGraphic, you have to use imageLoadCallback to update the vector layer when an image finishes loading.
+            imageLoadedCallback: () => {
+              vectorLayer.changed();
+            },
+          }));
+        }
       }
 
       function initMap(layersData) {
@@ -662,7 +693,7 @@
                 autor = "";
             pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
               title = feature.get('nom_cat');
-              description = feature.get('description_cat');
+              description = feature.get('descripcio_cat');
               foto = feature.get('imatge_1');
               autor = feature.get('autor');
               return true;
@@ -1060,7 +1091,7 @@
       }
 
       /*
-       * Cookies
+       * Cookies & i18n
        *****************************************/
       function initCookies() {
         /*if (Cookies.get('showinfo') === undefined || Cookies.get('showinfo') === "true") {
