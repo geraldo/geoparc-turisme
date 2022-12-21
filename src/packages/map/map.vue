@@ -27,18 +27,6 @@
       <div id="datatable-rutas"></div>
     </div>
   </div>
-
-  <div id="windowFeature" class="window">
-    <h2>
-      <i class="fa fa-file-text-o"></i>
-      <span class="title">Informació</span>
-    </h2>
-    <div class="content">
-      <div class="content-layers"></div>
-      <div class="content-limits"></div>
-      <div class="content-coord"></div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -394,7 +382,6 @@
         windowLayers: null,
         windowTablePois: null,
         windowTableRutas: null,
-        windowFeature: null,
         layersToggle: new Toggle({ 
           html: '<i class="fa fa-arrow-circle-right fa-lg"></i>',
           title: 'Tancar gestor de capes',
@@ -761,12 +748,8 @@
 
         $(document).keyup(function(e) {
           if (e.keyCode === 27) { // escape
-
-            // hide feature window
-            pageData.windowFeature.hide();
-            if (pageData.iconLayer) {
-              pageData.iconPoint.setCoordinates([]);
-            }
+            pageData.windowTablePois.hide();
+            pageData.windowTableRutas.hide();
           }
         });
       }
@@ -829,18 +812,6 @@
           content: document.getElementById("windowTableRutas")
         })
         pageData.map.addControl(pageData.windowTableRutas);
-
-        pageData.windowFeature = new Overlay({
-          closeBox : true,
-          className: "slide-left window infoWindow",
-          content: document.getElementById("windowFeature")
-        })
-        pageData.map.addControl(pageData.windowFeature);
-        pageData.windowFeature.on("change:visible", function(e) {
-          if (!e.visible && pageData.iconLayer) {
-            pageData.iconPoint.setCoordinates([]);
-          }
-        });
 
         let menuBar = new Bar({
           className: "ol-top ol-right menuBar"
@@ -975,7 +946,6 @@
         // windows
         $("#windowTablePois .title").text(i18next.t('gui.windowTablePoisTitle'));
         $("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
-        $("#windowFeature .title").text(i18next.t('gui.windowFeatureTitle'));
 
         // layerswitcher
         pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
@@ -1282,9 +1252,8 @@ h3 {
   height: 100%;
 }
 
-#windowFeature, 
 #windowLayers {
-  height: 550px;
+  height: 100%;
 }
 
 .window.tableWindow {
@@ -1299,26 +1268,6 @@ h3 {
 .window.tableWindow .content {
   overflow: scroll;
   max-height: 600px;
-}
-
-#windowFeature .content,
-#windowLayers .content {
-  overflow: scroll;
-  height: 90%;
-}
-
-#windowFeature .label {
-  text-decoration: underline;
-}
-#windowFeature .content .list {
-  margin: 0;
-  list-style: none;
-  padding-left: 0;
-  color: #777;
-}
-
-#windowFeature .content .list .field-content {
-  color: rgb(51, 51, 51);
 }
 
 .app-icon {

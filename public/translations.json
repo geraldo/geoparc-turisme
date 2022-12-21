@@ -4,8 +4,7 @@
       "gui": {
         "windowLayersTitle": "Gestor de capes",
         "windowTablePoisTitle": "Llistat POIs",
-        "windowTableRutasTitle": "Llistat Georutes",
-        "windowFeatureTitle": "Features"
+        "windowTableRutasTitle": "Llistat Georutes"
       },
       "switcher": {
         "wfsGroup": "Capes turisme",
@@ -18,8 +17,7 @@
       "gui": {
         "windowLayersTitle": "Gestor de capas",
         "windowTablePoisTitle": "Listado POIs",
-        "windowTableRutasTitle": "Listado Georutas",
-        "windowFeatureTitle": "Features"
+        "windowTableRutasTitle": "Listado Georutas"
       },
       "switcher": {
         "wfsGroup": "Capas turismo",
