@@ -346,35 +346,8 @@
         rasterLayer: null,
 
         baseLayers: new LayerGroup({
-          //title: 'Capes de referència',
+          title: 'Capes de referència',
           layers: [
-            /*new TileLayer({
-              title: 'Fons blanc',
-              type: 'base',
-              source: null,
-              visible: false
-            }),
-
-            new TileLayer({
-              title: 'OSM',
-              type: 'base',
-              source: new OSM(),
-              visible: false
-            }),
-
-            new TileLayer({
-              title: 'Cartografia geològica (ICGC)',
-              type: 'base',
-              visible: false,
-              source: new TileWMS({
-                url: 'https://geoserveis.icgc.cat/arcgis/services/geologic/icgc_mg50m/MapServer/WMSServer?',
-                params: {
-                  'LAYERS': 'CNEG_LN,DANT_PA,FAPL_LN,UGEO_PA', 
-                  'VERSION': '1.3.0'
-                },
-                attributions: ['Mapa geològic comarcal 1:50.000 de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-               })
-            }),
 
             new TileLayer({
               title: 'Ortofoto (ICGC)',
@@ -392,37 +365,10 @@
                })
             }),
 
-            new TileLayer({
+            new LayerGroup({
               title: 'Topogràfic (ICGC)',
               type: 'base',
-              visible: false,
-              source: new TileWMS({
-                url: 'https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wms/service?',
-                params: {
-                  'LAYERS': 'topo', 
-                  'VERSION': '1.1.1'
-                },
-                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-               })
-            }),
-
-            new TileLayer({
-              title: 'Topogràfic gris (ICGC)',
-              type: 'base',
-              visible: false,
-              source: new TileWMS({
-                url: 'https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wms/service?',
-                params: {
-                  'LAYERS': 'topogris', 
-                  'VERSION': '1.1.1'
-                },
-                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-               })
-            }),*/
-
-            new LayerGroup({
-              //title: 'Topogràfic (ICGC)',
-              type: 'base',
+              combine: true,
               layers: [
 
                 new TileLayer({

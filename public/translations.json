@@ -8,8 +8,8 @@
         "windowFeatureTitle": "Features"
       },
       "switcher": {
-        "wmsGroup": "Capes turisme",
-        "wfsGroup": "Capes temàtiques"
+        "wfsGroup": "Capes turisme",
+        "wmsGroup": "Capes temàtiques"
       }
     }
   },
@@ -22,8 +22,8 @@
         "windowFeatureTitle": "Features"
       },
       "switcher": {
-        "wmsGroup": "Capas turismo",
-        "wfsGroup": "Capas temáticas"
+        "wfsGroup": "Capas turismo",
+        "wmsGroup": "Capas temáticas"
       }
     }
   }
