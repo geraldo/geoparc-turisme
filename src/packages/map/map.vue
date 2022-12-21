@@ -670,7 +670,7 @@
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img style="max-width:500px" src="fotos/' + foto + '"/><p>' + autor + '</p></div>');
+            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>' + autor + '</p></div>');
             pageData.tooltip.hide();
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
@@ -728,7 +728,7 @@
             }, {
               hitTolerance: 5
             });
-            pageData.tooltip.show(evt.coordinate, '<div><h2>' + title + '</h2><img style="max-width:200px" src="fotos/' + foto + '"/></div>');
+            pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
@@ -1437,7 +1437,7 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
     display: none;
     position: absolute;
     background-color: white;
-    padding: 15px 25px 15px 15px;
+    padding: 15px;
     border: 1px solid #cccccc;
     bottom: 12px;
     left: -50px;
@@ -1468,9 +1468,15 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 
 .ol-popup-content {
-    min-width: 170px;
-    max-height: 300px;
+    min-width: 300px;
+    max-height: 450px;
     overflow-x: auto;
+}
+
+.ol-popup-content h2 {
+  text-align: center;
+  line-height: 1;
+  margin: 0;
 }
 
 .featurePopup {
@@ -1478,6 +1484,22 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 .featureTooltip {
   z-index: 3;
+}
+
+.featurePopup img {
+  max-width: 500px;
+}
+.featureTooltip .imgDiv {
+  display: inline-block;
+  position: relative;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.featureTooltip img {
+  width: auto;
+  height: 100%;
 }
 
 .featurePopup .ol-popup-content {
