@@ -10,7 +10,7 @@
 
   <div id="windowTablePois" class="window">
     <h2>
-      <i class="fa fa-table"></i>
+      <i class="fa fa-map-marker"></i>
       <span class="title">Llistat POIs</span>
     </h2>
     <div class="content">
@@ -20,7 +20,7 @@
 
   <div id="windowTableRutas" class="window">
     <h2>
-      <i class="fa fa-table"></i>
+      <i class="fa fa-map-o"></i>
       <span class="title">Llistat Georutes</span>
     </h2>
     <div class="content">
@@ -395,6 +395,23 @@
         windowTablePois: null,
         windowTableRutas: null,
         windowFeature: null,
+        layersToggle: new Toggle({ 
+          html: '<i class="fa fa-arrow-circle-right fa-lg"></i>',
+          title: 'Tancar gestor de capes',
+          className: "layersToggle",
+          onToggle: function(active) {
+            if (active) {
+              pageData.windowLayers.show();
+              $(".layersToggle i.fa").removeClass("fa-arrow-circle-left");
+              $(".layersToggle i.fa").addClass("fa-arrow-circle-right");
+            }
+            else {
+              pageData.windowLayers.hide();
+              $(".layersToggle i.fa").removeClass("fa-arrow-circle-right");
+              $(".layersToggle i.fa").addClass("fa-arrow-circle-left");
+            }
+          }
+        }),
         tableTogglePois: new Toggle({ 
           html: '<i class="fa fa-map-marker fa-lg"></i>',
           title: 'Llistat POIs',
@@ -830,6 +847,8 @@
         });
         pageData.map.addControl(menuBar);
 
+        menuBar.addControl(pageData.layersToggle);
+
         let actionBar = new Bar({ toggleOne: true, group: true });
         menuBar.addControl(actionBar);
 
@@ -1170,7 +1189,7 @@
 }
 .menuBar.ol-bar .ol-control button:hover i, 
 .menuBar.ol-bar .ol-control button:focus i {
-  color: #b2b019;
+  color: white;
   background-color: transparent;
 }
 
@@ -1257,6 +1276,10 @@ h3 {
 
 .window .title {
   margin-left: 5px;
+}
+
+.window.layersWindow {
+  height: 100%;
 }
 
 #windowFeature, 
