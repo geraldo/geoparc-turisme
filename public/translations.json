@@ -7,7 +7,8 @@
         "windowTableRutasTitle": "Llistat Georutes"
       },
       "switcher": {
-        "wfsGroup": "Capes turisme",
+        "wfsGroupPoi": "Punts de interès",
+        "wfsGroupRuta": "Georutes",
         "wmsGroup": "Capes temàtiques"
       }
     }
@@ -20,7 +21,8 @@
         "windowTableRutasTitle": "Listado Georutas"
       },
       "switcher": {
-        "wfsGroup": "Capas turismo",
+        "wfsGroupPoi": "Puntos de interés",
+        "wfsGroupRuta": "Georutas",
         "wmsGroup": "Capas temáticas"
       }
     }

@@ -80,6 +80,30 @@
   import i18next from 'i18next';
   import DataTable from 'datatables.net';
 
+  const tipusPoi = {
+    "Centre d'Interpretació": "centre_interpretacio",
+    "Informació turística": "info_turistica",
+    "Caiac": "caiac",
+    "Castell": "castell",
+    "Cova visitable": "cova_visitable",
+    "Església": "esglesia",
+    "Establiment recomanat": "establiment_recomanat_1",
+    "Exposició a l'aire lliure": "establiment_recomanat_2",
+    "Lloc interès Geoparc": "lloc_interes_geoparc",
+    "Jaciment arqueològic": "jacimentarqueologic",
+    "Mirador": "mirador",
+    "Parapent": "parapent",
+    "Rafting": "rafting",
+    "Telefèric": "teleferic",
+    "Via Ferrata": "viaferrata",
+    "Vol en Globus": "globus",
+    "Zona de bany": "zona_bany"
+  };
+  const tipologiasRuta = {
+    "Georuta": "georuta",
+    "Ruta Geològica": "rutageologica",
+    "El Cinquè Llac": "elcinquellac"
+  };
 
   function makeSafeForCSS(name) {
     if (name)
@@ -222,8 +246,17 @@
           render(lyr);
         };
         li.appendChild(input);
-        label.htmlFor = checkboxId;
 
+        // show legend image
+        if (lyr.get('vectorial')) {
+          let simbol = document.createElement('img');
+          simbol.className = 'leyenda';
+          console.log(tipusPoi[lyrTitle]);
+          simbol.src = 'simbols/' + tipusPoi[lyrTitle] + '.svg'
+          li.appendChild(simbol);
+        }
+
+        label.htmlFor = checkboxId;
         if (lyr.get('showlegend')) {
           label.innerHTML = lyrTitle + '<i class="fa fa-caret-down" aria-hidden="true"></i>';
         } else {
@@ -315,19 +348,14 @@
         qgisWmsLayers: new LayerGroup({
           title: 'Capes temàtiques'
         }),
-        qgisWfsLayers: new LayerGroup({
-          title: 'Capes turisme'
+        qgisWfsLayersPoi: new LayerGroup({
+          title: 'Punts de interès'
         }),
-        poisLayer: new VectorLayer({
-          title: 'origens_turisme',
-          vectorial: true,
-          showlegend: true
+        qgisWfsLayersRuta: new LayerGroup({
+          title: 'Georutes'
         }),
-        rutasLayer: new VectorLayer({
-          title: 'Georutes',
-          vectorial: true,
-          showlegend: true
-        }),
+        poisLayers: [],
+        rutasLayers: [],
 
         qgisSources: {},
         mousePosition: null,
@@ -465,7 +493,18 @@
         layersData.slice().reverse().forEach(function(layer, i) {
 
           if (layer.vectorial) {
-            loadWfsLayer(layer);            
+            if (layer.name === "origens_turisme") {
+              for (const tipo in tipusPoi) {
+                console.log(layer.name, tipo);
+                loadWfsLayerPoi(tipo);
+              }
+            }
+            else if (layer.name === "Georutes") {
+              for (const tipo in tipologiasRuta) {
+                console.log(layer.name, tipo);
+                loadWfsLayerRuta(tipo);
+              }
+            }
           }
           else {
             let name = null, 
@@ -529,24 +568,34 @@
         return layers;
       }
 
-      function loadWfsLayer(layer) {
-        let vectorSource = new VectorSource({
-          format: new GeoJSON(),
-          url: 'https://mapa.psig.es/qgisserver/wfs3/collections/' + layer.name + '/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000'
+      function loadWfsLayerPoi(tipologia) {
+        let vectorLayer = new VectorLayer({
+          title: tipologia,
+          vectorial: true,
+          source: new VectorSource({
+            format: new GeoJSON(),
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipus_cat=' + tipologia
+          })
         });
+        pageData.poisLayers.push(vectorLayer);
+        fetch("js/data/origens_turisme.sld")
+          .then(response => response.text())
+          .then(sld => applyVectorStyle(vectorLayer, sld));
+      }
 
-        if (layer.name === "origens_turisme") {
-          pageData.poisLayer.setSource(vectorSource);
-          fetch("js/data/" + layer.name + ".sld")
-            .then(response => response.text())
-            .then(sld => applyVectorStyle(pageData.poisLayer, sld));
-        }
-        else if (layer.name === "Georutes") {
-          pageData.rutasLayer.setSource(vectorSource);
-          fetch("js/data/" + layer.name + ".sld")
-            .then(response => response.text())
-            .then(sld => applyVectorStyle(pageData.rutasLayer, sld));
-        }
+      function loadWfsLayerRuta(tipologia) {
+        let vectorLayer = new VectorLayer({
+          title: tipologia,
+          vectorial: true,
+          source: new VectorSource({
+            format: new GeoJSON(),
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipologia_cat=' + tipologia
+          })
+        });
+        pageData.rutasLayers.push(vectorLayer);
+        fetch("js/data/Georutes.sld")
+          .then(response => response.text())
+          .then(sld => applyVectorStyle(vectorLayer, sld));
       }
 
       function applyVectorStyle(vectorLayer, sld) {
@@ -594,7 +643,8 @@
           layers: [
             pageData.baseLayers,
             pageData.qgisWmsLayers,
-            pageData.qgisWfsLayers,
+            pageData.qgisWfsLayersRuta,
+            pageData.qgisWfsLayersPoi
           ],
           view: new View({
             center: fromLonLat([pageData.center[0].lng, pageData.center[0].lat]),
@@ -616,7 +666,8 @@
         pageData.map.set("qgisProjectFile", pageData.qgisProjectFile);
 
         // add vector layers
-        pageData.qgisWfsLayers.setLayers(new Collection([pageData.rutasLayer, pageData.poisLayer]));
+        pageData.qgisWfsLayersPoi.setLayers(new Collection(pageData.poisLayers));
+        pageData.qgisWfsLayersRuta.setLayers(new Collection(pageData.rutasLayers));
         pageData.map.addOverlay(pageData.tooltip);
         pageData.map.addOverlay(pageData.popup);
 
@@ -633,14 +684,14 @@
             return true;
           }, {
             layerFilter: function(layer) {
-              return layer === pageData.rutasLayer;
+              return layer === pageData.rutasLayers;
             },
             hitTolerance: 5
           });
 
           if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
-              return layer === pageData.poisLayer;
+              return pageData.poisLayers.includes(layer);
             },
             hitTolerance: 5
           })) {
@@ -662,7 +713,7 @@
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
-              return layer === pageData.rutasLayer;
+              return layer === pageData.rutasLayers;
             },
             hitTolerance: 5
           })) {
@@ -695,14 +746,14 @@
         pageData.map.on('pointermove', function(evt) {
           pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
-              return layer === pageData.poisLayer || layer === pageData.rutasLayer;
+              return pageData.poisLayers.includes(layer) || pageData.rutasLayers.includes(layer);
             },
             hitTolerance: 5
           }) ? 'pointer' : '';
 
           if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
-              return layer === pageData.poisLayer;
+              return pageData.poisLayers.includes(layer);
             },
             hitTolerance: 5
           })) {
@@ -719,7 +770,7 @@
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
-              return layer === pageData.rutasLayer;
+              return layer === pageData.rutasLayers;
             },
             hitTolerance: 5
           })) {
@@ -739,9 +790,7 @@
         // select interaction working on "mouseover"
         let selectMove = new Select({
           condition: pointerMove,
-          layers: [
-            pageData.poisLayer
-          ],
+          layers: pageData.poisLayers,
           //style: iconHighlightStyleFunction
         });
         pageData.map.addInteraction(selectMove);
@@ -949,7 +998,8 @@
 
         // layerswitcher
         pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
-        pageData.qgisWfsLayers.set("title", i18next.t('switcher.wfsGroup'));
+        pageData.qgisWfsLayersPoi.set("title", i18next.t('switcher.wfsGroupPoi'));
+        pageData.qgisWfsLayersRuta.set("title", i18next.t('switcher.wfsGroupRuta'));
         LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true, groupSelectStyle: 'none' });
       }
 
@@ -1249,7 +1299,8 @@ h3 {
 }
 
 .window.layersWindow {
-  height: 100%;
+  height: calc(100% - 35px);
+  overflow: scroll;
 }
 
 #windowLayers {
@@ -1487,6 +1538,12 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 
 .ol-popup.marker {
     margin-bottom: 30px;
+}
+
+.leyenda {
+  width: 20px;
+  height: 20px;
+  margin: 0 -20px 0 30px;
 }
 
 @media only screen and (max-width: 420px) {
