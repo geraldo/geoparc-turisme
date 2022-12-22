@@ -625,7 +625,7 @@
             return true;
           }, {
             layerFilter: function(layer) {
-              return layer === pageData.rutasLayers;
+              return pageData.rutasLayers.includes(layer);
             },
             hitTolerance: 5
           });
@@ -654,7 +654,7 @@
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
-              return layer === pageData.rutasLayers;
+              return pageData.rutasLayers.includes(layer);
             },
             hitTolerance: 5
           })) {
@@ -705,13 +705,16 @@
               foto = feature.get('imatge_1');
               return true;
             }, {
+              layerFilter: function(layer) {
+                return pageData.poisLayers.includes(layer);
+              },
               hitTolerance: 5
             });
             pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
-              return layer === pageData.rutasLayers;
+              return pageData.rutasLayers.includes(layer);
             },
             hitTolerance: 5
           })) {
@@ -720,6 +723,9 @@
               title = feature.get('georuta_cat');
               return true;
             }, {
+              layerFilter: function(layer) {
+                return pageData.rutasLayers.includes(layer);
+              },
               hitTolerance: 5
             });
             pageData.tooltip.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2></div>');
@@ -729,12 +735,12 @@
         });
 
         // select interaction working on "mouseover"
-        let selectMove = new Select({
+        /*let selectMove = new Select({
           condition: pointerMove,
           layers: pageData.poisLayers,
           //style: iconHighlightStyleFunction
         });
-        pageData.map.addInteraction(selectMove);
+        pageData.map.addInteraction(selectMove);*/
 
         $(document).keyup(function(e) {
           if (e.keyCode === 27) { // escape
