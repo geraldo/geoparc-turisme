@@ -100,9 +100,9 @@
     "Zona de bany": "zona_bany"
   };
   const tipologiasRuta = {
-    "Georuta": "georuta",
-    "Ruta Geològica": "rutageologica",
-    "El Cinquè Llac": "elcinquellac"
+    "Georuta": "Georuta",
+    "Ruta Geològica": "Ruta Geològica",
+    "El Cinquè Llac": "El Cinquè Llac"
   };
 
   function makeSafeForCSS(name) {
@@ -169,19 +169,6 @@
             elm.appendChild(LayerSwitcherWithLegend.renderLayer_(map, l, i, options, render));
         }
       }
-
-      // add event for legend dropdown
-      $('li.layer i').unbind("click").click(function(){
-        $(this).toggleClass('fa-caret-up');
-        $(this).toggleClass('fa-caret-down');
-        if ($(this).hasClass('fa-caret-down')) {
-          $(this).parent().parent().find('img').css("display", "none");
-        } else {
-          $(this).parent().parent().find('img').css("display", "block");
-        }
-        return false;
-      });
-
     }
 
     static renderLayer_(map, lyr, idx, options, render) {
@@ -248,20 +235,18 @@
         li.appendChild(input);
 
         // show legend image
-        if (lyr.get('vectorial')) {
+        if (lyr.get("type") !== "base") {
           let simbol = document.createElement('img');
           simbol.className = 'leyenda';
-          console.log(tipusPoi[lyrTitle]);
-          simbol.src = 'simbols/' + tipusPoi[lyrTitle] + '.svg'
+          let icon = tipusPoi[lyrTitle];
+          if (icon === undefined || icon === "undefined")
+            icon = lyr.get('title');
+          simbol.src = 'simbols/' + icon + '.svg'
           li.appendChild(simbol);
         }
 
         label.htmlFor = checkboxId;
-        if (lyr.get('showlegend')) {
-          label.innerHTML = lyrTitle + '<i class="fa fa-caret-down" aria-hidden="true"></i>';
-        } else {
-          label.innerHTML = lyrTitle;
-        }
+        label.innerHTML = lyrTitle;
 
         const rsl = map.getView().getResolution();
         if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
@@ -274,48 +259,6 @@
           }
         }
         li.appendChild(label);
-
-        // append legend
-        if (lyr.get('children') !== undefined) {
-          lyr.get('children').forEach(function(sublayer, i) {
-            if (sublayer.showlegend == true) {
-              // show legend
-              var img = document.createElement('img');
-              img.className = 'legend';
-              
-              //if (!sublayer.mapproxy) {
-                // dynamic from qgis server
-                img.src = map.get("qgisServerURL") + '?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER='+sublayer.name+'&FORMAT=image/png&SLD_VERSION=1.1.0&SYMBOLWIDTH=4&ITEMFONTSIZE=10&BOXSPACE=1&MAP='+map.get("qgisProjectFile");
-
-                // remove image title for all but this layer
-                if (lyr.get('title') !== 'Planejament urbanístic')
-                  img.src += "&LAYERTITLE=false";
-              /*}
-              else {
-                // static from directory
-                img.src = "legend/"+sublayer.mapproxy+'.png';
-              }*/
-              
-              li.appendChild(img);
-            }
-          });
-        }
-
-        else if (lyr.get('showlegend')) {
-          // show legend
-          var img = document.createElement('img');
-          img.className = 'legend';
-          /*if (!lyr.get('mapproxy') && lyr.get('mapproxy') !== undefined) {*/
-            // dynamic from qgis server
-            img.src = map.get("qgisServerURL") + '?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER='+lyrTitle+'&FORMAT=image/png&SLD_VERSION=1.1.0&LAYERTITLE=false&SYMBOLWIDTH=4&ITEMFONTSIZE=10&BOXSPACE=1&MAP='+map.get("qgisProjectFile");
-          /*}
-          else {
-            // static from directory
-            img.src = "legend/"+lyr.get('mapproxy')+'.png';
-          }*/
-          li.appendChild(document.createElement('br'));
-          li.appendChild(img);
-        }
       }
       return li;
     }
@@ -495,13 +438,11 @@
           if (layer.vectorial) {
             if (layer.name === "origens_turisme") {
               for (const tipo in tipusPoi) {
-                console.log(layer.name, tipo);
                 loadWfsLayerPoi(tipo);
               }
             }
             else if (layer.name === "Georutes") {
               for (const tipo in tipologiasRuta) {
-                console.log(layer.name, tipo);
                 loadWfsLayerRuta(tipo);
               }
             }
