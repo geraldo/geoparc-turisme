@@ -73,7 +73,7 @@
 
   import LayerSwitcher from 'ol-layerswitcher';
   import Popup from 'ol-popup';
-  import SLDReader from '@nieuwlandgeo/sldreader';
+  //import SLDReader from '@nieuwlandgeo/sldreader';
   import proj4 from 'proj4';
   import $ from 'jquery';
   import Cookies from 'js-cookie';
@@ -241,7 +241,7 @@
           let icon = tipusPoi[lyrTitle];
           if (icon === undefined || icon === "undefined")
             icon = lyr.get('title');
-          simbol.src = 'simbols/' + icon + '.svg'
+          simbol.src = 'icons/' + icon + '.png'
           li.appendChild(simbol);
         }
 
@@ -516,12 +516,14 @@
           source: new VectorSource({
             format: new GeoJSON(),
             url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipus_cat=' + tipologia
-          })
+          }),
+          style: iconStyleFunction
         });
         pageData.poisLayers.push(vectorLayer);
-        fetch("js/data/origens_turisme.sld")
+      
+        /*fetch("js/data/origens_turisme.sld")
           .then(response => response.text())
-          .then(sld => applyVectorStyle(vectorLayer, sld));
+          .then(sld => applyVectorStyle(vectorLayer, sld));*/
       }
 
       function loadWfsLayerRuta(tipologia) {
@@ -531,15 +533,17 @@
           source: new VectorSource({
             format: new GeoJSON(),
             url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipologia_cat=' + tipologia
-          })
+          }),
+          style: rutaStyleFunction
         });
         pageData.rutasLayers.push(vectorLayer);
-        fetch("js/data/Georutes.sld")
+
+        /*fetch("js/data/Georutes.sld")
           .then(response => response.text())
-          .then(sld => applyVectorStyle(vectorLayer, sld));
+          .then(sld => applyVectorStyle(vectorLayer, sld));*/
       }
 
-      function applyVectorStyle(vectorLayer, sld) {
+      /*function applyVectorStyle(vectorLayer, sld) {
 
         const sldObject = SLDReader.Reader(sld),
               sldLayer = SLDReader.getLayer(sldObject),
@@ -563,7 +567,7 @@
             },
           }));
         }
-      }
+      }*/
 
       function initMap(layersData) {
         // https://epsg.io/25831
@@ -649,7 +653,7 @@
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>' + autor + '</p></div>');
+            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p></div>');
             pageData.tooltip.hide();
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
@@ -677,7 +681,7 @@
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2><p>' + description + '</p><p>' + distancia + '</p><p>' + desnivel + '</p><p>' + tipologia + '</p><p>' + modalidad + '</p><p>' + dificultad + '</p></div>');
+            pageData.popup.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2><p>' + description + '</p><p>Distancia: ' + distancia + '</p><p>Desnivel: ' + desnivel + '</p><p>Tipología: ' + tipologia + '</p><p>Modalidad: ' + modalidad + '</p><p>Dificultad: ' + dificultad + '</p></div>');
             pageData.tooltip.hide();
           }
           else
@@ -685,60 +689,63 @@
         });
 
         pageData.map.on('pointermove', function(evt) {
-          pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
-            layerFilter: function(layer) {
-              return pageData.poisLayers.includes(layer) || pageData.rutasLayers.includes(layer);
-            },
-            hitTolerance: 5
-          }) ? 'pointer' : '';
+          if (!pageData.popup.isOpened()) {
 
-          if (pageData.map.hasFeatureAtPixel(evt.pixel, {
-            layerFilter: function(layer) {
-              return pageData.poisLayers.includes(layer);
-            },
-            hitTolerance: 5
-          })) {
-            let title = "",
-                foto = "";
-            pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-              title = feature.get('nom_cat');
-              foto = feature.get('imatge_1');
-              return true;
-            }, {
+            pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
+              layerFilter: function(layer) {
+                return pageData.poisLayers.includes(layer) || pageData.rutasLayers.includes(layer);
+              },
+              hitTolerance: 5
+            }) ? 'pointer' : '';
+
+            if (pageData.map.hasFeatureAtPixel(evt.pixel, {
               layerFilter: function(layer) {
                 return pageData.poisLayers.includes(layer);
               },
               hitTolerance: 5
-            });
-            pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
-          }
-          else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
-            layerFilter: function(layer) {
-              return pageData.rutasLayers.includes(layer);
-            },
-            hitTolerance: 5
-          })) {
-            let title = "";
-            pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-              title = feature.get('georuta_cat');
-              return true;
-            }, {
+            })) {
+              let title = "",
+                  foto = "";
+              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+                title = feature.get('nom_cat');
+                foto = feature.get('imatge_1');
+                return true;
+              }, {
+                layerFilter: function(layer) {
+                  return pageData.poisLayers.includes(layer);
+                },
+                hitTolerance: 5
+              });
+              pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
+            }
+            else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
               layerFilter: function(layer) {
                 return pageData.rutasLayers.includes(layer);
               },
               hitTolerance: 5
-            });
-            pageData.tooltip.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2></div>');
+            })) {
+              let title = "";
+              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+                title = feature.get('georuta_cat');
+                return true;
+              }, {
+                layerFilter: function(layer) {
+                  return pageData.rutasLayers.includes(layer);
+                },
+                hitTolerance: 5
+              });
+              pageData.tooltip.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2></div>');
+            }
+            else
+              pageData.tooltip.hide();
           }
-          else
-            pageData.tooltip.hide();
         });
 
         // select interaction working on "mouseover"
         /*let selectMove = new Select({
           condition: pointerMove,
           layers: pageData.poisLayers,
-          //style: iconHighlightStyleFunction
+          style: iconHighlightStyleFunction
         });
         pageData.map.addInteraction(selectMove);*/
 
@@ -752,33 +759,55 @@
 
 
       /*
-       * Icon styles
+       * WFS styles
        *****************************************/
       function iconStyleFunction(feature, resolution) {
+        //console.log(feature.get('nom_cat'), tipusPoi[feature.get('tipus_cat')], feature.getGeometry().getCoordinates());
         return new Style({
           image: new Icon({
-            //size: [20, 20],
-            scale: 0.1,
-            src: "icons/" + feature.get('tipus_cat') + ".png"
+            size: [20, 20],
+            src: "icons/" + tipusPoi[feature.get('tipus_cat')] + ".png"
           })
         });
       }
 
       function iconHighlightStyleFunction(feature, resolution) {
-        let style = feature.getStyle();
-        try {
-          console.log(style.getImage());
-          return style.getImage().setScale(style.getImage().getScale()*2);
-        }
-        catch(e) {}
-
-        /*return new Style({
+        return new Style({
           image: new Icon({
-            //size: [20, 20],
-            scale: 0.2,
-            src: "icons/" + feature.get('tipus_cat') + ".png"
+            size: [20, 20],
+            src: "icons/" + tipusPoi[feature.get('tipus_cat')] + ".png"
           })
-        });*/
+        });
+      }
+
+      function rutaStyleFunction(feature, resolution) {
+        if (feature.get('tipologia_cat') === 'Georuta') {
+          return new Style({
+            stroke: new Stroke({
+              color: '#4f1c23',
+              lineDash: [4,4],
+              width: 3
+            })
+          });
+        }
+        else if (feature.get('tipologia_cat') === 'Ruta Geològica') {
+          return new Style({
+            stroke: new Stroke({
+              color: '#b19395',
+              lineDash: [4,4],
+              width: 3
+            })
+          });
+        }
+        else if (feature.get('tipologia_cat') === 'El Cinquè Llac') {
+          return new Style({
+            stroke: new Stroke({
+              color: '#cd3a37',
+              lineDash: [4,4],
+              width: 3
+            })
+          });
+        }
       }
 
 
@@ -1390,7 +1419,7 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
     left: -50px;
 }
 
-.ol-popup:after, .ol-popup:before {
+.featureTooltip .ol-popup:after, .featureTooltip .ol-popup:before {
     top: 100%;
     border: solid transparent;
     content: " ";
@@ -1400,14 +1429,14 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
     pointer-events: none;
 }
 
-.ol-popup:after {
+.featureTooltip .ol-popup:after {
     border-top-color: white;
     border-width: 10px;
     left: 48px;
     margin-left: -10px;
 }
 
-.ol-popup:before {
+.featureTooltip .ol-popup:before {
     border-top-color: #cccccc;
     border-width: 11px;
     left: 48px;
@@ -1427,8 +1456,21 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 
 .featurePopup {
+  transform: none !important;
+  bottom: 100px;
+  left: 100px;
   z-index: 2;
+  width: calc(100% - 200px);
+  max-width: 800px;
 }
+.featurePopup .ol-popup {
+  left: 0;
+  min-height: 500px;
+}
+.featurePopup .ol-popup .ol-popup-content {
+  max-height: none;
+}
+
 .featureTooltip {
   z-index: 3;
 }
