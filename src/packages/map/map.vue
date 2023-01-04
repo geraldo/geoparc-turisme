@@ -40,6 +40,7 @@
 
   import { Map, View, Feature, Collection, Overlay as OverlayOL } from 'ol';
   import {
+    Cluster,
     OSM, 
     XYZ as xyzSource,
     Vector as VectorSource, 
@@ -81,28 +82,29 @@
   import DataTable from 'datatables.net';
 
   const tipusPoi = {
-    "Centre d'Interpretació": "centre_interpretacio",
-    "Informació turística": "info_turistica",
-    "Caiac": "caiac",
-    "Castell": "castell",
-    "Cova visitable": "cova_visitable",
-    "Església": "esglesia",
-    "Establiment recomanat": "establiment_recomanat_1",
-    "Exposició a l'aire lliure": "establiment_recomanat_2",
+    "Zona de bany": "zona_bany",
+    "Vol en Globus": "globus",
+    "Via Ferrata": "viaferrata",
+    "Telefèric": "teleferic",
+    "Rafting": "rafting",
+    "Parapent": "parapent",
+    "Mirador": "mirador",
     "Lloc interès Geoparc": "lloc_interes_geoparc",
     "Jaciment arqueològic": "jacimentarqueologic",
-    "Mirador": "mirador",
-    "Parapent": "parapent",
-    "Rafting": "rafting",
-    "Telefèric": "teleferic",
-    "Via Ferrata": "viaferrata",
-    "Vol en Globus": "globus",
-    "Zona de bany": "zona_bany"
+    "Informació turística": "info_turistica",
+    "Exposició a l'aire lliure": "establiment_recomanat_2",
+    "Establiment recomanat": "establiment_recomanat_1",
+    "Església": "esglesia",
+    "Cova visitable": "cova_visitable",
+    "Centre d'Interpretació": "centre_interpretacio",
+    "Castell": "castell",
+    "Caiac": "caiac"
   };
   const tipologiasRuta = {
-    "Georuta": "Georuta",
+    "Ruta en bicicleta": "Ruta en bicicleta",
+    "El Cinquè Llac": "El Cinquè Llac",
     "Ruta Geològica": "Ruta Geològica",
-    "El Cinquè Llac": "El Cinquè Llac"
+    "Georuta": "Georuta"
   };
 
   function makeSafeForCSS(name) {
@@ -621,6 +623,7 @@
          * Interaction
          *****************************************/
         pageData.map.on('click', function(evt) {
+          // zoom to rutas
           pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
             pageData.map.getView().fit(feature.getGeometry().getExtent(), {
               easing: easeOut,
@@ -634,12 +637,14 @@
             hitTolerance: 5
           });
 
+          // popup
           if (pageData.map.hasFeatureAtPixel(evt.pixel, {
             layerFilter: function(layer) {
               return pageData.poisLayers.includes(layer);
             },
             hitTolerance: 5
           })) {
+            // POIs
             let title = "",
                 description = "",
                 foto = "",
@@ -662,8 +667,11 @@
             },
             hitTolerance: 5
           })) {
+            // rutas
             let title = "",
                 description = "",
+                foto = "",
+                autor = "",
                 distancia = "",
                 desnivel = "",
                 tipologia = "",
@@ -672,6 +680,8 @@
             pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
               title = feature.get('georuta_cat');
               description = feature.get('descripcio_cat');
+              foto = feature.get('imatge_1');
+              autor = feature.get('autor');
               distancia = feature.get('distancia_km') + " km";
               desnivel = feature.get('desnivell_m');
               tipologia = feature.get('tipologia_cat');
@@ -681,7 +691,7 @@
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2><p>' + description + '</p><p>Distancia: ' + distancia + '</p><p>Desnivel: ' + desnivel + '</p><p>Tipología: ' + tipologia + '</p><p>Modalidad: ' + modalidad + '</p><p>Dificultad: ' + dificultad + '</p></div>');
+            pageData.popup.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p><p>Distancia: ' + distancia + '</br>Desnivel: ' + desnivel + '</br>Tipología: ' + tipologia + '</br>Modalidad: ' + modalidad + '</br>Dificultad: ' + dificultad + '</p></div>');
             pageData.tooltip.hide();
           }
           else
@@ -691,6 +701,7 @@
         pageData.map.on('pointermove', function(evt) {
           if (!pageData.popup.isOpened()) {
 
+            // tooltip
             pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
               layerFilter: function(layer) {
                 return pageData.poisLayers.includes(layer) || pageData.rutasLayers.includes(layer);
@@ -704,6 +715,7 @@
               },
               hitTolerance: 5
             })) {
+              // POIs
               let title = "",
                   foto = "";
               pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
@@ -724,9 +736,12 @@
               },
               hitTolerance: 5
             })) {
-              let title = "";
+              // rutas
+              let title = "",
+                  foto = "";
               pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
                 title = feature.get('georuta_cat');
+                foto = feature.get('imatge_1');
                 return true;
               }, {
                 layerFilter: function(layer) {
@@ -734,7 +749,7 @@
                 },
                 hitTolerance: 5
               });
-              pageData.tooltip.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2></div>');
+              pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>Georuta: ' + title + '</h2></div>');
             }
             else
               pageData.tooltip.hide();
@@ -803,8 +818,17 @@
           return new Style({
             stroke: new Stroke({
               color: '#cd3a37',
-              lineDash: [4,4],
+              lineDash: [6,6],
               width: 3
+            })
+          });
+        }
+        else if (feature.get('tipologia_cat') === 'Ruta en bicicleta') {
+          return new Style({
+            stroke: new Stroke({
+              color: '#db1e2a',
+              lineDash: [2,6],
+              width: 2
             })
           });
         }
@@ -1016,6 +1040,7 @@
           columns: [
             { "data": "properties.georuta_cat", "title" : "Nom"},
             { "data": "properties.descripcio_cat", "title" : "Descripció"},
+            { "data": "properties.imatge_1", "title" : "Imatge", "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
             { "data": "properties.desnivell_m", "title" : "Desnivell [m]"},
             { "data": "properties.dificultat_cat", "title" : "Dificultat"},
             { "data": "properties.distancia_km", "title" : "Distancia [km]", "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
@@ -1444,7 +1469,7 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 
 .ol-popup-content {
-    min-width: 300px;
+    min-width: 200px;
     max-height: 450px;
     overflow-x: auto;
 }
@@ -1457,18 +1482,18 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 
 .featurePopup {
   transform: none !important;
-  bottom: 100px;
+  bottom: 20px;
   left: 100px;
   z-index: 2;
   width: calc(100% - 200px);
-  max-width: 800px;
+  max-width: 900px;
 }
 .featurePopup .ol-popup {
   left: 0;
   min-height: 500px;
 }
 .featurePopup .ol-popup .ol-popup-content {
-  max-height: none;
+  max-height: 800px;
 }
 
 .featureTooltip {
@@ -1476,13 +1501,13 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 
 .featurePopup img {
-  max-width: 500px;
+  max-width: 800px;
 }
 .featureTooltip .imgDiv {
   display: inline-block;
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  height: 200px;
   overflow: hidden;
   border-radius: 50%;
 }
