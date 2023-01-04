@@ -180,8 +180,8 @@
             label = document.createElement('label');
 
       if (lyr instanceof LayerGroup && !lyr.get('combine')) {
-        const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
         li.classList.add('group');
+        const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
         if (isBaseGroup) {
           li.classList.add(super.CSS_PREFIX + 'base-group');
         }
@@ -648,17 +648,19 @@
             let title = "",
                 description = "",
                 foto = "",
-                autor = "";
+                autor = "",
+                web = "";
             pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
               title = feature.get('nom_cat');
               description = feature.get('descripcio_cat');
               foto = feature.get('imatge_1');
               autor = feature.get('autor');
+              web = feature.get('web_cat');
               return true;
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p></div>');
+            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p><p>Web: <a target="_blank" href="' + web + '">' + web + '</a></p></div>');
             pageData.tooltip.hide();
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
@@ -676,7 +678,8 @@
                 desnivel = "",
                 tipologia = "",
                 modalidad = "",
-                dificultad = "";
+                dificultad = "",
+                web = "";
             pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
               title = feature.get('georuta_cat');
               description = feature.get('descripcio_cat');
@@ -687,11 +690,12 @@
               tipologia = feature.get('tipologia_cat');
               modalidad = feature.get('modalitat_cat');
               dificultad = feature.get('dificultat_cat');
+              web = feature.get('web_cat');
               return true;
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p><p>Distancia: ' + distancia + '</br>Desnivel: ' + desnivel + '</br>Tipología: ' + tipologia + '</br>Modalidad: ' + modalidad + '</br>Dificultad: ' + dificultad + '</p></div>');
+            pageData.popup.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p><p>Distancia: ' + distancia + '</br>Desnivel: ' + desnivel + '</br>Tipología: ' + tipologia + '</br>Modalidad: ' + modalidad + '</br>Dificultad: ' + dificultad + '</p><p>Web: <a target="_blank" href="' + web + '">' + web + '</a></p></div>');
             pageData.tooltip.hide();
           }
           else
@@ -1023,6 +1027,7 @@
             { "data": "properties.nom_ruta_cat", "title" : "Georuta"},
             { "data": "properties.tematica_1_cat", "title" : "Temática"},
             { "data": "properties.tipus_cat", "title" : "Tipus"},
+            { "data": "properties.web_cat", "title" : "Web", "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
           ],
         })
       }
@@ -1046,6 +1051,7 @@
             { "data": "properties.distancia_km", "title" : "Distancia [km]", "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
             { "data": "properties.tipologia_cat", "title" : "Tipología"},
             { "data": "properties.modalitat_cat", "title" : "Modalitat"},
+            { "data": "properties.web_cat", "title" : "Web", "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
           ],
         })
       }
@@ -1558,6 +1564,10 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   width: 20px;
   height: 20px;
   margin: 0 -20px 0 30px;
+}
+
+.fa-eye:hover {
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 420px) {
