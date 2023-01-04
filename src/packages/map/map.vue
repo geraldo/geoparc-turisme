@@ -183,14 +183,15 @@
         li.classList.add('group');
         const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
         if (isBaseGroup) {
-          li.classList.add(super.CSS_PREFIX + 'base-group');
+          li.classList.add('base-group');
         }
         // Group folding
         if (lyr.get('fold')) {
-          li.classList.add(super.CSS_PREFIX + 'fold');
-          li.classList.add(super.CSS_PREFIX + lyr.get('fold'));
+          li.classList.add('layer-switcher-fold');
+          li.classList.add('layer-switcher-' + lyr.get('fold'));
           const btn = document.createElement('button');
           btn.onclick = function (e) {
+            console.log(lyr, li);
             const evt = e || window.event;
             LayerSwitcher.toggleFold_(lyr, li);
             evt.preventDefault();
@@ -211,7 +212,7 @@
           li.appendChild(input);
           label.htmlFor = checkboxId;
         }
-        label.innerHTML = lyrTitle;
+        label.innerHTML = '<i class="fa fa-eye"></i> ' + lyrTitle;
         li.appendChild(label);
         const ul = document.createElement('ul');
         li.appendChild(ul);
@@ -291,23 +292,28 @@
         qgisProjectFile: '/home/geoparc/geoparc-turisme/geoparc-turisme.qgs',
 
         qgisWmsLayers: new LayerGroup({
-          title: 'Capes temàtiques'
+          title: 'Capes temàtiques',
+          fold: 'close'
         }),
+        invisibleWmsLayers: [],
+        qgisInvisibleWmsLayers: new LayerGroup({}),
         qgisWfsLayersPoi: new LayerGroup({
-          title: 'Punts de interès'
+          title: 'Punts de interès',
+          fold: 'open'
         }),
         qgisWfsLayersRuta: new LayerGroup({
-          title: 'Georutes'
+          title: 'Georutes',
+          fold: 'close'
         }),
         poisLayers: [],
         rutasLayers: [],
 
-        qgisSources: {},
         mousePosition: null,
         rasterLayer: null,
 
         baseLayers: new LayerGroup({
           title: 'Capes de referència',
+          fold: 'close',
           layers: [
 
             new TileLayer({
@@ -449,20 +455,42 @@
               }
             }
           }
+          else if (layer.hidden) {
+            pageData.invisibleWmsLayers.push(defineQgisLayer(layer));
+          }
           else {
-            let name = null, 
-              url = null;
+            layers.push(defineQgisLayer(layer));
+          }
+        });
 
-            if (layer.mapproxy) {
-              name = layer.mapproxy;  // mapproxy
-              url = pageData.mapproxyServerURL;
-            }
-            else {
-              name = layer.name;  // qgis
-              url = pageData.qgisServerURL;
-            }
+        return layers;
+      }
 
-            let layerSource = new TileWMS({
+      function defineQgisLayer(layer) {
+        let name = null, 
+          url = null;
+
+        if (layer.mapproxy) {
+          name = layer.mapproxy;  // mapproxy
+          url = pageData.mapproxyServerURL;
+        }
+        else {
+          name = layer.name;  // qgis
+          url = pageData.qgisServerURL;
+        }
+
+        let newLayer = 
+          new TileLayer({
+            qgisname: layer.qgisname,
+            mapproxy: layer.mapproxy,
+            type: layer.type,
+            showlegend: layer.showlegend,
+            visible: layer.visible,
+            hidden: layer.hidden,
+            children: layer.children,
+            fields: layer.fields,
+            indentifiable: layer.indentifiable,
+            source: new TileWMS({
               url: url,
               projection: 'EPSG:3857',
               params: {
@@ -473,42 +501,13 @@
               },
               serverType: 'qgis',
               crossOrigin: 'Anonymous'
-            });
+            })
+          });
 
-            // save qgisSource to query layer
-            pageData.qgisSources[layer.qgisname] = new TileWMS({
-              url: pageData.qgisServerURL,
-              projection: 'EPSG:3857',
-              params: {
-                'LAYERS': layer.name,
-                'TRANSPARENT': true,
-                'VERSION': '1.3.0',
-              },
-              serverType: 'qgis',
-              crossOrigin: 'Anonymous'
-            });
+        if (!layer.name.startsWith("@"))
+          newLayer.set("title", layer.name);
 
-            let newLayer = 
-              new TileLayer({
-                qgisname: layer.qgisname,
-                mapproxy: layer.mapproxy,
-                type: layer.type,
-                source: layerSource,
-                showlegend: layer.showlegend,
-                visible: layer.visible,
-                hidden: layer.hidden,
-                children: layer.children,
-                fields: layer.fields,
-                indentifiable: layer.indentifiable,
-              });
-
-            if (!layer.name.startsWith("@"))
-              newLayer.set("title", layer.name);
-            layers.push(newLayer);
-          }
-        });
-
-        return layers;
+        return(newLayer);
       }
 
       function loadWfsLayerPoi(tipologia) {
@@ -577,6 +576,7 @@
         register(proj4);
 
         pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
+        pageData.qgisInvisibleWmsLayers.setLayers(new Collection(pageData.invisibleWmsLayers));
 
         pageData.mapEle = document.getElementById('map');
         pageData.map = new Map({
@@ -590,6 +590,7 @@
           layers: [
             pageData.baseLayers,
             pageData.qgisWmsLayers,
+            pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
             pageData.qgisWfsLayersPoi
           ],
@@ -850,7 +851,7 @@
         })
         pageData.map.addControl(pageData.windowLayers);
 
-        LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true, groupSelectStyle: 'none' });
+        LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true });
 
         pageData.windowTablePois = new Overlay({
           closeBox : true,
@@ -1004,7 +1005,7 @@
         pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
         pageData.qgisWfsLayersPoi.set("title", i18next.t('switcher.wfsGroupPoi'));
         pageData.qgisWfsLayersRuta.set("title", i18next.t('switcher.wfsGroupRuta'));
-        LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true, groupSelectStyle: 'none' });
+        LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true });
       }
 
       /*
@@ -1354,7 +1355,6 @@ h3 {
   font-family: graphic-semibold, sans-serif;
   border-bottom: 1px solid #4f1c23;;
   display: block;
-  padding-left: 0;
 }
 .layer-switcher li.layer {
   width: 100%;
@@ -1399,8 +1399,30 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 .layer-switcher li label {
   padding-left: 1.5em;
 }
+.layer-switcher li.base-group > label {
+  padding-left: 0;
+}
 .hidden {
   display: none;
+}
+
+.fa-eye:hover,
+.group.fold button:hover {
+  cursor: pointer;
+}
+
+.layer-switcher .group button {
+  right: 0;
+  left: auto;
+}
+.layer-switcher .group.layer-switcher-close button {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+}
+
+.layer-switcher .group.fold.layer-switcher-close > ul {
+  overflow: hidden;
+  height: 0;
 }
 
 .loading {
@@ -1564,10 +1586,6 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   width: 20px;
   height: 20px;
   margin: 0 -20px 0 30px;
-}
-
-.fa-eye:hover {
-  cursor: pointer;
 }
 
 @media only screen and (max-width: 420px) {
