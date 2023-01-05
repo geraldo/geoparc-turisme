@@ -71,6 +71,7 @@
   import Toggle from 'ol-ext/control/Toggle';
   import Overlay from 'ol-ext/control/Overlay';
   import GeolocationButton from 'ol-ext/control/GeolocationButton';
+  import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
 
   import LayerSwitcher from 'ol-layerswitcher';
   import Popup from 'ol-popup';
@@ -312,24 +313,25 @@
         mousePosition: null,
         rasterLayer: null,
 
+        baseSourceOrto: new TileWMS({
+          //url: 'https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wms/service?',
+          url: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms',
+          params: {
+            //'LAYERS': 'ortogris',
+            'LAYERS': 'ortofoto_color_provisional',
+            'VERSION': '1.1.1'
+          },
+          attributions: ['Ortofoto 2022 de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
+         }),
         baseLayerOrto: new TileLayer({
           title: 'Ortofoto (ICGC)',
-          type: 'base',
+          baseLayer: true,
           visible: false,
-          source: new TileWMS({
-            //url: 'https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wms/service?',
-            url: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms',
-            params: {
-              //'LAYERS': 'ortogris',
-              'LAYERS': 'ortofoto_color_provisional',
-              'VERSION': '1.1.1'
-            },
-            attributions: ['Ortofoto 2022 de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-           })
+          preview: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ortofoto_color_provisional&WIDTH=256&HEIGHT=256&SRS=EPSG%3A3857&STYLES=&BBOX=195678.7924100496%2C5087648.602661332%2C234814.55089205984%2C5126784.361143342'
         }),
         baseLayerTopo: new LayerGroup({
           title: 'Topogràfic (ICGC)',
-          type: 'base',
+          baseLayer: true,
           combine: true,
           layers: [
 
@@ -350,10 +352,10 @@
             })
           ]
         }),
-        baseLayers: new LayerGroup({
+        /*baseLayers: new LayerGroup({
           title: 'Capes de referència',
           fold: 'close'
-        }),
+        }),*/
 
         windowLayers: null,
         windowTablePois: null,
@@ -575,6 +577,8 @@
         pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
         pageData.qgisInvisibleWmsLayers.setLayers(new Collection(pageData.invisibleWmsLayers));
 
+        pageData.baseLayerOrto.setSource(pageData.baseSourceOrto);
+
         pageData.mapEle = document.getElementById('map');
         pageData.map = new Map({
           target: pageData.mapEle,
@@ -585,7 +589,9 @@
             })
           ]),
           layers: [
-            pageData.baseLayers,
+            //pageData.baseLayers,
+            pageData.baseLayerOrto,
+            pageData.baseLayerTopo,
             pageData.qgisWmsLayers,
             pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
@@ -601,7 +607,13 @@
           }),
         });
 
-        pageData.baseLayers.setLayers(new Collection([pageData.baseLayerOrto,pageData.baseLayerTopo]));
+        //pageData.baseLayers.setLayers(new Collection([pageData.baseLayerOrto,pageData.baseLayerTopo]));
+        pageData.map.addControl(new LayerSwitcherImage({
+          collapsed: false,
+          displayInLayerSwitcher: function(layer) {
+            return (layer.get("baseLayer")); 
+          }
+        }));
 
         const scaleLine = new ScaleLine({
           bar: true
@@ -1013,9 +1025,9 @@
         pageData.qgisWfsLayersPoi.set("title", i18next.t('switcher.wfsGroupPoi'));
         pageData.qgisWfsLayersRuta.set("title", i18next.t('switcher.wfsGroupRuta'));
         pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
-        pageData.baseLayers.set("title", i18next.t('switcher.baseGroup'));
-        pageData.baseLayerTopo.set("title", i18next.t('switcher.baseGroupTopo'));        
-        pageData.baseLayerOrto.set("title", i18next.t('switcher.baseGroupOrto'));
+        //pageData.baseLayers.set("title", i18next.t('switcher.baseGroup'));
+        //pageData.baseLayerTopo.set("title", i18next.t('switcher.baseGroupTopo'));        
+        //pageData.baseLayerOrto.set("title", i18next.t('switcher.baseGroupOrto'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(1) label").text(i18next.t('switcher.baseGroupTopo'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(2) label").text(i18next.t('switcher.baseGroupOrto'));
         LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true });
@@ -1599,6 +1611,22 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   width: 20px;
   height: 20px;
   margin: 0 -20px 0 30px;
+}
+
+.ol-control.ol-layerswitcher-image {
+  bottom: 5em;
+  top: auto !important;
+  left: 0.5em;
+  right: auto;
+}
+
+.ol-control.ol-layerswitcher-image button {
+  display: none;
+}
+
+.layer._topogr__00e0fic-__0028_i_c_g_c__0029,
+.layer._ortofoto-__0028_i_c_g_c__0029 {
+  display: none !important;
 }
 
 @media only screen and (max-width: 420px) {
