@@ -276,6 +276,7 @@
     setup(props, context){
       let pageData = reactive({
         cookieOptions: { sameSite: 'strict', secure: true },
+        lang: "cat",
 
         center: [{
           lng: 0.88,
@@ -652,11 +653,11 @@
                 autor = "",
                 web = "";
             pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-              title = feature.get('nom_cat');
-              description = feature.get('descripcio_cat');
+              title = feature.get('nom_' + pageData.lang);
+              description = feature.get('descripcio_' + pageData.lang);
               foto = feature.get('imatge_1');
-              autor = feature.get('autor');
-              web = feature.get('web_cat');
+              autor = feature.get('imatge1_autor');
+              web = feature.get('web_' + pageData.lang);
               return true;
             }, {
               hitTolerance: 5
@@ -682,21 +683,21 @@
                 dificultad = "",
                 web = "";
             pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-              title = feature.get('georuta_cat');
-              description = feature.get('descripcio_cat');
+              title = feature.get('georuta_2_' + pageData.lang);
+              description = feature.get('descripcio_' + pageData.lang);
               foto = feature.get('imatge_1');
-              autor = feature.get('autor');
+              autor = feature.get('imatge_1_autor');
               distancia = feature.get('distancia_km') + " km";
               desnivel = feature.get('desnivell_m');
-              tipologia = feature.get('tipologia_cat');
-              modalidad = feature.get('modalitat_cat');
-              dificultad = feature.get('dificultat_cat');
-              web = feature.get('web_cat');
+              tipologia = feature.get('tipologia_' + pageData.lang);
+              modalidad = feature.get('modalitat_' + pageData.lang);
+              dificultad = feature.get('dificultat_' + pageData.lang);
+              web = feature.get('web_' + pageData.lang);
               return true;
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>Georuta: ' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p><p>Distancia: ' + distancia + '</br>Desnivel: ' + desnivel + '</br>Tipología: ' + tipologia + '</br>Modalidad: ' + modalidad + '</br>Dificultad: ' + dificultad + '</p><p>Web: <a target="_blank" href="' + web + '">' + web + '</a></p></div>');
+            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p><p>Distancia: ' + distancia + '</br>Desnivel: ' + desnivel + '</br>Tipología: ' + tipologia + '</br>Modalidad: ' + modalidad + '</br>Dificultad: ' + dificultad + '</p><p>Web: <a target="_blank" href="' + web + '">' + web + '</a></p></div>');
             pageData.tooltip.hide();
           }
           else
@@ -724,7 +725,7 @@
               let title = "",
                   foto = "";
               pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-                title = feature.get('nom_cat');
+                title = feature.get('nom_' + pageData.lang);
                 foto = feature.get('imatge_1');
                 return true;
               }, {
@@ -743,9 +744,10 @@
             })) {
               // rutas
               let title = "",
+                  title2 = "",
                   foto = "";
               pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-                title = feature.get('georuta_cat');
+                title = feature.get('georuta_2_' + pageData.lang);
                 foto = feature.get('imatge_1');
                 return true;
               }, {
@@ -754,7 +756,7 @@
                 },
                 hitTolerance: 5
               });
-              pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>Georuta: ' + title + '</h2></div>');
+              pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
             }
             else
               pageData.tooltip.hide();
@@ -993,6 +995,14 @@
       }
 
       function translateContent() {
+        // load qgis content
+        if (i18next.language === "ca")
+          pageData.lang = "cat";
+        else
+          pageData.lang = i18next.language;
+        initDtPois();
+        initDtRutes();
+
         // menu
         pageData.tableTogglePois.setTitle(i18next.t('gui.windowTablePoisTitle'));
         pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
@@ -1022,13 +1032,13 @@
             dataSrc: 'features'
           },
           columns: [
-            { "data": "properties.nom_cat", "title" : "Nom"},
-            { "data": "properties.descripcio_cat", "title" : "Descripció"},
-            { "data": "properties.imatge_1", "title" : "Imatge", "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
-            { "data": "properties.nom_ruta_cat", "title" : "Georuta"},
-            { "data": "properties.tematica_1_cat", "title" : "Temática"},
-            { "data": "properties.tipus_cat", "title" : "Tipus"},
-            { "data": "properties.web_cat", "title" : "Web", "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
+            { "data": "properties.nom_" + pageData.lang, "title" : i18next.t("dtPoi.Nom")},
+            { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtPoi.Descripcio")},
+            { "data": "properties.imatge_1", "title" : i18next.t("dtPoi.Imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
+            { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.Georuta")},
+            { "data": "properties.tematica_1_" + pageData.lang, "title" : i18next.t("dtPoi.Temática")},
+            { "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.Tipus")},
+            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
           ],
         })
       }
@@ -1044,15 +1054,15 @@
             dataSrc: 'features'
           },
           columns: [
-            { "data": "properties.georuta_cat", "title" : "Nom"},
-            { "data": "properties.descripcio_cat", "title" : "Descripció"},
-            { "data": "properties.imatge_1", "title" : "Imatge", "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
-            { "data": "properties.desnivell_m", "title" : "Desnivell [m]"},
-            { "data": "properties.dificultat_cat", "title" : "Dificultat"},
-            { "data": "properties.distancia_km", "title" : "Distancia [km]", "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
-            { "data": "properties.tipologia_cat", "title" : "Tipología"},
-            { "data": "properties.modalitat_cat", "title" : "Modalitat"},
-            { "data": "properties.web_cat", "title" : "Web", "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
+            { "data": "properties.georuta_" + pageData.lang, "title" : i18next.t("dtRuta.Nom")},
+            { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtRuta.Descripcio")},
+            { "data": "properties.imatge_1", "title" : i18next.t("dtRuta.Imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
+            { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.Desnivell")},
+            { "data": "properties.dificultat_" + pageData.lang, "title" : i18next.t("dtRuta.Dificultat")},
+            { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.Distancia"), "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
+            { "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.Tipología")},
+            { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.Modalitat")},
+            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
           ],
         })
       }
@@ -1061,8 +1071,8 @@
        * Init
        *****************************************/
       function initGui() {
-        initMenu();
         initCookies();
+        initMenu();
         pageData.windowLayers.show();
       }
 

@@ -10,6 +10,26 @@
         "wfsGroupPoi": "Punts de interès",
         "wfsGroupRuta": "Georutes",
         "wmsGroup": "Capes temàtiques"
+      },
+      "dtPoi": {
+        "Nom": "Nom",
+        "Descripcio": "Descripció",
+        "Imatge": "Imatge",
+        "Georuta": "Georuta",
+        "Temática": "Temática",
+        "Tipus": "Tipus",
+        "Web": "Web"
+      },
+      "dtRuta": {
+        "Nom": "Nom",
+        "Descripcio": "Descripció",
+        "Imatge": "Imatge",
+        "Desnivell": "Desnivell [m]",
+        "Dificultat": "Dificultat",
+        "Distancia": "Distancia [km]",
+        "Tipología": "Tipología",
+        "Modalitat": "Modalitat",
+        "Web": "Web"
       }
     }
   },
@@ -24,6 +44,26 @@
         "wfsGroupPoi": "Puntos de interés",
         "wfsGroupRuta": "Georutas",
         "wmsGroup": "Capas temáticas"
+      },
+      "dtPoi": {
+        "Nom": "Nombre",
+        "Descripcio": "Descripción",
+        "Imatge": "Imagen",
+        "Georuta": "Georuta",
+        "Temática": "Temática",
+        "Tipus": "Tipo",
+        "Web": "Web"
+      },
+      "dtRuta": {
+        "Nom": "Nombre",
+        "Descripcio": "Descripción",
+        "Imatge": "Imagen",
+        "Desnivell": "Desnivel [m]",
+        "Dificultat": "Dificultad",
+        "Distancia": "Distancia [km]",
+        "Tipología": "Tipología",
+        "Modalitat": "Modalitad",
+        "Web": "Web"
       }
     }
   }
