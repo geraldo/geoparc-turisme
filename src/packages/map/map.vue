@@ -312,51 +312,47 @@
         mousePosition: null,
         rasterLayer: null,
 
-        baseLayers: new LayerGroup({
-          title: 'Capes de referència',
-          fold: 'close',
+        baseLayerOrto: new TileLayer({
+          title: 'Ortofoto (ICGC)',
+          type: 'base',
+          visible: false,
+          source: new TileWMS({
+            //url: 'https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wms/service?',
+            url: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms',
+            params: {
+              //'LAYERS': 'ortogris',
+              'LAYERS': 'ortofoto_color_provisional',
+              'VERSION': '1.1.1'
+            },
+            attributions: ['Ortofoto 2022 de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
+           })
+        }),
+        baseLayerTopo: new LayerGroup({
+          title: 'Topogràfic (ICGC)',
+          type: 'base',
+          combine: true,
           layers: [
 
             new TileLayer({
-              title: 'Ortofoto (ICGC)',
-              type: 'base',
-              visible: false,
-              source: new TileWMS({
-                //url: 'https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wms/service?',
-                url: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms',
-                params: {
-                  //'LAYERS': 'ortogris',
-                  'LAYERS': 'ortofoto_color_provisional',
-                  'VERSION': '1.1.1'
-                },
-                attributions: ['Ortofoto 2022 de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
+              minZoom: 14,
+              source: new xyzSource({
+                url: 'https://tilemaps.icgc.cat/mapfactory/wmts/topo_suau/CAT3857/{z}/{x}/{y}.png',
+                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
                })
             }),
 
-            new LayerGroup({
-              title: 'Topogràfic (ICGC)',
-              type: 'base',
-              combine: true,
-              layers: [
-
-                new TileLayer({
-                  minZoom: 14,
-                  source: new xyzSource({
-                    url: 'https://tilemaps.icgc.cat/mapfactory/wmts/topo_suau/CAT3857/{z}/{x}/{y}.png',
-                    attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-                   })
-                }),
-
-                new TileLayer({
-                  maxZoom: 14,
-                  source: new xyzSource({
-                    url: 'https://tilemaps.icgc.cat/mapfactory/wmts/osm_suau/CAT3857_15/{z}/{x}/{y}.png',
-                    attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-                   })
-                })
-              ]
+            new TileLayer({
+              maxZoom: 14,
+              source: new xyzSource({
+                url: 'https://tilemaps.icgc.cat/mapfactory/wmts/osm_suau/CAT3857_15/{z}/{x}/{y}.png',
+                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
+               })
             })
           ]
+        }),
+        baseLayers: new LayerGroup({
+          title: 'Capes de referència',
+          fold: 'close'
         }),
 
         windowLayers: null,
@@ -604,6 +600,8 @@
             extent: [25000, 5100000, 200000, 5280000]
           }),
         });
+
+        pageData.baseLayers.setLayers(new Collection([pageData.baseLayerOrto,pageData.baseLayerTopo]));
 
         const scaleLine = new ScaleLine({
           bar: true
@@ -1012,9 +1010,14 @@
         $("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
 
         // layerswitcher
-        pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
         pageData.qgisWfsLayersPoi.set("title", i18next.t('switcher.wfsGroupPoi'));
         pageData.qgisWfsLayersRuta.set("title", i18next.t('switcher.wfsGroupRuta'));
+        pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
+        pageData.baseLayers.set("title", i18next.t('switcher.baseGroup'));
+        pageData.baseLayerTopo.set("title", i18next.t('switcher.baseGroupTopo'));        
+        pageData.baseLayerOrto.set("title", i18next.t('switcher.baseGroupOrto'));
+        //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(1) label").text(i18next.t('switcher.baseGroupTopo'));
+        //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(2) label").text(i18next.t('switcher.baseGroupOrto'));
         LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true });
       }
 

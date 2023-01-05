@@ -9,7 +9,14 @@
       "switcher": {
         "wfsGroupPoi": "Punts de interès",
         "wfsGroupRuta": "Georutes",
-        "wmsGroup": "Capes temàtiques"
+        "wmsGroup": "Capes temàtiques",
+        "wmsGroup1": "Reserva Starlight",
+        "wmsGroup2": "Xarxa Natura 2000",
+        "wmsGroup3": "Parc Nacional Aigüestortes",
+        "wmsGroup4": "Reserva Boumort",
+        "baseGroup": "Capes de referència",
+        "baseGroupTopo": "Topogràfic (ICGC)",
+        "baseGroupOrto": "Ortofoto (ICGC)"
       },
       "dtPoi": {
         "Nom": "Nom",
@@ -43,7 +50,14 @@
       "switcher": {
         "wfsGroupPoi": "Puntos de interés",
         "wfsGroupRuta": "Georutas",
-        "wmsGroup": "Capas temáticas"
+        "wmsGroup": "Capas temáticas",
+        "wmsGroup1": "Reserva Starlight",
+        "wmsGroup2": "Red Natura 2000",
+        "wmsGroup3": "Parque nacional de Aiguas Tortas",
+        "wmsGroup4": "Reserva Boumort",
+        "baseGroup": "Capas de referencia",
+        "baseGroupTopo": "Topográfico (ICGC)",
+        "baseGroupOrto": "Ortofoto (ICGC)"
       },
       "dtPoi": {
         "Nom": "Nombre",
