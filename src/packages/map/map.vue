@@ -199,6 +199,7 @@
           };
           li.appendChild(btn);
         }
+        let fa = '<i class="fa fa-eye';
         if (!isBaseGroup && options.groupSelectStyle != 'none') {
           const input = document.createElement('input');
           input.type = 'checkbox';
@@ -212,8 +213,9 @@
           };
           li.appendChild(input);
           label.htmlFor = checkboxId;
+          if (!input.checked) fa += ' off';
         }
-        label.innerHTML = '<i class="fa fa-eye"></i> ' + lyrTitle;
+        label.innerHTML =  fa + '"/> ' + lyrTitle;
         li.appendChild(label);
         const ul = document.createElement('ul');
         li.appendChild(ul);
@@ -242,6 +244,7 @@
         if (lyr.get("type") !== "base") {
           let simbol = document.createElement('img');
           simbol.className = 'leyenda';
+          if (!input.checked) simbol.className += ' off';
           let icon = tipusPoi[lyrTitle];
           if (icon === undefined || icon === "undefined")
             icon = lyr.get('title');
@@ -250,6 +253,7 @@
         }
 
         label.htmlFor = checkboxId;
+        if (!input.checked) label.className = 'off';
         label.innerHTML = lyrTitle;
 
         const rsl = map.getView().getResolution();
@@ -1121,7 +1125,6 @@
       })
 
       function clearMap() {
-        console.log("clear");
         document.getElementById('map').innerHTML = '';
         pageData.mapEle = null;
         pageData.map = null;
@@ -1435,11 +1438,15 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   z-index: -3;
 }
 
+#layerSwitcher input {
+  display: none;
+}
+
 .layer-switcher li input {
   left: 0;
 }
 .layer-switcher li label {
-  padding-left: 1.5em;
+  padding-left: 0;
 }
 .layer-switcher li.base-group > label {
   padding-left: 0;
@@ -1448,9 +1455,20 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   display: none;
 }
 
-.fa-eye:hover,
-.group.fold button:hover {
+.group.layer-switcher-fold button:hover,
+.group.layer-switcher-fold label:hover {
   cursor: pointer;
+}
+
+.fa-eye.off,
+.layer-switcher label.off {
+  color: #aaa;
+}
+
+img.leyenda.off {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+  opacity: 0.5;
 }
 
 .layer-switcher .group button {
@@ -1627,7 +1645,7 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 .leyenda {
   width: 20px;
   height: 20px;
-  margin: 0 -20px 0 30px;
+  margin-right: 7px;
 }
 
 .ol-control.ol-layerswitcher-image {
