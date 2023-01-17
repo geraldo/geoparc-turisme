@@ -34,7 +34,6 @@
   import 'ol-layerswitcher/dist/ol-layerswitcher.css';
   import 'ol-ext/dist/ol-ext.css';
   import 'font-awesome/css/font-awesome.min.css';
-  import 'font-gis/css/font-gis.css'
 
   import { ref, reactive, shallowReactive, toRefs, toRef, onMounted, onBeforeUnmount } from 'vue';
 
@@ -53,10 +52,10 @@
     Vector as VectorLayer
   } from 'ol/layer';
   import { ScaleLine, FullScreen, defaults as defaultControls } from 'ol/control';
-  import { Point, Polygon, LineString } from 'ol/geom';
+  import { Point, Polygon, LineString, Geometry } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
   import { register } from 'ol/proj/proj4';
-  import { Projection, get as getProjection, getPointResolution, transform, fromLonLat, toLonLat, METERS_PER_UNIT } from 'ol/proj';
+  import { get as getProjection, getPointResolution, fromLonLat, toLonLat, transformExtent, METERS_PER_UNIT } from 'ol/proj';
   import { getLength, getArea } from 'ol/sphere';
   import { unByKey } from 'ol/Observable';
   import { easeOut } from 'ol/easing';
@@ -289,9 +288,6 @@
         }],
         map: null,
         mapEle: null,
-        proj25831: new Projection({
-          code: 'EPSG:25831'
-        }),
 
         qgisServerURL: 'https://mapa.psig.es/qgisserver/cgi-bin/qgis_mapserv.fcgi',
         mapproxyServerURL: 'https://mapa.psig.es/mapproxy/service?',
@@ -575,10 +571,6 @@
       }*/
 
       function initMap(layersData) {
-        // https://epsg.io/25831
-        proj4.defs("EPSG:25831","+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
-        register(proj4);
-
         pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
         pageData.qgisInvisibleWmsLayers.setLayers(new Collection(pageData.invisibleWmsLayers));
 
@@ -1052,7 +1044,7 @@
             dataSrc: 'features'
           },
           columns: [
-            { "data": "properties.nom_" + pageData.lang, "title" : i18next.t("dtPoi.Nom")},
+            { "data": "properties.nom_" + pageData.lang, "title" : i18next.t("dtPoi.Nom"), "render": function ( data, type, row ) { return "<span class='link' data-coords='[" + row.geometry.coordinates + "]'>" + data + "</span>"; }},
             { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtPoi.Descripcio")},
             { "data": "properties.imatge_1", "title" : i18next.t("dtPoi.Imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
             { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.Georuta")},
@@ -1060,7 +1052,13 @@
             { "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.Tipus")},
             { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
           ],
-        })
+        }).on( 'init.dt', function () {
+          $("#datatable-pois .link").click(function() {
+            $(".tableWindow").hide();
+            //console.log($(this).data("coords"));
+            pageData.map.getView().animate({zoom: 15, center: fromLonLat($(this).data("coords")), duration: 2000});
+          });
+        });
       }
 
       function initDtRutes() {
@@ -1074,7 +1072,7 @@
             dataSrc: 'features'
           },
           columns: [
-            { "data": "properties.georuta_" + pageData.lang, "title" : i18next.t("dtRuta.Nom")},
+            { "data": "properties.georuta_" + pageData.lang, "title" : i18next.t("dtRuta.Nom"), "render": function ( data, type, row ) { return "<span class='link' data-coords='" + JSON.stringify(row.bbox) + "'>" + data + "</span>"; }},
             { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtRuta.Descripcio")},
             { "data": "properties.imatge_1", "title" : i18next.t("dtRuta.Imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
             { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.Desnivell")},
@@ -1084,7 +1082,17 @@
             { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.Modalitat")},
             { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
           ],
-        })
+        }).on( 'init.dt', function () {
+          $("#datatable-rutas .link").click(function() {
+            $(".tableWindow").hide();
+            //console.log($(this).data("coords"));
+            pageData.map.getView().fit(transformExtent($(this).data("coords"), "EPSG:4326", "EPSG:3857"), {
+              padding: [50, 250, 50, 50],
+              easing: easeOut,
+              duration: 2000
+            });
+          });
+        });
       }
 
       /*
@@ -1177,8 +1185,13 @@ window.mobilecheck = function() {
   right: auto;
 }
 
+.ol-scale-bar {
+  bottom: 0.5em;
+  left: 0.5em;
+}
+
 .ol-attribution {
-  bottom: 3em;
+  bottom: 2.5em;
 }
 
 .ol-geobt {
@@ -1188,18 +1201,51 @@ window.mobilecheck = function() {
   bottom: auto !important;
 }
 
-.logo button {
-  width: auto;
-  height: auto;
-}
-.logo img {
-  width: 180px;
-}
-.logo2 img {
-  width: 90px;
-  margin-left: 20px;
+.ol-zoom .ol-zoom-in,
+.ol-zoom .ol-zoom-out {
+  border-radius: 0;
 }
 
+.ol-control.ol-bar.ol-right .ol-group .ol-control:last-child > button {
+  border-radius: 0;
+}
+
+.loading {
+  display: none;
+  background: #fff;
+  border: 2px solid #369;
+  left: 50%;
+  margin: -2em -100px;
+  padding: 0.5em;
+  position: fixed;
+  text-align: center;
+  top: 50%;
+  width: 200px;
+  z-index: 1;
+  box-sizing: border-box;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.btn {
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  background-color: #b2b019;
+  color: #fff;
+  margin: 2px;
+  padding: 6px 12px;
+}
+.btn:hover {
+  background-color: #868484;
+  color: #fff;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/*
+ * menu
+ * ************************/
 .ol-control {
   padding: 0;
 }
@@ -1244,8 +1290,24 @@ window.mobilecheck = function() {
   color: #4f1c23;
 }
 
+.logo button {
+  width: auto;
+  height: auto;
+}
+.logo img {
+  width: 180px;
+}
+.logo2 img {
+  width: 90px;
+  margin-left: 20px;
+}
+
 .langBar {
   float: right;
+}
+
+.lang button {
+  color: black;
 }
 
 .ol-control button {
@@ -1265,15 +1327,9 @@ window.mobilecheck = function() {
   background-color: transparent;
 }
 
-.ol-zoom .ol-zoom-in,
-.ol-zoom .ol-zoom-out {
-  border-radius: 0;
-}
-
-.ol-control.ol-bar.ol-right .ol-group .ol-control:last-child > button {
-  border-radius: 0;
-}
-
+/*
+ * overlays
+ * ************************/
 .ol-overlay.window { 
   width: 344px;
   max-width: 95%;
@@ -1338,6 +1394,11 @@ h3 {
   border-bottom: 1px solid #4f1c23;
 }
 
+.dataTables_wrapper .link {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .window .content {
   padding: 20px;
 }
@@ -1364,6 +1425,7 @@ h3 {
   width: 90%;
   top: 100px;
   right: 50px;
+  z-index: 11;
 }
 #pois-table,
 #rutas-table {
@@ -1374,14 +1436,9 @@ h3 {
   max-height: 600px;
 }
 
-.app-icon {
-  vertical-align: top;
-}
-
-.tab-left {
-  padding-left: 25px;
-}
-
+/*
+ * layer switcher
+ * ************************/
 .layer-switcher {
   position: relative;
   top: auto;
@@ -1485,43 +1542,31 @@ img.leyenda.off {
   height: 0;
 }
 
-.loading {
+.leyenda {
+  width: 20px;
+  height: 20px;
+  margin-right: 7px;
+}
+
+.ol-control.ol-layerswitcher-image {
+  bottom: 4.5em;
+  top: auto !important;
+  left: 0.1em;
+  right: auto;
+}
+
+.ol-control.ol-layerswitcher-image button {
   display: none;
-  background: #fff;
-  border: 2px solid #369;
-  left: 50%;
-  margin: -2em -100px;
-  padding: 0.5em;
-  position: fixed;
-  text-align: center;
-  top: 50%;
-  width: 200px;
-  z-index: 1;
-  box-sizing: border-box;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
-.btn {
-  border-radius: 0;
-  box-shadow: none;
-  border: none;
-  background-color: #b2b019;
-  color: #fff;
-  margin: 2px;
-  padding: 6px 12px;
-}
-.btn:hover {
-  background-color: #868484;
-  color: #fff;
-  border: none;
-  text-decoration: none;
-  cursor: pointer;
+.layer._topogr__00e0fic-__0028_i_c_g_c__0029,
+.layer._ortofoto-__0028_i_c_g_c__0029 {
+  display: none !important;
 }
 
-.lang button {
-  color: black;
-}
-
+/*
+ * tooltip, popup
+ * ************************/
 .ol-popup {
     display: none;
     position: absolute;
@@ -1642,37 +1687,9 @@ img.leyenda.off {
     margin-bottom: 30px;
 }
 
-.leyenda {
-  width: 20px;
-  height: 20px;
-  margin-right: 7px;
-}
-
-.ol-control.ol-layerswitcher-image {
-  bottom: 4.5em;
-  top: auto !important;
-  left: 0.1em;
-  right: auto;
-}
-
-.ol-control.ol-layerswitcher-image button {
-  display: none;
-}
-
-.ol-scale-bar {
-  bottom: 0.5em;
-  left: 0.5em;
-}
-
-.ol-attribution {
-  bottom: 2.5em;
-}
-
-.layer._topogr__00e0fic-__0028_i_c_g_c__0029,
-.layer._ortofoto-__0028_i_c_g_c__0029 {
-  display: none !important;
-}
-
+/*
+ * responsive
+ * ************************/
 .ol-touch .ol-control.ol-bar.ol-top.ol-right, .ol-touch .ol-control.ol-bar.ol-top.ol-right {
   top: 0;
 }

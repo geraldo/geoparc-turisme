@@ -11,19 +11,17 @@
     "datatables.net": "^1.13.1",
     "datatables.net-dt": "^1.13.1",
     "font-awesome": "^4.7.0",
-    "font-gis": "^1.0.5",
-    "i18next": "^22.4.5",
-    "jquery": "^3.6.1",
+    "i18next": "^22.4.9",
+    "jquery": "^3.6.3",
     "js-cookie": "^3.0.1",
     "ol": "latest",
-    "ol-ext": "^4.0.3",
+    "ol-ext": "^4.0.4",
     "ol-layerswitcher": "latest",
     "ol-popup": "^5.0.0",
-    "proj4": "^2.8.0",
-    "vue": "^3.2.41"
+    "vue": "^3.2.45"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.1.2",
-    "vite": "^3.1.8"
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.0.4"
   }
 }
