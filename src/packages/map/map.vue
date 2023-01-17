@@ -1414,7 +1414,7 @@ h3 {
 .window.layersWindow {
   height: calc(100% - 35px);
   overflow: scroll;
-  z-index: 11;
+  z-index: 12;
 }
 
 #windowLayers {
@@ -1425,7 +1425,7 @@ h3 {
   width: 90%;
   top: 100px;
   right: 50px;
-  z-index: 11;
+  z-index: 12;
 }
 #pois-table,
 #rutas-table {
@@ -1617,7 +1617,7 @@ img.leyenda.off {
   transform: none !important;
   bottom: 20px;
   left: 100px;
-  z-index: 2;
+  z-index: 12;
   width: calc(100% - 200px);
   max-width: 900px;
 }
