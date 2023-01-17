@@ -1050,7 +1050,7 @@
             { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.Georuta")},
             { "data": "properties.tematica_1_" + pageData.lang, "title" : i18next.t("dtPoi.Temática")},
             { "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.Tipus")},
-            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
+            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],
         }).on( 'init.dt', function () {
           $("#datatable-pois .link").click(function() {
@@ -1080,7 +1080,7 @@
             { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.Distancia"), "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
             { "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.Tipología")},
             { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.Modalitat")},
-            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "'>" + data + "</a>" : ""; }},
+            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],
         }).on( 'init.dt', function () {
           $("#datatable-rutas .link").click(function() {
