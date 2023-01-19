@@ -1718,7 +1718,7 @@ img.leyenda.off {
   }
 
   .ol-control.ol-layerswitcher-image {
-    bottom: 0.5em;
+    bottom: 2.5em;
     top: auto !important;
     left: auto;
     right: 0.5em;
@@ -1759,6 +1759,14 @@ img.leyenda.off {
 
   .ol-zoom {
     top: 7.5em;
+  }
+
+  .ol-scale-bar {
+    bottom: 2.5em;
+  }
+
+  .ol-attribution {
+    bottom: 4.5em;
   }
 }
 </style>
