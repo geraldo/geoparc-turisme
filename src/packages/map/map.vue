@@ -1588,43 +1588,43 @@ img.leyenda.off {
  * tooltip, popup
  * ************************/
 .ol-popup {
-    display: none;
-    position: absolute;
-    background-color: white;
-    padding: 15px;
-    border: 1px solid #cccccc;
-    bottom: 12px;
-    left: -50px;
+  display: none;
+  position: absolute;
+  background-color: white;
+  padding: 15px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
 }
 
 .featureTooltip .ol-popup:after, .featureTooltip .ol-popup:before {
-    top: 100%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
 
 .featureTooltip .ol-popup:after {
-    border-top-color: white;
-    border-width: 10px;
-    left: 48px;
-    margin-left: -10px;
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
 }
 
 .featureTooltip .ol-popup:before {
-    border-top-color: #cccccc;
-    border-width: 11px;
-    left: 48px;
-    margin-left: -11px;
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
 }
 
 .ol-popup-content {
-    min-width: 200px;
-    max-height: 450px;
-    overflow-x: auto;
+  min-width: 200px;
+  max-height: 450px;
+  overflow-x: auto;
 }
 
 .ol-popup-content h2 {
@@ -1650,7 +1650,7 @@ img.leyenda.off {
 }
 
 .featureTooltip {
-  z-index: 3;
+  z-index: 13;
 }
 
 .featurePopup img {
