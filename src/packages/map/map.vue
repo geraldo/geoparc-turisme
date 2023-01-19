@@ -1072,7 +1072,7 @@
             { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],
         }).on( 'init.dt', function () {
-          $("#datatable-pois .link").click(function() {
+          $("#datatable-pois").on("click", ".link", function() {
             $(".tableWindow").hide();
             //console.log($(this).data("coords"));
             pageData.map.getView().animate({zoom: 15, center: fromLonLat($(this).data("coords")), duration: 2000});
@@ -1102,7 +1102,7 @@
             { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],
         }).on( 'init.dt', function () {
-          $("#datatable-rutas .link").click(function() {
+          $("#datatable-rutas").on("click", ".link", function() {
             $(".tableWindow").hide();
             //console.log($(this).data("coords"));
             pageData.map.getView().fit(transformExtent($(this).data("coords"), "EPSG:4326", "EPSG:3857"), {
