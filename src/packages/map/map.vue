@@ -11,7 +11,7 @@
   <div id="windowTablePois" class="window">
     <h2>
       <i class="fa fa-map-marker"></i>
-      <span class="title">Llistat POIs</span>
+      <span class="title">Punts de interès</span>
     </h2>
     <div class="content">
       <div id="datatable-pois"></div>
@@ -21,7 +21,7 @@
   <div id="windowTableRutas" class="window">
     <h2>
       <i class="fa fa-map-o"></i>
-      <span class="title">Llistat Georutes</span>
+      <span class="title">Rutes recomanades</span>
     </h2>
     <div class="content">
       <div id="datatable-rutas"></div>
@@ -85,20 +85,20 @@
     "Zona de bany": "zona_bany",
     "Vol en Globus": "globus",
     "Via Ferrata": "viaferrata",
-    "Telefèric": "teleferic",
     "Rafting": "rafting",
     "Parapent": "parapent",
-    "Mirador": "mirador",
-    "Lloc interès Geoparc": "lloc_interes_geoparc",
-    "Jaciment arqueològic": "jacimentarqueologic",
-    "Informació turística": "info_turistica",
-    "Exposició a l'aire lliure": "establiment_recomanat_2",
+    "Caiac": "caiac",
+    "Telefèric": "teleferic",
     "Establiment recomanat": "establiment_recomanat_1",
-    "Església": "esglesia",
+    "Mirador": "mirador",
+    "Exposició a l'aire lliure": "establiment_recomanat_2",
     "Cova visitable": "cova_visitable",
-    "Centre d'Interpretació": "centre_interpretacio",
+    "Església": "esglesia",
     "Castell": "castell",
-    "Caiac": "caiac"
+    "Jaciment arqueològic": "jacimentarqueologic",
+    "Lloc interès Geoparc": "lloc_interes_geoparc",
+    "Informació turística": "info_turistica",
+    "Centre d'Interpretació": "centre_interpretacio"
   };
   const tipologiasRuta = {
     "Ruta en bicicleta": "Ruta en bicicleta",
@@ -304,7 +304,7 @@
           fold: 'open'
         }),
         qgisWfsLayersRuta: new LayerGroup({
-          title: 'Georutes',
+          title: 'Rutes recomanades',
           fold: 'close'
         }),
         poisLayers: [],
@@ -380,7 +380,7 @@
         }),
         tableTogglePois: new Toggle({ 
           html: '<i class="fa fa-map-marker fa-lg"></i>',
-          title: 'Llistat POIs',
+          title: 'Punts de interès',
           className: "tableTogglePois",
           onToggle: function(active) {
             if (active) {
@@ -395,7 +395,7 @@
         }),
         tableToggleRutas: new Toggle({ 
           html: '<i class="fa fa-map-o fa-lg"></i>',
-          title: 'Llistat Georutes',
+          title: 'Rutes recomanades',
           className: "tableToggleRutas",
           onToggle: function(active) {
             if (active) {
@@ -449,7 +449,7 @@
                 loadWfsLayerPoi(tipo);
               }
             }
-            else if (layer.name === "Georutes") {
+            else if (layer.name === "Rutes recomanades") {
               for (const tipo in tipologiasRuta) {
                 loadWfsLayerRuta(tipo);
               }
@@ -533,13 +533,13 @@
           vectorial: true,
           source: new VectorSource({
             format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipologia_cat=' + tipologia
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipologia_cat=' + tipologia
           }),
           style: rutaStyleFunction
         });
         pageData.rutasLayers.push(vectorLayer);
 
-        /*fetch("js/data/Georutes.sld")
+        /*fetch("js/data/Rutes recomanades.sld")
           .then(response => response.text())
           .then(sld => applyVectorStyle(vectorLayer, sld));*/
       }
@@ -669,7 +669,14 @@
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p><p>Web: <a target="_blank" href="' + web + '">' + web + '</a></p></div>');
+
+            let htmlStr = '<div><h2>' + title + '</h2>';
+            htmlStr += description ? '<p>' + description + '</p>' : '';
+            htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
+            htmlStr += autor ? '<p>' + i18next.t("dtRuta.Autor") + ': ' + autor + '</p>' : '';
+            htmlStr += web ? '<p>' + i18next.t("dtRuta.Web") + ': <a target="_blank" href="' + web + '">' + web + '</a></p>' : '';
+            htmlStr += '</div>';
+            pageData.popup.show(evt.coordinate, htmlStr);
             pageData.tooltip.hide();
           }
           else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
@@ -704,7 +711,18 @@
             }, {
               hitTolerance: 5
             });
-            pageData.popup.show(evt.coordinate, '<div><h2>' + title + '</h2><p>' + description + '</p><img src="fotos/' + foto + '"/><p>Autor: ' + autor + '</p><p>Distancia: ' + distancia + '</br>Desnivel: ' + desnivel + '</br>Tipología: ' + tipologia + '</br>Modalidad: ' + modalidad + '</br>Dificultad: ' + dificultad + '</p><p>Web: <a target="_blank" href="' + web + '">' + web + '</a></p></div>');
+            let htmlStr = '<div><h2>' + title + '</h2>';
+            htmlStr += description ? '<p>' + description + '</p>' : '';
+            htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
+            htmlStr += autor ? '<p>' + i18next.t("dtRuta.Autor") + ': ' + autor + '</p>' : '';
+            htmlStr += distancia ? '<p>' + i18next.t("dtRuta.Distancia") + ': ' + distancia + '</br>' : '';
+            htmlStr += desnivel ? i18next.t("dtRuta.Desnivell") + ': ' + desnivel + '</br>' : '';
+            htmlStr += tipologia ? i18next.t("dtRuta.Tipologia") + ': ' + tipologia + '</br>' : '';
+            htmlStr += modalidad ? i18next.t("dtRuta.Modalitat") + ': ' + modalidad + '</br>' : '';
+            htmlStr += dificultad ? i18next.t("dtRuta.Dificultat") + ': ' + dificultad + '</p>' : '';
+            htmlStr += web ? '<p>' + i18next.t("dtRuta.Web") + ': <a target="_blank" href="' + web + '">' + web + '</a></p>' : '';
+            htmlStr += '</div>';
+            pageData.popup.show(evt.coordinate, htmlStr);
             pageData.tooltip.hide();
           }
           else
@@ -1068,7 +1086,7 @@
           responsible: true,
           search: true,
           ajax: { 
-            url :"https://mapa.psig.es/qgisserver/wfs3/collections/Georutes/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000", type : "GET",
+            url :"https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000", type : "GET",
             dataSrc: 'features'
           },
           columns: [
@@ -1078,7 +1096,7 @@
             { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.Desnivell")},
             { "data": "properties.dificultat_" + pageData.lang, "title" : i18next.t("dtRuta.Dificultat")},
             { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.Distancia"), "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
-            { "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.Tipología")},
+            { "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.Tipologia")},
             { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.Modalitat")},
             { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],

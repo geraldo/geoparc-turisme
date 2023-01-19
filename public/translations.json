@@ -3,12 +3,12 @@
     "translation": {
       "gui": {
         "windowLayersTitle": "Gestor de capes",
-        "windowTablePoisTitle": "Llistat POIs",
-        "windowTableRutasTitle": "Llistat Georutes"
+        "windowTablePoisTitle": "Punts de interès",
+        "windowTableRutasTitle": "Rutes recomanades"
       },
       "switcher": {
         "wfsGroupPoi": "Punts de interès",
-        "wfsGroupRuta": "Georutes",
+        "wfsGroupRuta": "Rutes recomanades",
         "wmsGroup": "Capes temàtiques",
         "wmsGroup1": "Reserva Starlight",
         "wmsGroup2": "Xarxa Natura 2000",
@@ -31,10 +31,11 @@
         "Nom": "Nom",
         "Descripcio": "Descripció",
         "Imatge": "Imatge",
+        "Autor": "Autor",
         "Desnivell": "Desnivell [m]",
         "Dificultat": "Dificultat",
         "Distancia": "Distancia [km]",
-        "Tipología": "Tipología",
+        "Tipologia": "Tipología",
         "Modalitat": "Modalitat",
         "Web": "Web"
       }
@@ -44,8 +45,8 @@
     "translation": {
       "gui": {
         "windowLayersTitle": "Gestor de capas",
-        "windowTablePoisTitle": "Listado POIs",
-        "windowTableRutasTitle": "Listado Georutas"
+        "windowTablePoisTitle": "Puntos de interés",
+        "windowTableRutasTitle": "Rutas recomendadas"
       },
       "switcher": {
         "wfsGroupPoi": "Puntos de interés",
@@ -63,6 +64,7 @@
         "Nom": "Nombre",
         "Descripcio": "Descripción",
         "Imatge": "Imagen",
+        "Autor": "Autor",
         "Georuta": "Georuta",
         "Temática": "Temática",
         "Tipus": "Tipo",
@@ -72,10 +74,11 @@
         "Nom": "Nombre",
         "Descripcio": "Descripción",
         "Imatge": "Imagen",
+        "Autor": "Autor",
         "Desnivell": "Desnivel [m]",
         "Dificultat": "Dificultad",
         "Distancia": "Distancia [km]",
-        "Tipología": "Tipología",
+        "Tipologia": "Tipología",
         "Modalitat": "Modalitad",
         "Web": "Web"
       }
