@@ -212,7 +212,7 @@
           };
           li.appendChild(input);
           label.htmlFor = checkboxId;
-          if (!input.checked) fa += ' off';
+          if (!input.checked) fa += '-slash';
         }
         label.innerHTML =  fa + '"/> ' + lyrTitle;
         li.appendChild(label);
@@ -1536,6 +1536,7 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 }
 
 .fa-eye.off,
+.fa-eye-slash,
 .layer-switcher label.off {
   color: #aaa;
 }
@@ -1718,7 +1719,7 @@ img.leyenda.off {
   }
 
   .ol-control.ol-layerswitcher-image {
-    bottom: 2.5em;
+    bottom: 3.5em;
     top: auto !important;
     left: auto;
     right: 0.5em;
@@ -1762,11 +1763,11 @@ img.leyenda.off {
   }
 
   .ol-scale-bar {
-    bottom: 2.5em;
+    bottom: 3.5em;
   }
 
   .ol-attribution {
-    bottom: 4.5em;
+    bottom: 5.5em;
   }
 }
 </style>
