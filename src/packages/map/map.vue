@@ -595,6 +595,7 @@
             pageData.qgisWfsLayersPoi
           ],
           view: new View({
+            enableRotation: false,
             center: fromLonLat([pageData.center[0].lng, pageData.center[0].lat]),
             zoom: 10,
             minZoom: 9,
