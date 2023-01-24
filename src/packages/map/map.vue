@@ -91,14 +91,14 @@
     "Telefèric": "teleferic",
     "Establiment recomanat": "establiment_recomanat_1",
     "Mirador": "mirador",
-    "Exposició a l'aire lliure": "establiment_recomanat_2",
+    "Exposició a l'aire lliure": "exposicio_aire_lliure", // exposicio_aire_lliure
     "Cova visitable": "cova_visitable",
     "Església": "esglesia",
     "Castell": "castell",
     "Jaciment arqueològic": "jacimentarqueologic",
     "Lloc interès Geoparc": "lloc_interes_geoparc",
     "Informació turística": "info_turistica",
-    "Centre d'Interpretació": "centre_interpretacio"
+    "Centre d'Interpretació": "centre_interpretacio" // centre_interpretacio
   };
   const tipologiasRuta = {
     "Ruta en bicicleta": "Ruta en bicicleta",
@@ -180,6 +180,7 @@
             label = document.createElement('label');
 
       if (lyr instanceof LayerGroup && !lyr.get('combine')) {
+        // group
         li.classList.add('group');
         const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
         if (isBaseGroup) {
@@ -221,7 +222,8 @@
         LayerSwitcherWithLegend.renderLayers_(map, lyr, ul, options, render);
       }
       else {
-        li.className = 'layer ' + makeSafeForCSS(lyr.get('title'));
+        // layer
+        li.className = 'layer ' + makeSafeForCSS(lyrTitle);
         const input = document.createElement('input');
         if (lyr.get('type') === 'base') {
           input.type = 'radio';
@@ -233,6 +235,7 @@
         input.checked = lyr.get('visible');
         input.indeterminate = lyr.get('indeterminate');
         input.onchange = function (e) {
+          console.log(lyrTitle);
           const target = e.target;
           LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
           render(lyr);
@@ -246,7 +249,7 @@
           if (!input.checked) simbol.className += ' off';
           let icon = tipusPoi[lyrTitle];
           if (icon === undefined || icon === "undefined")
-            icon = lyr.get('title');
+            icon = lyrTitle;
           simbol.src = 'icons/' + icon + '.png'
           li.appendChild(simbol);
         }
@@ -543,13 +546,17 @@
       }
 
       function loadWfsLayerPoi(tipologia) {
+        let tipo = tipologia;
+        if (tipologia === "Exposició a l'aire lliure") tipo = tipusPoi["Exposició a l'aire lliure"];
+        else if (tipologia === "Centre d'Interpretació") tipo = tipusPoi["Centre d'Interpretació"];
+
         let vectorLayer = new VectorLayer({
           title: tipologia,
           vectorial: true,
           type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipus_cat=' + tipologia
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipus_cat=' + tipo
           }),
           style: iconStyleFunction
         });
@@ -849,11 +856,16 @@
        * WFS styles
        *****************************************/
       function iconStyleFunction(feature, resolution) {
+        let tipus = feature.get('tipus_cat');
+        let icon = tipusPoi[tipus];
+        if (tipus === "exposicio_aire_lliure") icon = "exposicio_aire_lliure";
+        else if (tipus === "centre_interpretacio") icon = "centre_interpretacio";
+
         //console.log(feature.get('nom_cat'), tipusPoi[feature.get('tipus_cat')], feature.getGeometry().getCoordinates());
         return new Style({
           image: new Icon({
             size: [20, 20],
-            src: "icons/" + tipusPoi[feature.get('tipus_cat')] + ".png"
+            src: "icons/" + icon + ".png"
           })
         });
       }
