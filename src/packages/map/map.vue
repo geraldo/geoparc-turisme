@@ -192,7 +192,6 @@
           li.classList.add('layer-switcher-' + lyr.get('fold'));
           const btn = document.createElement('button');
           btn.onclick = function (e) {
-            console.log(lyr, li);
             const evt = e || window.event;
             LayerSwitcher.toggleFold_(lyr, li);
             evt.preventDefault();
@@ -235,7 +234,6 @@
         input.checked = lyr.get('visible');
         input.indeterminate = lyr.get('indeterminate');
         input.onchange = function (e) {
-          console.log(lyrTitle);
           const target = e.target;
           LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
           render(lyr);
@@ -250,7 +248,8 @@
           let icon = tipusPoi[lyrTitle];
           if (icon === undefined || icon === "undefined")
             icon = lyrTitle;
-          simbol.src = 'icons/' + icon + '.png'
+          //simbol.src = 'icons/' + icon + '.png';
+          simbol.src = 'simbols/' + icon + '.svg';
           li.appendChild(simbol);
         }
 
@@ -864,8 +863,11 @@
         //console.log(feature.get('nom_cat'), tipusPoi[feature.get('tipus_cat')], feature.getGeometry().getCoordinates());
         return new Style({
           image: new Icon({
-            size: [20, 20],
-            src: "icons/" + icon + ".png"
+            //size: [20, 20],
+            //imgSize: [20, 20],
+            //src: "icons/" + icon + ".png"
+            scale: 0.06,
+            src: "simbols/" + icon + ".svg"
           })
         });
       }
