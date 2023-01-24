@@ -19,25 +19,27 @@
         "baseGroupOrto": "Ortofoto (ICGC)"
       },
       "dtPoi": {
-        "Nom": "Nom",
-        "Descripcio": "Descripció",
-        "Imatge": "Imatge",
-        "Georuta": "Georuta",
-        "Temática": "Temática",
-        "Tipus": "Tipus",
-        "Web": "Web"
+        "nom": "Nom",
+        "Ddscripcio": "Descripció",
+        "imatge": "Imatge",
+        "georuta": "Georuta",
+        "temática": "Temática",
+        "tipus": "Tipus",
+        "web": "Web",
+        "link": "Més informació"
       },
       "dtRuta": {
-        "Nom": "Nom",
-        "Descripcio": "Descripció",
-        "Imatge": "Imatge",
-        "Autor": "Autor",
-        "Desnivell": "Desnivell [m]",
-        "Dificultat": "Dificultat",
-        "Distancia": "Distancia [km]",
-        "Tipologia": "Tipología",
-        "Modalitat": "Modalitat",
-        "Web": "Web"
+        "nom": "Nom",
+        "descripcio": "Descripció",
+        "imatge": "Imatge",
+        "autor": "Foto",
+        "desnivell": "Desnivell [m]",
+        "dificultat": "Dificultat",
+        "distancia": "Distancia [km]",
+        "tipologia": "Tipología",
+        "modalitat": "Modalitat",
+        "web": "Web",
+        "link": "Més informació"
       }
     }
   },
@@ -61,26 +63,28 @@
         "baseGroupOrto": "Ortofoto (ICGC)"
       },
       "dtPoi": {
-        "Nom": "Nombre",
-        "Descripcio": "Descripción",
-        "Imatge": "Imagen",
-        "Autor": "Autor",
-        "Georuta": "Georuta",
-        "Temática": "Temática",
-        "Tipus": "Tipo",
-        "Web": "Web"
+        "nom": "Nombre",
+        "descripcio": "Descripción",
+        "imatge": "Imagen",
+        "autor": "Foto",
+        "georuta": "Georuta",
+        "temática": "Temática",
+        "tipus": "Tipo",
+        "web": "Web",
+        "link": "Més informació"
       },
       "dtRuta": {
-        "Nom": "Nombre",
-        "Descripcio": "Descripción",
-        "Imatge": "Imagen",
-        "Autor": "Autor",
-        "Desnivell": "Desnivel [m]",
-        "Dificultat": "Dificultad",
-        "Distancia": "Distancia [km]",
-        "Tipologia": "Tipología",
-        "Modalitat": "Modalitad",
-        "Web": "Web"
+        "nom": "Nombre",
+        "descripcio": "Descripción",
+        "imatge": "Imagen",
+        "autor": "Autor",
+        "desnivell": "Desnivel [m]",
+        "dificultat": "Dificultad",
+        "distancia": "Distancia [km]",
+        "tipologia": "Tipología",
+        "modalitat": "Modalitad",
+        "web": "Web",
+        "link": "Més informació"
       }
     }
   }

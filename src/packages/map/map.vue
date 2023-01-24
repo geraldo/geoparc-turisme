@@ -711,8 +711,8 @@
             let htmlStr = '<div><h2>' + title + '</h2>';
             htmlStr += description ? '<p>' + description + '</p>' : '';
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
-            htmlStr += autor ? '<p>' + i18next.t("dtRuta.Autor") + ': ' + autor + '</p>' : '';
-            htmlStr += web ? '<p>' + i18next.t("dtRuta.Web") + ': <a target="_blank" href="' + web + '">' + web + '</a></p>' : '';
+            htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
+            htmlStr += web ? '<p><a target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
             htmlStr += '</div>';
             pageData.popup.show(evt.coordinate, htmlStr);
             pageData.tooltip.hide();
@@ -752,13 +752,13 @@
             let htmlStr = '<div><h2>' + title + '</h2>';
             htmlStr += description ? '<p>' + description + '</p>' : '';
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
-            htmlStr += autor ? '<p>' + i18next.t("dtRuta.Autor") + ': ' + autor + '</p>' : '';
-            htmlStr += distancia ? '<p>' + i18next.t("dtRuta.Distancia") + ': ' + distancia + '</br>' : '';
-            htmlStr += desnivel ? i18next.t("dtRuta.Desnivell") + ': ' + desnivel + '</br>' : '';
-            htmlStr += tipologia ? i18next.t("dtRuta.Tipologia") + ': ' + tipologia + '</br>' : '';
-            htmlStr += modalidad ? i18next.t("dtRuta.Modalitat") + ': ' + modalidad + '</br>' : '';
-            htmlStr += dificultad ? i18next.t("dtRuta.Dificultat") + ': ' + dificultad + '</p>' : '';
-            htmlStr += web ? '<p>' + i18next.t("dtRuta.Web") + ': <a target="_blank" href="' + web + '">' + web + '</a></p>' : '';
+            htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
+            htmlStr += distancia ? '<p>' + i18next.t("dtRuta.distancia") + ': ' + distancia + '</br>' : '';
+            htmlStr += desnivel ? i18next.t("dtRuta.desnivell") + ': ' + desnivel + '</br>' : '';
+            htmlStr += tipologia ? i18next.t("dtRuta.tipologia") + ': ' + tipologia + '</br>' : '';
+            htmlStr += modalidad ? i18next.t("dtRuta.modalitat") + ': ' + modalidad + '</br>' : '';
+            htmlStr += dificultad ? i18next.t("dtRuta.dificultat") + ': ' + dificultad + '</p>' : '';
+            htmlStr += web ? '<p><a target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
             htmlStr += '</div>';
             pageData.popup.show(evt.coordinate, htmlStr);
             pageData.tooltip.hide();
@@ -1100,13 +1100,13 @@
             dataSrc: 'features'
           },
           columns: [
-            { "data": "properties.nom_" + pageData.lang, "title" : i18next.t("dtPoi.Nom"), "render": function ( data, type, row ) { return "<span class='link' data-coords='[" + row.geometry.coordinates + "]'>" + data + "</span>"; }},
-            { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtPoi.Descripcio")},
-            { "data": "properties.imatge_1", "title" : i18next.t("dtPoi.Imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
-            { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.Georuta")},
-            { "data": "properties.tematica_1_" + pageData.lang, "title" : i18next.t("dtPoi.Temática")},
-            { "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.Tipus")},
-            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
+            { "data": "properties.nom_" + pageData.lang, "title" : i18next.t("dtPoi.nom"), "render": function ( data, type, row ) { return "<span class='link' data-coords='[" + row.geometry.coordinates + "]'>" + data + "</span>"; }},
+            { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtPoi.descripcio")},
+            { "data": "properties.imatge_1", "title" : i18next.t("dtPoi.imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
+            { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.georuta")},
+            { "data": "properties.tematica_1_" + pageData.lang, "title" : i18next.t("dtPoi.temática")},
+            { "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.tipus")},
+            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],
         }).on( 'init.dt', function () {
           $("#datatable-pois").on("click", ".link", function() {
@@ -1128,15 +1128,15 @@
             dataSrc: 'features'
           },
           columns: [
-            { "data": "properties.georuta_" + pageData.lang, "title" : i18next.t("dtRuta.Nom"), "render": function ( data, type, row ) { return "<span class='link' data-coords='" + JSON.stringify(row.bbox) + "'>" + data + "</span>"; }},
-            { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtRuta.Descripcio")},
-            { "data": "properties.imatge_1", "title" : i18next.t("dtRuta.Imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
-            { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.Desnivell")},
+            { "data": "properties.georuta_" + pageData.lang, "title" : i18next.t("dtRuta.nom"), "render": function ( data, type, row ) { return "<span class='link' data-coords='" + JSON.stringify(row.bbox) + "'>" + data + "</span>"; }},
+            { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtRuta.descripcio")},
+            { "data": "properties.imatge_1", "title" : i18next.t("dtRuta.imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
+            { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.desnivell")},
             { "data": "properties.dificultat_" + pageData.lang, "title" : i18next.t("dtRuta.Dificultat")},
-            { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.Distancia"), "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
-            { "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.Tipologia")},
-            { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.Modalitat")},
-            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.Web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
+            { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.distancia"), "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
+            { "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.tipologia")},
+            { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.modalitat")},
+            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],
         }).on( 'init.dt', function () {
           $("#datatable-rutas").on("click", ".link", function() {
@@ -1620,6 +1620,10 @@ img.leyenda.off {
 .layer._ortofoto-__0028_i_c_g_c__0029,
 .layer._openstreetmap {
   display: none !important;
+}
+
+.autor {
+  float: right;
 }
 
 /*
