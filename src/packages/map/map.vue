@@ -861,15 +861,24 @@
         else if (tipus === "centre_interpretacio") icon = "centre_interpretacio";
 
         //console.log(feature.get('nom_cat'), tipusPoi[feature.get('tipus_cat')], feature.getGeometry().getCoordinates());
-        return new Style({
-          image: new Icon({
-            //size: [20, 20],
-            //imgSize: [20, 20],
-            //src: "icons/" + icon + ".png"
-            scale: 0.06,
-            src: "simbols/" + icon + ".svg"
+        return [
+          new Style({
+            image: new Circle({
+              fill: new Fill({
+                color: "rgba(255,255,0,0.8)"
+              }),
+              radius: 16
+            })
+          }),
+          new Style({
+            image: new Icon({
+              //size: [20, 20],
+              //src: "icons/" + icon + ".png"
+              scale: 0.06,
+              src: "simbols/" + icon + ".svg"
+            })
           })
-        });
+        ]
       }
 
       function iconHighlightStyleFunction(feature, resolution) {
