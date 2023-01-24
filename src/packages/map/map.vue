@@ -39,29 +39,28 @@
 
   import { Map, View, Feature, Collection, Overlay as OverlayOL } from 'ol';
   import {
+    OSM,
     Cluster,
-    OSM, 
     XYZ as xyzSource,
     Vector as VectorSource, 
     TileWMS,
-    TileArcGISRest
+    VectorTile as VectorTileSource
   } from 'ol/source';
   import {
     Group as LayerGroup,
     Tile as TileLayer, 
-    Vector as VectorLayer
+    Vector as VectorLayer,
+    VectorTile
   } from 'ol/layer';
   import { ScaleLine, FullScreen, defaults as defaultControls } from 'ol/control';
   import { Point, Polygon, LineString, Geometry } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
-  import { register } from 'ol/proj/proj4';
+  //import { register } from 'ol/proj/proj4';
   import { get as getProjection, getPointResolution, fromLonLat, toLonLat, transformExtent, METERS_PER_UNIT } from 'ol/proj';
   import { getLength, getArea } from 'ol/sphere';
   import { unByKey } from 'ol/Observable';
   import { easeOut } from 'ol/easing';
-  import { 
-    GeoJSON,
-  } from 'ol/format';
+  import { GeoJSON, MVT } from 'ol/format';
   import { Select } from 'ol/interaction';
   import { pointerMove } from 'ol/events/condition';
 
@@ -72,10 +71,11 @@
   import GeolocationButton from 'ol-ext/control/GeolocationButton';
   import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
 
+  //import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
   import LayerSwitcher from 'ol-layerswitcher';
   import Popup from 'ol-popup';
   //import SLDReader from '@nieuwlandgeo/sldreader';
-  import proj4 from 'proj4';
+  //import proj4 from 'proj4';
   import $ from 'jquery';
   import Cookies from 'js-cookie';
   import i18next from 'i18next';
@@ -333,8 +333,8 @@
           title: 'Topogràfic (ICGC)',
           baseLayer: true,
           combine: true,
+          visible: false,
           layers: [
-
             new TileLayer({
               minZoom: 14,
               source: new xyzSource({
@@ -342,7 +342,6 @@
                 attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
                })
             }),
-
             new TileLayer({
               maxZoom: 14,
               source: new xyzSource({
@@ -352,6 +351,39 @@
             })
           ]
         }),
+        /*baseLayerVector: new MapLibreLayer({
+          title: 'Topogràfic (ICGC)',
+          baseLayer: true,
+          visible: false,
+          maplibreOptions: {
+            style: "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_estandard.json",
+          }
+        }),*/
+        baseLayerContext: new TileLayer({
+          title: 'Topogràfic (ICGC)',
+          baseLayer: true,
+          source: new xyzSource({
+            maxZoom: 19,
+            url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/{z}/{x}/{y}.png",
+            attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
+            /*projection: 'EPSG:3857',
+            params: {
+              'LAYERS': name,
+              'TRANSPARENT': true,
+              'VERSION': '1.3.0',
+              'MAP': pageData.qgisProjectFile
+            },
+            serverType: 'qgis',
+            crossOrigin: 'Anonymous',*/
+          })
+        }),
+        baseLayerOSM: new TileLayer({
+          title: 'Openstreetmap',
+          baseLayer: true,
+          visible: false,
+          source: new OSM()
+        }),
+
         /*baseLayers: new LayerGroup({
           title: 'Capes de referència',
           fold: 'close'
@@ -589,6 +621,8 @@
             //pageData.baseLayers,
             pageData.baseLayerOrto,
             pageData.baseLayerTopo,
+            pageData.baseLayerContext,
+            pageData.baseLayerOSM,
             pageData.qgisWmsLayers,
             pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
@@ -604,6 +638,9 @@
             extent: [25000, 5100000, 200000, 5280000]
           }),
         });
+
+        //olms(pageData.map, "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_estandard.json");
+        //olms(pageData.map, "./myICGCstyle.json");
 
         //pageData.baseLayers.setLayers(new Collection([pageData.baseLayerOrto,pageData.baseLayerTopo]));
         pageData.map.addControl(new LayerSwitcherImage({
@@ -1580,7 +1617,8 @@ img.leyenda.off {
 }
 
 .layer._topogr__00e0fic-__0028_i_c_g_c__0029,
-.layer._ortofoto-__0028_i_c_g_c__0029 {
+.layer._ortofoto-__0028_i_c_g_c__0029,
+.layer._openstreetmap {
   display: none !important;
 }
 
