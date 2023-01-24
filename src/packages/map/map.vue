@@ -240,7 +240,7 @@
         li.appendChild(input);
 
         // show legend image
-        if (lyr.get("type") !== "base") {
+        if (lyr.get("type") === "layer") {
           let simbol = document.createElement('img');
           simbol.className = 'leyenda';
           if (!input.checked) simbol.className += ' off';
@@ -546,6 +546,7 @@
         let vectorLayer = new VectorLayer({
           title: tipologia,
           vectorial: true,
+          type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
             url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipus_cat=' + tipologia
@@ -563,6 +564,7 @@
         let vectorLayer = new VectorLayer({
           title: tipologia,
           vectorial: true,
+          type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
             url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipologia_cat=' + tipologia
@@ -1066,6 +1068,8 @@
         initDtPois();
         initDtRutes();
 
+        pageData.popup.hide();
+
         // menu
         pageData.tableTogglePois.setTitle(i18next.t('gui.windowTablePoisTitle'));
         pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
@@ -1132,7 +1136,7 @@
             { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtRuta.descripcio")},
             { "data": "properties.imatge_1", "title" : i18next.t("dtRuta.imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
             { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.desnivell")},
-            { "data": "properties.dificultat_" + pageData.lang, "title" : i18next.t("dtRuta.Dificultat")},
+            { "data": "properties.dificultat_" + pageData.lang, "title" : i18next.t("dtRuta.dificultat")},
             { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.distancia"), "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
             { "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.tipologia")},
             { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.modalitat")},

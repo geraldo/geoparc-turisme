@@ -20,7 +20,7 @@
       },
       "dtPoi": {
         "nom": "Nom",
-        "Ddscripcio": "Descripció",
+        "descripcio": "Descripció",
         "imatge": "Imatge",
         "georuta": "Georuta",
         "temática": "Temática",
