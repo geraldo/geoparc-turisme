@@ -70,21 +70,9 @@
   import { ref, reactive, shallowReactive, toRefs, toRef, onMounted, onBeforeUnmount } from 'vue';
 
   import { Map, View, Feature, Collection, Overlay as OverlayOL } from 'ol';
-  import {
-    OSM,
-    Cluster,
-    XYZ as xyzSource,
-    Vector as VectorSource, 
-    TileWMS,
-    VectorTile as VectorTileSource
-  } from 'ol/source';
-  import {
-    Group as LayerGroup,
-    Tile as TileLayer, 
-    Vector as VectorLayer,
-    VectorTile
-  } from 'ol/layer';
-  import { ScaleLine, FullScreen, defaults as defaultControls } from 'ol/control';
+  import { OSM, Cluster, XYZ as xyzSource, Vector as VectorSource, TileWMS, VectorTile as VectorTileSource } from 'ol/source';
+  import { Group as LayerGroup, Tile as TileLayer, Vector as VectorLayer, VectorTile } from 'ol/layer';
+  import { ScaleLine, FullScreen, defaults as defaultControls, Control } from 'ol/control';
   import { Point, Polygon, LineString, Geometry } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
   //import { register } from 'ol/proj/proj4';
@@ -150,6 +138,37 @@
       });
     else
       return "";
+  }
+
+  /*
+   * LayerControl extended with legends
+   *****************************************/
+  class LayerControl extends Control {
+    /**
+     * @param {Object} [opt_options] Control options.
+     */
+    constructor(opt_options) {
+      const options = opt_options || {};
+
+      const button = document.createElement('button');
+      button.innerHTML = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5AUMDDgneLgzCAAAAZpJREFUOMvVkz1r21AUhg+UkmjIL0i89wdkMoL7P2xkkWzNWNzNJqPdgD8oZOhu8AfEYLvOoiVguLYRBIFyh2jRavCFK9mC+CLI26FLCG6cJlDosx0O54FzeA/Rv8IwjH3DMPbfJTFNM+u6LlzXhWma2TdJBoPBVyklADwCeJRSYjwef/kbx5HneddpmuI5aZrC87xrIjp60VCtVo9931fYge/7qlKpHG+V2LZ9ulqt8FriOIZt26dbZb1e70prvVOitUa/32+/uF6z2TyXUsZ/kiyXy7jRaJw/n/vwtCgWiz8Wi8Xler3+vtlsPmcymY9P+5zzh8lk8kkIcccY+8Y5/7ntRidKKSilVKlUOiMimk6nN3EcI4oicM5viIjK5fKZ+g0KhcLJ1rXq9boZhmGktUa73b4iIhqNRtZwOLSIiFqt1kBrjTAMo1qtZu7K0eF8Pr8FAMdx7i3L2rMsa89xnHsAmM1mt0R0+OpUdrvdiyRJEARBGgRBmiQJOp3OxZveJJ/PZ4UQEEIgl8tl3/W4jLEDxtgB/Xf8Asr2eTvgMHELAAAAAElFTkSuQmCC"/>';
+
+      const element = document.createElement('div');
+      element.className = 'layer-control ol-unselectable ol-control open';
+      element.appendChild(button);
+
+      super({
+        element: element,
+        target: options.target,
+      });
+
+      button.addEventListener('click', this.handleLayerControl.bind(this), false);
+    }
+
+    handleLayerControl() {
+      $(".layersWindow").toggleClass("open");
+      $(".layer-control").toggleClass("open");
+    }
   }
 
   /*
@@ -429,24 +448,6 @@
         windowTableRutas: null,
         windowInfo: null,
 
-        layersToggle: new Toggle({ 
-          html: '<i class="fa fa-arrow-circle-right fa-lg"></i>',
-          title: 'Tancar gestor de capes',
-          className: "layersToggle",
-          active: true,
-          onToggle: function(active) {
-            if (active) {
-              pageData.windowLayers.show();
-              $(".layersToggle i.fa").removeClass("fa-arrow-circle-left");
-              $(".layersToggle i.fa").addClass("fa-arrow-circle-right");
-            }
-            else {
-              pageData.windowLayers.hide();
-              $(".layersToggle i.fa").removeClass("fa-arrow-circle-right");
-              $(".layersToggle i.fa").addClass("fa-arrow-circle-left");
-            }
-          }
-        }),
         tableTogglePois: new Toggle({ 
           html: '<i class="fa fa-map-marker fa-lg"></i>',
           title: 'Punts de interès',
@@ -709,6 +710,8 @@
         }));
 
         pageData.map.addControl(new ScaleLine());
+
+        pageData.map.addControl(new LayerControl());
 
         // variables for layer switcher
         pageData.map.set("qgisServerURL", pageData.qgisServerURL);
@@ -993,7 +996,7 @@
       function initMenu() {
         pageData.windowLayers = new Overlay({
           closeBox : true,
-          className: "slide-right window layersWindow",
+          className: "slide-right window layersWindow open",
           content: document.getElementById("windowLayers")
         })
         pageData.map.addControl(pageData.windowLayers);
@@ -1026,11 +1029,8 @@
         });
         pageData.map.addControl(menuBar);
 
-        menuBar.addControl(pageData.layersToggle);
-
         let actionBar = new Bar({ toggleOne: true, group: true });
         menuBar.addControl(actionBar);
-
         actionBar.addControl(pageData.tableTogglePois);
         actionBar.addControl(pageData.tableToggleRutas);
         actionBar.addControl(pageData.infoToggle);
@@ -1269,10 +1269,8 @@
 
           if (window.mobilecheck()) {
             setTimeout(function() {
-              pageData.layersToggle.toggle();
-              pageData.windowLayers.hide();
-              $(".layersToggle i.fa").removeClass("fa-arrow-circle-right");
-              $(".layersToggle i.fa").addClass("fa-arrow-circle-left");
+              $(".layersWindow").removeClass("open");
+              $(".layer-control").removeClass("open");
             }, 3000);
           }
         })

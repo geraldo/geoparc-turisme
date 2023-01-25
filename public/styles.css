@@ -1,4 +1,4 @@
-@import '/fonts/font.css';
+@import 'fonts/font.css';
 
 #map {
   width: 100%;
@@ -30,7 +30,7 @@
   right: auto;
 }
 
-.ol-scale-bar {
+.ol-scale-line {
   bottom: 0.5em;
   left: 0.5em;
 }
@@ -190,7 +190,7 @@
  * overlays
  * ************************/
 .ol-overlay.window { 
-  width: 344px;
+  width: 0;
   max-width: 95%;
   background: #fff;
   color: #333;
@@ -307,6 +307,22 @@ h3 {
 /*
  * layer switcher
  * ************************/
+.layer-control {
+  right: 0.5em;
+  top: 3em;
+  transition: right 500ms;
+}
+.layer-control.open {
+  right: 344px;
+}
+
+.layersWindow {
+  transition: right 500ms;
+}
+.layersWindow.open {
+  width: 344px;
+}
+
 .layer-switcher {
   position: relative;
   top: auto;
@@ -520,9 +536,6 @@ img.leyenda.off {
   min-height: 500px;
   padding-top: 25px;
 }
-.featurePopup .ol-popup .ol-popup-content {
-  max-height: 800px;
-}
 
 .featureTooltip {
   z-index: 13;
@@ -546,7 +559,7 @@ img.leyenda.off {
 
 .featurePopup .ol-popup-content {
     min-width: 570px;
-    max-height: 400px;
+    max-height: 600px;
     overflow-x: auto;
     overflow-y: scroll;
 }
@@ -594,17 +607,14 @@ img.leyenda.off {
     max-width: 85%;
   }
 
-  .ol-control.ol-layerswitcher-image {
-    bottom: 3.5em;
-    top: auto !important;
-    left: auto;
-    right: 0.5em;
-  }
-
   .featurePopup {
-    bottom: 0;
     left: 0;
     width: 100%;
+    top: 120px;
+  }
+  .featurePopup .ol-popup {
+    left: 0;
+    min-height: auto;
   }
 
   .featurePopup .ol-popup-content {
@@ -617,8 +627,19 @@ img.leyenda.off {
 
   .ol-overlay.window {
     top: 3em;
-    width: 100%;
     max-width: 100%;
+  }
+
+  .ol-overlay.window.open {
+    width: 100%;
+  }
+
+  .layer-control {
+    right: 0;
+  }
+  .layer-control.open {
+    left: 0;
+    z-index: 13;
   }
 
   .menuBar.ol-control.ol-bar.ol-top.ol-right {
@@ -638,11 +659,15 @@ img.leyenda.off {
     top: 7.5em;
   }
 
-  .ol-scale-bar {
-    bottom: 3.5em;
+  .ol-scale-line {
+    bottom: 2.5em;
   }
 
   .ol-attribution {
     bottom: 5.5em;
+  }
+
+  .ol-full-screen {
+    display: none;
   }
 }
