@@ -280,6 +280,13 @@ h3 {
   height: 100%;
 }
 
+#windowLayers .content {
+  height: calc(100% - 135px);
+  overflow: scroll;
+  border-bottom: 2px solid #b2b019;
+  padding-bottom: 10px;
+}
+
 .window.tableWindow,
 .window.infoWindow {
   width: 90%;
@@ -434,6 +441,21 @@ img.leyenda.off {
 
 .autor {
   float: right;
+}
+
+.logos {
+  position: absolute;
+  bottom: 10px;
+  right: 30px;
+}
+
+.logo1 img {
+  width: 180px;
+}
+
+.logo2 img {
+  width: 90px;
+  margin-left: 20px;
 }
 
 /*

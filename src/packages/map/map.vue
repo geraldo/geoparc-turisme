@@ -6,6 +6,10 @@
     <div class="content">
       <div id="layerSwitcher" class="layer-switcher"></div>
     </div>
+    <div class="logos">
+      <a class="logo1" title="Geoparc Orígens als Pirineus Catalans" href="https://www.geoparcorigens.cat/"><img src="/logo-geoparc.jpg"></a>
+      <a class="logo2" title="UNESCO Global Geoparks" href="https://en.unesco.org/global-geoparks"><img src="/logo-unesco.png"></a>
+    </div>
   </div>
 
   <div id="windowTablePois" class="window">
