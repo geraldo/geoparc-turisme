@@ -129,6 +129,7 @@
     "Centre d'Interpretació": "centre_interpretacio" // centre_interpretacio
   };
   const tipologiasRuta = {
+    "Ruta a peu": "Ruta a peu",
     "Ruta en bicicleta": "Ruta en bicicleta",
     "El Cinquè Llac": "El Cinquè Llac",
     "Ruta Geològica": "Ruta Geològica",
@@ -966,7 +967,15 @@
             stroke: new Stroke({
               color: '#db1e2a',
               lineDash: [2,6],
-              width: 2
+              width: 3
+            })
+          });
+        }
+        else if (feature.get('tipologia_cat') === 'Ruta a peu') {
+          return new Style({
+            stroke: new Stroke({
+              color: '#11b76c',
+              width: 3
             })
           });
         }
