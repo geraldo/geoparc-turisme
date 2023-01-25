@@ -27,6 +27,34 @@
       <div id="datatable-rutas"></div>
     </div>
   </div>
+
+  <div id="windowInfo" class="window">
+    <h2>
+      <i class="fa fa-info-circle"></i>
+      <span class="title">Informació</span>
+    </h2>
+    <div class="content">
+      <h3>Contacte</h3>
+      <p>Orígens UNESCO Global Geopark<br>
+      Carrer de Soldevila, 3 – 25620 Tremp (Lleida)<br>
+      Tlf. +34 973 651 088 / +34 636 868 713<br>
+      info@geoparcorigens.cat</p>
+      <h3>Amb el soport de</h3>
+      <div class="wp-block-image">
+        <figure class="aligncenter size-medium is-resized"><a href="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1.jpg"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg" alt="" class="wp-image-6401" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-1024x192.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-768x144.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-150x28.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1.jpg 1400w" sizes="(max-width: 225px) 100vw, 225px" width="225" height="42"></a></figure>
+      </div>
+      <div class="wp-block-image">
+        <figure class="aligncenter size-medium"><a href="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif" alt="" class="wp-image-3099" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif 300w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-150x39.gif 150w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif 574w" sizes="(max-width: 300px) 100vw, 300px" width="300" height="78"></a></figure>
+      </div>
+      <div class="wp-block-image">
+        <figure class="aligncenter size-medium is-resized"><a href="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01.jpg"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-300x65.jpg" alt="" class="wp-image-13491" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-300x65.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-1024x223.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-768x167.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-1536x334.jpg 1536w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-150x33.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01.jpg 1781w" sizes="(max-width: 300px) 100vw, 300px" width="300" height="65"></a></figure>
+      </div>
+      <div class="wp-block-image">
+        <figure class="aligncenter size-medium is-resized" style="float: left;"><a href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg" alt="" class="wp-image-14986" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-150x105.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo.jpg 580w" sizes="(max-width: 75px) 100vw, 75px" width="75" height="52"></a></figure>
+        <figure class="wp-block-image size-medium is-resized"><a href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg 292w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-996x1024.jpg 996w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-768x790.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-146x150.jpg 146w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW.jpg 1489w" sizes="(max-width: 73px) 100vw, 73px" width="73" height="75"></a></figure>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -394,6 +422,8 @@
         windowLayers: null,
         windowTablePois: null,
         windowTableRutas: null,
+        windowInfo: null,
+
         layersToggle: new Toggle({ 
           html: '<i class="fa fa-arrow-circle-right fa-lg"></i>',
           title: 'Tancar gestor de capes',
@@ -439,6 +469,21 @@
             else {
               pageData.windowTableRutas.hide();
               $(".tableToggleRutas").removeClass("ol-active");
+            }
+          }
+        }),
+        infoToggle: new Toggle({ 
+          html: '<i class="fa fa-info-circle fa-lg"></i>',
+          title: 'Informació',
+          className: "infoToggle",
+          onToggle: function(active) {
+            if (active) {
+              hideWindows("info");
+              pageData.windowInfo.show();
+            }
+            else {
+              pageData.windowInfo.hide();
+              $(".infoToggle").removeClass("ol-active");
             }
           }
         }),
@@ -773,7 +818,7 @@
         });
 
         pageData.map.on('pointermove', function(evt) {
-          if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowTableRutas").is(':visible')) {
+          if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowTableRutas").is(':visible') && !$("#windowInfo").is(':visible')) {
 
             // tooltip
             pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
@@ -843,6 +888,7 @@
           if (e.keyCode === 27) { // escape
             pageData.windowTablePois.hide();
             pageData.windowTableRutas.hide();
+            pageData.windowInfo.hide();
           }
         });
       }
@@ -954,6 +1000,13 @@
         })
         pageData.map.addControl(pageData.windowTableRutas);
 
+        pageData.windowInfo = new Overlay({
+          closeBox : true,
+          className: "slide-right window infoWindow",
+          content: document.getElementById("windowInfo")
+        })
+        pageData.map.addControl(pageData.windowInfo);
+
         let menuBar = new Bar({
           className: "ol-top ol-right menuBar"
         });
@@ -966,6 +1019,7 @@
 
         actionBar.addControl(pageData.tableTogglePois);
         actionBar.addControl(pageData.tableToggleRutas);
+        actionBar.addControl(pageData.infoToggle);
 
         let languageBar = new Bar({ 
           toggleOne: true, 
@@ -1002,11 +1056,14 @@
       function hideWindows(activeToggle) {
         pageData.windowTablePois.hide();
         pageData.windowTableRutas.hide();
+        pageData.windowInfo.hide();
         
         if (activeToggle !== "tablePois")
           pageData.tableTogglePois.setActive(false);
         else if (activeToggle !== "tableRutas")
           pageData.tableToggleRutas.setActive(false);
+        else if (activeToggle !== "info")
+          pageData.infoToggle.setActive(false);
       }
 
       /*
@@ -1093,10 +1150,12 @@
         // menu
         pageData.tableTogglePois.setTitle(i18next.t('gui.windowTablePoisTitle'));
         pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
+        pageData.infoToggle.setTitle(i18next.t('gui.windowInfoTitle'));
 
         // windows
         $("#windowTablePois .title").text(i18next.t('gui.windowTablePoisTitle'));
         $("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
+        $("#windowInfo .title").text(i18next.t('gui.windowInfoTitle'));
 
         // layerswitcher
         pageData.qgisWfsLayersPoi.set("title", i18next.t('switcher.wfsGroupPoi'));

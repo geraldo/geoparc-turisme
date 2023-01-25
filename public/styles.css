@@ -280,7 +280,8 @@ h3 {
   height: 100%;
 }
 
-.window.tableWindow {
+.window.tableWindow,
+.window.infoWindow {
   width: 90%;
   top: 100px;
   right: 50px;
@@ -290,7 +291,8 @@ h3 {
 #rutas-table {
   width: 100% !important;
 }
-.window.tableWindow .content {
+.window.tableWindow .content,
+.window.infoWindow .content {
   overflow: scroll;
   max-height: 600px;
 }

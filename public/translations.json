@@ -4,7 +4,8 @@
       "gui": {
         "windowLayersTitle": "Gestor de capes",
         "windowTablePoisTitle": "Punts de interès",
-        "windowTableRutasTitle": "Rutes recomanades"
+        "windowTableRutasTitle": "Rutes recomanades",
+        "windowInfoTitle": "Informació"
       },
       "switcher": {
         "wfsGroupPoi": "Punts de interès",
@@ -48,7 +49,8 @@
       "gui": {
         "windowLayersTitle": "Gestor de capas",
         "windowTablePoisTitle": "Puntos de interés",
-        "windowTableRutasTitle": "Rutas recomendadas"
+        "windowTableRutasTitle": "Rutas recomendadas",
+        "windowInfoTitle": "Información"
       },
       "switcher": {
         "wfsGroupPoi": "Puntos de interés",
