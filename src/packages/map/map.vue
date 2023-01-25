@@ -773,7 +773,7 @@
         });
 
         pageData.map.on('pointermove', function(evt) {
-          if (!pageData.popup.isOpened()) {
+          if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowTableRutas").is(':visible')) {
 
             // tooltip
             pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
@@ -1126,7 +1126,7 @@
           columns: [
             { "data": "properties.nom_" + pageData.lang, "title" : i18next.t("dtPoi.nom"), "render": function ( data, type, row ) { return "<span class='link' data-coords='[" + row.geometry.coordinates + "]'>" + data + "</span>"; }},
             { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtPoi.descripcio")},
-            { "data": "properties.imatge_1", "title" : i18next.t("dtPoi.imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
+            { "data": "properties.imatge_1", "title" : i18next.t("dtPoi.imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img class='link' style='max-width:300px;' src='fotos/" + data + "' data-coords='[" + row.geometry.coordinates + "]'/>" : ""; }},
             { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.georuta")},
             { "data": "properties.tematica_1_" + pageData.lang, "title" : i18next.t("dtPoi.temática")},
             { "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.tipus")},
@@ -1154,7 +1154,7 @@
           columns: [
             { "data": "properties.georuta_" + pageData.lang, "title" : i18next.t("dtRuta.nom"), "render": function ( data, type, row ) { return "<span class='link' data-coords='" + JSON.stringify(row.bbox) + "'>" + data + "</span>"; }},
             { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtRuta.descripcio")},
-            { "data": "properties.imatge_1", "title" : i18next.t("dtRuta.imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img style='max-width:300px;' src='fotos/" + data + "'/>" : ""; }},
+            { "data": "properties.imatge_1", "title" : i18next.t("dtRuta.imatge"), "render": function ( data, type, row ) { return data!=="" ? "<img class='link' style='max-width:300px;' src='fotos/" + data + "' data-coords='" + JSON.stringify(row.bbox) + "'/>" : ""; }},
             { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.desnivell")},
             { "data": "properties.dificultat_" + pageData.lang, "title" : i18next.t("dtRuta.dificultat")},
             { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.distancia"), "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},

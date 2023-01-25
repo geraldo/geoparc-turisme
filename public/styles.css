@@ -46,6 +46,20 @@
   bottom: auto !important;
 }
 
+.ol-control.ol-geobt button:before {
+  font-family: "FontAwesome";
+  content: "\f041";
+  display: inline-block;
+  padding-right: 3px;
+  vertical-align: middle;
+  font-weight: 900;
+  border: none;
+  width: auto;
+}
+.ol-control.ol-geobt button:after {
+  width: 0;
+}
+
 .ol-zoom .ol-zoom-in,
 .ol-zoom .ol-zoom-out {
   border-radius: 0;
