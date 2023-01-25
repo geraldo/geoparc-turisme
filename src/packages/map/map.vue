@@ -903,10 +903,11 @@
        * WFS styles
        *****************************************/
       function iconStyleFunction(feature, resolution) {
-        let tipus = feature.get('tipus_cat');
-        let icon = tipusPoi[tipus];
+        let tipus = feature.get('tipus_cat'),
+            icon = tipusPoi[tipus];
         if (tipus === "exposicio_aire_lliure") icon = "exposicio_aire_lliure";
         else if (tipus === "centre_interpretacio") icon = "centre_interpretacio";
+        else if (feature.get("nom_cat") === "Oficina d'informació de l'Epicentre, centre de visitants del Geoparc Orígens") icon = "epicentre";
 
         //console.log(feature.get('nom_cat'), tipusPoi[feature.get('tipus_cat')], feature.getGeometry().getCoordinates());
         return [
