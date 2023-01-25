@@ -509,15 +509,16 @@ img.leyenda.off {
 
 .featurePopup {
   transform: none !important;
-  bottom: 20px;
+  top: 100px;
   left: 100px;
   z-index: 12;
   width: calc(100% - 200px);
   max-width: 900px;
 }
 .featurePopup .ol-popup {
-  left: 0;
+  position: relative;
   min-height: 500px;
+  padding-top: 25px;
 }
 .featurePopup .ol-popup .ol-popup-content {
   max-height: 800px;
