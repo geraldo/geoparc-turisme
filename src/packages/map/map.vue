@@ -214,7 +214,7 @@
           label.htmlFor = checkboxId;
           if (!input.checked) fa += '-slash';
         }
-        label.innerHTML =  fa + '"/> ' + lyrTitle;
+        label.innerHTML =  fa + '"></i> ' + lyrTitle;
         li.appendChild(label);
         const ul = document.createElement('ul');
         li.appendChild(ul);
@@ -1586,7 +1586,11 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   left: 0;
 }
 .layer-switcher li label {
-  padding-left: 0;
+  padding-left: 25px;
+  margin-left: -20px;
+}
+.layer-switcher li.group > label {
+  padding-left: 20px;
 }
 .layer-switcher li.base-group > label {
   padding-left: 0;
@@ -1606,12 +1610,6 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
   color: #aaa;
 }
 
-img.leyenda.off {
-  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-  filter: grayscale(100%);
-  opacity: 0.5;
-}
-
 .layer-switcher .group button {
   right: 0;
   left: auto;
@@ -1629,7 +1627,14 @@ img.leyenda.off {
 .leyenda {
   width: 20px;
   height: 20px;
-  margin-right: 7px;
+}
+
+img.leyenda.off {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+  opacity: 0.5;
+  z-index: -1;
+  position: relative;
 }
 
 .ol-control.ol-layerswitcher-image {
