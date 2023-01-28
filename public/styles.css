@@ -358,6 +358,18 @@ img.legend {
   display: none;
   max-width: 100%;
 }
+li.poiLayer {
+  cursor: pointer;
+}
+li.group.off,
+li.poiLayer.off {
+  color: #aaa;
+}
+li.poiLayer.off img {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
 
 li.layer img.legend,
 li.layer._nivell-de-protecci__00f3-d__2019espais-oberts img.legend:nth-of-type(2) {
@@ -449,6 +461,7 @@ img.leyenda.off {
   display: none;
 }
 
+.layer._punts-de-inter__00e8s,
 .layer._topogr__00e0fic-__0028_i_c_g_c__0029,
 .layer._ortofoto-__0028_i_c_g_c__0029,
 .layer._openstreetmap {
@@ -457,6 +470,7 @@ img.leyenda.off {
 
 .autor {
   float: right;
+  margin-right: 20px;
 }
 
 .logos {
@@ -529,7 +543,7 @@ img.leyenda.off {
   left: 100px;
   z-index: 12;
   width: calc(100% - 200px);
-  max-width: 900px;
+  max-width: 860px;
 }
 .featurePopup .ol-popup {
   position: relative;

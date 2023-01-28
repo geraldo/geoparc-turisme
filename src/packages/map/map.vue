@@ -76,6 +76,7 @@
   import { Point, Polygon, LineString, Geometry } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
   //import { register } from 'ol/proj/proj4';
+  import { createEmpty, extend } from 'ol/extent';
   import { get as getProjection, getPointResolution, fromLonLat, toLonLat, transformExtent, METERS_PER_UNIT } from 'ol/proj';
   import { getLength, getArea } from 'ol/sphere';
   import { unByKey } from 'ol/Observable';
@@ -102,23 +103,23 @@
   import DataTable from 'datatables.net';
 
   const tipusPoi = {
-    "Zona de bany": "zona_bany",
-    "Vol en Globus": "globus",
-    "Via Ferrata": "viaferrata",
-    "Rafting": "rafting",
-    "Parapent": "parapent",
-    "Caiac": "caiac",
-    "Telefèric": "teleferic",
-    "Establiment recomanat": "establiment_recomanat_1",
-    "Mirador": "mirador",
-    "Exposició a l'aire lliure": "exposicio_aire_lliure", // exposicio_aire_lliure
-    "Cova visitable": "cova_visitable",
-    "Església": "esglesia",
-    "Castell": "castell",
-    "Jaciment arqueològic": "jacimentarqueologic",
-    "Lloc interès Geoparc": "lloc_interes_geoparc",
+    "Centre d'Interpretació": "centre_interpretacio", // centre_interpretacio
     "Informació turística": "info_turistica",
-    "Centre d'Interpretació": "centre_interpretacio" // centre_interpretacio
+    "Lloc interès Geoparc": "lloc_interes_geoparc",
+    "Jaciment arqueològic": "jacimentarqueologic",
+    "Castell": "castell",
+    "Església": "esglesia",
+    "Cova visitable": "cova_visitable",
+    "Exposició a l'aire lliure": "exposicio_aire_lliure", // exposicio_aire_lliure
+    "Mirador": "mirador",
+    "Establiment recomanat": "establiment_recomanat_1",
+    "Telefèric": "teleferic",
+    "Caiac": "caiac",
+    "Parapent": "parapent",
+    "Rafting": "rafting",
+    "Via Ferrata": "viaferrata",
+    "Vol en Globus": "globus",
+    "Zona de bany": "zona_bany"
   };
   const tipologiasRuta = {
     "Ruta a peu": "Ruta a peu",
@@ -127,6 +128,11 @@
     "Ruta Geològica": "Ruta Geològica",
     "Georuta": "Georuta"
   };
+
+  let tipusPoiArray = [];
+  for (let tipo in tipusPoi) {
+    tipusPoiArray.push(tipo);
+  }
 
   function makeSafeForCSS(name) {
     if (name)
@@ -175,7 +181,7 @@
    * LayerSwitcher extended with legends
    *****************************************/
   class LayerSwitcherWithLegend extends LayerSwitcher {
-    static renderPanel(map, panel, options) {
+    static renderPanel(map, poisLayer, panel, options) {
       // Create the event.
       const render_event = new Event('render');
       // Dispatch the event.
@@ -184,7 +190,7 @@
       options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
       LayerSwitcher.ensureTopVisibleBaseLayerShown(map, options.groupSelectStyle);
       while (panel.firstChild) {
-          panel.removeChild(panel.firstChild);
+        panel.removeChild(panel.firstChild);
       }
       // Reset indeterminate state for all layers and groups before
       // applying based on groupSelectStyle
@@ -192,20 +198,20 @@
           l.set('indeterminate', false);
       });
       if (options.groupSelectStyle === 'children' ||
-          options.groupSelectStyle === 'none') {
-          // Set visibile and indeterminate state of groups based on
-          // their children's visibility
-          LayerSwitcher.setGroupVisibility(map);
+        options.groupSelectStyle === 'none') {
+        // Set visibile and indeterminate state of groups based on
+        // their children's visibility
+        LayerSwitcher.setGroupVisibility(map);
       }
       else if (options.groupSelectStyle === 'group') {
-          // Set child indetermiate state based on their parent's visibility
-          LayerSwitcher.setChildVisibility(map);
+        // Set child indetermiate state based on their parent's visibility
+        LayerSwitcher.setChildVisibility(map);
       }
       const ul = document.createElement('ul');
       panel.appendChild(ul);
       // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-      LayerSwitcherWithLegend.renderLayers_(map, map, ul, options, function render(_changedLyr) {
-          LayerSwitcherWithLegend.renderPanel(map, panel, options);
+      LayerSwitcherWithLegend.renderLayers_(map, map, poisLayer, ul, options, function render(_changedLyr) {
+        LayerSwitcherWithLegend.renderPanel(map, poisLayer, panel, options);
       });
       // Create the event.
       const rendercomplete_event = new Event('rendercomplete');
@@ -213,19 +219,19 @@
       panel.dispatchEvent(rendercomplete_event);
     }
 
-    static renderLayers_(map, lyr, elm, options, render) {
+    static renderLayers_(map, lyr, poisLayer, elm, options, render) {
       let lyrs = lyr.getLayers().getArray().slice();
       if (options.reverse)
         lyrs = lyrs.reverse();
       for (let i = 0, l; i < lyrs.length; i++) {
         l = lyrs[i];
         if (l.get('title')) {
-            elm.appendChild(LayerSwitcherWithLegend.renderLayer_(map, l, i, options, render));
+            elm.appendChild(LayerSwitcherWithLegend.renderLayer_(map, poisLayer, l, i, options, render));
         }
       }
     }
 
-    static renderLayer_(map, lyr, idx, options, render) {
+    static renderLayer_(map, poisLayer, lyr, idx, options, render) {
       const li = document.createElement('li'),
             lyrTitle = lyr.get('title'),
             checkboxId = LayerSwitcher.uuid(),
@@ -234,6 +240,7 @@
       if (lyr instanceof LayerGroup && !lyr.get('combine')) {
         // group
         li.classList.add('group');
+        li.classList.add(makeSafeForCSS(lyrTitle));
         const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
         if (isBaseGroup) {
           li.classList.add('base-group');
@@ -258,19 +265,25 @@
           input.checked = lyr.getVisible();
           input.indeterminate = lyr.get('indeterminate');
           input.onchange = function (e) {
-            const target = e.target;
-            LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
-            render(lyr);
+            if (lyrTitle !== "Punts de interès") {
+              const target = e.target;
+              LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
+              render(lyr);
+              LayerSwitcherWithLegend.addPois(poisLayer);
+            }
           };
           li.appendChild(input);
           label.htmlFor = checkboxId;
-          if (!input.checked) fa += '-slash';
+          if (!input.checked) {
+            fa += '-slash';
+            li.classList.add('off');
+          }
         }
         label.innerHTML =  fa + '"></i> ' + lyrTitle;
         li.appendChild(label);
         const ul = document.createElement('ul');
         li.appendChild(ul);
-        LayerSwitcherWithLegend.renderLayers_(map, lyr, ul, options, render);
+        LayerSwitcherWithLegend.renderLayers_(map, lyr, poisLayer, ul, options, render);
       }
       else {
         // layer
@@ -323,6 +336,40 @@
       }
       return li;
     }
+
+    static addPois(poisLayer) {
+      // add pois to layerswitcher
+      let html = "";
+      for (let tipo in tipusPoi) {
+        let tipologia = tipo;
+        if (tipologia === "Exposició a l'aire lliure") tipologia = "exposicio_aire_lliure";
+        else if (tipologia === "Centre d'Interpretació") tipologia = "centre_interpretacio";
+        html += "<li class='poiLayer " + makeSafeForCSS(tipologia) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + tipo+"</li>";
+      }
+
+      $("#layerSwitcher li.group ul").first().append(html);
+      $("#layerSwitcher li.poiLayer").click(function() {
+        // toggle selected initiative icons
+        $(this).toggleClass("off");
+        poisLayer.getSource().changed();
+        //pageData.popup.hide();
+      });
+
+      $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").unbind("click");
+      $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").click(function() {
+        $(this).toggleClass("off");
+        $(this).children().eq(0).toggleClass("fa-eye");
+        $(this).children().eq(0).toggleClass("fa-eye-slash");
+        if ($(this).hasClass("off")) {
+          $("#layerSwitcher li.poiLayer").addClass("off");
+        }
+        else {
+          $("#layerSwitcher li.poiLayer").removeClass("off");
+        }
+        poisLayer.getSource().changed();
+        //pageData.popup.hide();
+      });
+    }
   }
 
 
@@ -361,6 +408,7 @@
           title: 'Rutes recomanades',
           fold: 'close'
         }),
+        poisLayer: null,
         poisLayers: [],
         rutasLayers: [],
 
@@ -420,15 +468,6 @@
             maxZoom: 19,
             url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/{z}/{x}/{y}.png",
             attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
-            /*projection: 'EPSG:3857',
-            params: {
-              'LAYERS': name,
-              'TRANSPARENT': true,
-              'VERSION': '1.3.0',
-              'MAP': pageData.qgisProjectFile
-            },
-            serverType: 'qgis',
-            crossOrigin: 'Anonymous',*/
           })
         }),
         baseLayerOSM: new TileLayer({
@@ -530,9 +569,10 @@
 
           if (layer.vectorial) {
             if (layer.name === "origens_turisme") {
-              for (const tipo in tipusPoi) {
+              /*for (const tipo in tipusPoi) {
                 loadWfsLayerPoi(tipo);
-              }
+              }*/
+              loadWfsLayer(layer);
             }
             else if (layer.name === "Rutes recomanades") {
               for (const tipo in tipologiasRuta) {
@@ -585,7 +625,7 @@
                 'MAP': pageData.qgisProjectFile
               },
               serverType: 'qgis',
-              crossOrigin: 'Anonymous'
+              //crossOrigin: 'Anonymous'
             })
           });
 
@@ -595,7 +635,25 @@
         return(newLayer);
       }
 
-      function loadWfsLayerPoi(tipologia) {
+      function loadWfsLayer(layer) {
+        pageData.poisLayer = new VectorLayer({
+          title: "Punts de interès",
+          vectorial: true,
+          type: "layer",
+          source: new Cluster({
+            distance: 100,
+            minDistance: 0,
+            source: new VectorSource({
+              format: new GeoJSON(),
+              url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000'
+            }),
+          }),
+          style: clusterStyleFunction
+        });
+        pageData.poisLayers.push(pageData.poisLayer);
+      }
+
+      /*function loadWfsLayerPoi(tipologia) {
         let tipo = tipologia;
         if (tipologia === "Exposició a l'aire lliure") tipo = tipusPoi["Exposició a l'aire lliure"];
         else if (tipologia === "Centre d'Interpretació") tipo = tipusPoi["Centre d'Interpretació"];
@@ -612,10 +670,10 @@
         });
         pageData.poisLayers.push(vectorLayer);
       
-        /*fetch("js/data/origens_turisme.sld")
-          .then(response => response.text())
-          .then(sld => applyVectorStyle(vectorLayer, sld));*/
-      }
+        //fetch("js/data/origens_turisme.sld")
+        //  .then(response => response.text())
+        //  .then(sld => applyVectorStyle(vectorLayer, sld));
+      }*/
 
       function loadWfsLayerRuta(tipologia) {
         let vectorLayer = new VectorLayer({
@@ -725,7 +783,82 @@
 
 
         /*
-         * Interaction
+         * Tooltip
+         *****************************************/
+        pageData.map.on('pointermove', function(evt) {
+          if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowTableRutas").is(':visible') && !$("#windowInfo").is(':visible')) {
+
+            pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
+              layerFilter: function(layer) {
+                return pageData.poisLayer === layer || pageData.rutasLayers.includes(layer);
+              },
+              hitTolerance: 5
+            }) ? 'pointer' : '';
+
+            if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+              layerFilter: function(layer) {
+                return pageData.poisLayer === layer;
+              },
+              hitTolerance: 5
+            })) {
+              // POIs
+              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+                if (feature.get('cluster')) {
+                  pageData.tooltip.hide();
+                  return false;
+                }
+                else {
+                  let features = feature.get('features');
+                  for (var i = features.length - 1; i >= 0; --i) {
+                    if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+                      let title = features[i].get('nom_' + pageData.lang),
+                          foto = features[i].get('imatge_1');
+                      pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
+                      return true;
+                    }
+                  }
+                }
+              }, {
+                layerFilter: function(layer) {
+                  return pageData.poisLayer === layer;
+                },
+                hitTolerance: 5
+              });
+            }
+            else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+              layerFilter: function(layer) {
+                return pageData.rutasLayers.includes(layer);
+              },
+              hitTolerance: 5
+            })) {
+              // rutas
+              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+                let title = feature.get('georuta_2_' + pageData.lang),
+                    foto = feature.get('imatge_1');
+                pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
+                return true;
+              }, {
+                layerFilter: function(layer) {
+                  return pageData.rutasLayers.includes(layer);
+                },
+                hitTolerance: 5
+              });
+            }
+            else
+              pageData.tooltip.hide();
+          }
+        });
+
+        // select interaction working on "mouseover"
+        /*let selectMove = new Select({
+          condition: pointerMove,
+          layers: pageData.poisLayers,
+          style: iconHighlightStyleFunction
+        });
+        pageData.map.addInteraction(selectMove);*/
+
+        /*
+         * Click to zoom or show popup
          *****************************************/
         pageData.map.on('click', function(evt) {
           // zoom to rutas
@@ -742,71 +875,83 @@
             hitTolerance: 5
           });
 
-          // popup
-          if (pageData.map.hasFeatureAtPixel(evt.pixel, {
-            layerFilter: function(layer) {
-              return pageData.poisLayers.includes(layer);
-            },
-            hitTolerance: 5
-          })) {
-            // POIs
-            let title = "",
-                description = "",
-                foto = "",
-                autor = "",
-                web = "";
-            pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-              title = feature.get('nom_' + pageData.lang);
-              description = feature.get('descripcio_' + pageData.lang);
-              foto = feature.get('imatge_1');
-              autor = feature.get('imatge1_autor');
-              web = feature.get('web_' + pageData.lang);
-              return true;
-            }, {
-              hitTolerance: 5
-            });
+          // cluster and pois
+          let feature = pageData.map.forEachFeatureAtPixel(evt.pixel, function(feature) {
+            return feature;
+          });
 
-            let htmlStr = '<div><h2>' + title + '</h2>';
-            htmlStr += description ? '<p>' + description + '</p>' : '';
-            htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
-            htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
-            htmlStr += web ? '<p><a target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
-            htmlStr += '</div>';
-            pageData.popup.show(evt.coordinate, htmlStr);
-            pageData.tooltip.hide();
+          if (feature) {
+            if (feature.get("cluster") && pageData.map.getView().getZoom() < pageData.map.getView().getMaxZoom()) {
+
+              // marker or cluster -> zoom to area
+              pageData.map.getView().animate({
+                zoom: pageData.map.getView().getZoom()+2, 
+                center: evt.coordinate
+              });
+            }
+            else {
+              // popup
+              if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+                layerFilter: function(layer) {
+                  return pageData.poisLayer === layer;
+                },
+                hitTolerance: 5
+              })) {
+                let features = feature.get('features');
+                for (var i = features.length - 1; i >= 0; --i) {
+                  if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+                    showPopupPoi(evt, features[i]);
+                  }
+                }
+              }
+              else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+                layerFilter: function(layer) {
+                  return pageData.rutasLayers.includes(layer);
+                },
+                hitTolerance: 5
+              })) {
+                showPopupRuta(evt);
+              }
+              else {
+                pageData.popup.hide();
+              }
+            }
           }
-          else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
-            layerFilter: function(layer) {
-              return pageData.rutasLayers.includes(layer);
-            },
-            hitTolerance: 5
-          })) {
-            // rutas
-            let title = "",
-                description = "",
-                foto = "",
-                autor = "",
-                distancia = "",
-                desnivel = "",
-                tipologia = "",
-                modalidad = "",
-                dificultad = "",
-                web = "";
-            pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-              title = feature.get('georuta_2_' + pageData.lang);
-              description = feature.get('descripcio_' + pageData.lang);
-              foto = feature.get('imatge_1');
-              autor = feature.get('imatge_1_autor');
-              distancia = feature.get('distancia_km') + " km";
-              desnivel = feature.get('desnivell_m');
-              tipologia = feature.get('tipologia_' + pageData.lang);
-              modalidad = feature.get('modalitat_' + pageData.lang);
-              dificultad = feature.get('dificultat_' + pageData.lang);
+          else {
+            pageData.popup.hide();
+          }
+        });
+
+        function showPopupPoi(evt, feature) {
+          let title = feature.get('nom_' + pageData.lang),
+              description = feature.get('descripcio_' + pageData.lang),
+              foto = feature.get('imatge_1'),
+              autor = feature.get('imatge1_autor'),
               web = feature.get('web_' + pageData.lang);
-              return true;
-            }, {
-              hitTolerance: 5
-            });
+
+          let htmlStr = '<div><h2>' + title + '</h2>';
+          htmlStr += description ? '<p>' + description + '</p>' : '';
+          htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
+          htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
+          htmlStr += web ? '<p><a target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
+          htmlStr += '</div>';
+          pageData.popup.show(evt.coordinate, htmlStr);
+          pageData.tooltip.hide();
+        }
+
+        function showPopupRuta(evt) {
+          pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+            let title = feature.get('georuta_2_' + pageData.lang),
+                description = feature.get('descripcio_' + pageData.lang),
+                foto = feature.get('imatge_1'),
+                autor = feature.get('imatge_1_autor'),
+                distancia = feature.get('distancia_km') + " km",
+                desnivel = feature.get('desnivell_m'),
+                tipologia = feature.get('tipologia_' + pageData.lang),
+                modalidad = feature.get('modalitat_' + pageData.lang),
+                dificultad = feature.get('dificultat_' + pageData.lang),
+                web = feature.get('web_' + pageData.lang);
+
             let htmlStr = '<div><h2>' + title + '</h2>';
             htmlStr += description ? '<p>' + description + '</p>' : '';
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
@@ -820,77 +965,11 @@
             htmlStr += '</div>';
             pageData.popup.show(evt.coordinate, htmlStr);
             pageData.tooltip.hide();
-          }
-          else
-            pageData.popup.hide();
-        });
-
-        pageData.map.on('pointermove', function(evt) {
-          if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowTableRutas").is(':visible') && !$("#windowInfo").is(':visible')) {
-
-            // tooltip
-            pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
-              layerFilter: function(layer) {
-                return pageData.poisLayers.includes(layer) || pageData.rutasLayers.includes(layer);
-              },
-              hitTolerance: 5
-            }) ? 'pointer' : '';
-
-            if (pageData.map.hasFeatureAtPixel(evt.pixel, {
-              layerFilter: function(layer) {
-                return pageData.poisLayers.includes(layer);
-              },
-              hitTolerance: 5
-            })) {
-              // POIs
-              let title = "",
-                  foto = "";
-              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-                title = feature.get('nom_' + pageData.lang);
-                foto = feature.get('imatge_1');
-                return true;
-              }, {
-                layerFilter: function(layer) {
-                  return pageData.poisLayers.includes(layer);
-                },
-                hitTolerance: 5
-              });
-              pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
-            }
-            else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
-              layerFilter: function(layer) {
-                return pageData.rutasLayers.includes(layer);
-              },
-              hitTolerance: 5
-            })) {
-              // rutas
-              let title = "",
-                  title2 = "",
-                  foto = "";
-              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-                title = feature.get('georuta_2_' + pageData.lang);
-                foto = feature.get('imatge_1');
-                return true;
-              }, {
-                layerFilter: function(layer) {
-                  return pageData.rutasLayers.includes(layer);
-                },
-                hitTolerance: 5
-              });
-              pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
-            }
-            else
-              pageData.tooltip.hide();
-          }
-        });
-
-        // select interaction working on "mouseover"
-        /*let selectMove = new Select({
-          condition: pointerMove,
-          layers: pageData.poisLayers,
-          style: iconHighlightStyleFunction
-        });
-        pageData.map.addInteraction(selectMove);*/
+            return true;
+          }, {
+            hitTolerance: 5
+          });
+        }
 
         $(document).keyup(function(e) {
           if (e.keyCode === 27) { // escape
@@ -905,7 +984,82 @@
       /*
        * WFS styles
        *****************************************/
-      function iconStyleFunction(feature, resolution) {
+      let initiativesLayer,
+          maxFeatureCount;
+      let calculateClusterInfo = function(resolution) {
+        maxFeatureCount = 0;
+        let features = pageData.poisLayer.getSource().getFeatures(),
+            feature, 
+            radius;
+        for (var i = features.length - 1; i >= 0; --i) {
+          feature = features[i];
+          let originalFeatures = feature.get('features'),
+              extent = createEmpty(),
+              j = (void 0), 
+              jj = (void 0);
+          for (j = 0, jj = originalFeatures.length; j < jj; ++j) {
+            extend(extent, originalFeatures[j].getGeometry().getExtent());
+          }
+          maxFeatureCount = Math.max(maxFeatureCount, jj);
+          //radius = 0.75 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent)) /
+              resolution;
+          feature.set('radius', 25);
+        }
+      };
+
+      let currentResolution;
+      function clusterStyleFunction(feature, resolution) {
+        if (resolution != currentResolution) {
+          calculateClusterInfo(resolution);
+          currentResolution = resolution;
+        }
+
+        let size = 0,
+            features = feature.get('features');
+        //remove not selected categories
+        for (var i = features.length - 1; i >= 0; --i) {
+          if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+            size++;
+          }
+        }
+        
+        let style;
+        if (size > 1 && pageData.map.getView().getZoom() < pageData.map.getView().getMaxZoom()) {
+          // cluster style - but not on last zoom
+          feature.set('cluster', true);
+          style = new Style({
+            image: new Circle({
+              radius: feature.get('radius'),
+              fill: new Fill({
+                color: [255, 255, 0, Math.min(0.8, 0.2 + (size / maxFeatureCount))]
+              })
+            }),
+            text: new Text({
+              text: size.toString(),
+              fill: new Fill({
+                color: '#fff'
+              }),
+              stroke: new Stroke({
+                color: 'rgba(0, 0, 0, 0.6)',
+                width: 3
+              })
+            })
+          });
+        } else {
+          // icon style
+          feature.set('cluster', false);
+          for (var i = features.length - 1; i >= 0; --i) {
+            if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+              style = iconStyleFunction(features[i]);
+              break;
+            }
+          }
+        }
+        return style;
+      }
+
+
+      function iconStyleFunction(feature) {
         let tipus = feature.get('tipus_cat'),
             icon = tipusPoi[tipus];
         if (tipus === "exposicio_aire_lliure") icon = "exposicio_aire_lliure";
@@ -920,7 +1074,8 @@
                 color: "rgba(255,255,0,0.8)"
               }),
               radius: 16
-            })
+            }),
+            //zIndex: 20-tipusPoiArray.indexOf(tipus)
           }),
           new Style({
             image: new Icon({
@@ -928,21 +1083,22 @@
               //src: "icons/" + icon + ".png"
               scale: 0.06,
               src: "simbols/" + icon + ".svg"
-            })
+            }),
+            //zIndex: 20-tipusPoiArray.indexOf(tipus)
           })
         ]
       }
 
-      function iconHighlightStyleFunction(feature, resolution) {
+      /*function iconHighlightStyleFunction(feature) {
         return new Style({
           image: new Icon({
             size: [20, 20],
             src: "icons/" + tipusPoi[feature.get('tipus_cat')] + ".png"
           })
         });
-      }
+      }*/
 
-      function rutaStyleFunction(feature, resolution) {
+      function rutaStyleFunction(feature) {
         if (feature.get('tipologia_cat') === 'Georuta') {
           return new Style({
             stroke: new Stroke({
@@ -1001,7 +1157,8 @@
         })
         pageData.map.addControl(pageData.windowLayers);
 
-        LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true });
+        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, document.getElementById("layerSwitcher"), { reverse: true });
+        LayerSwitcherWithLegend.addPois(pageData.poisLayer);
 
         pageData.windowTablePois = new Overlay({
           closeBox : true,
@@ -1180,7 +1337,8 @@
         //pageData.baseLayerOrto.set("title", i18next.t('switcher.baseGroupOrto'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(1) label").text(i18next.t('switcher.baseGroupTopo'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(2) label").text(i18next.t('switcher.baseGroupOrto'));
-        LayerSwitcherWithLegend.renderPanel(pageData.map, document.getElementById("layerSwitcher"), { reverse: true });
+        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, document.getElementById("layerSwitcher"), { reverse: true });
+        LayerSwitcherWithLegend.addPois(pageData.poisLayer);
       }
 
       /*
