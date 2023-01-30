@@ -76,7 +76,7 @@
   import { Point, Polygon, LineString, Geometry } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
   //import { register } from 'ol/proj/proj4';
-  import { createEmpty, extend } from 'ol/extent';
+  import { createEmpty, extend, getHeight, getWidth } from 'ol/extent';
   import { get as getProjection, getPointResolution, fromLonLat, toLonLat, transformExtent, METERS_PER_UNIT } from 'ol/proj';
   import { getLength, getArea } from 'ol/sphere';
   import { unByKey } from 'ol/Observable';
@@ -408,6 +408,12 @@
           title: 'Rutes recomanades',
           fold: 'close'
         }),
+        
+        clusterSource: null,
+        clusterCircles: null,
+        clickFeature: null,
+        clickResolution: null,
+
         poisLayer: null,
         poisLayers: [],
         rutasLayers: [],
@@ -636,19 +642,27 @@
       }
 
       function loadWfsLayer(layer) {
+        pageData.clusterSource = new Cluster({
+          distance: 100,
+          minDistance: 0,
+          source: new VectorSource({
+            format: new GeoJSON(),
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000'
+          })
+        });
+
+        // Layer displaying the expanded view of overlapping cluster members.
+        pageData.clusterCircles = new VectorLayer({
+          source: pageData.clusterSource,
+          style: clusterCircleStyle,
+        });
+
         pageData.poisLayer = new VectorLayer({
           title: "Punts de interès",
           vectorial: true,
           type: "layer",
-          source: new Cluster({
-            distance: 100,
-            minDistance: 0,
-            source: new VectorSource({
-              format: new GeoJSON(),
-              url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000'
-            }),
-          }),
-          style: clusterStyleFunction
+          source: pageData.clusterSource,
+          style: clusterStyle
         });
         pageData.poisLayers.push(pageData.poisLayer);
       }
@@ -743,14 +757,15 @@
             pageData.qgisWmsLayers,
             pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
-            pageData.qgisWfsLayersPoi
+            pageData.qgisWfsLayersPoi,
+            pageData.clusterCircles
           ],
           view: new View({
             enableRotation: false,
             center: fromLonLat([pageData.center[0].lng, pageData.center[0].lat]),
             zoom: 10,
             minZoom: 9,
-            maxZoom: 20,
+            maxZoom: 19,
             showFullExtent: true,
             extent: [25000, 5100000, 200000, 5280000]
           }),
@@ -788,13 +803,52 @@
         pageData.map.on('pointermove', function(evt) {
           if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowTableRutas").is(':visible') && !$("#windowInfo").is(':visible')) {
 
-            pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
+            if (pageData.map.hasFeatureAtPixel(evt.pixel, {
               layerFilter: function(layer) {
-                return pageData.poisLayer === layer || pageData.rutasLayers.includes(layer);
+                return pageData.poisLayer === layer || pageData.clusterCircles === layer || pageData.rutasLayers.includes(layer);
               },
               hitTolerance: 5
-            }) ? 'pointer' : '';
+            })) {
+              pageData.map.getTargetElement().style.cursor = 'pointer';
+            }
+            else {
+              pageData.map.getTargetElement().style.cursor = '';
+              pageData.tooltip.hide();
+            }
 
+            /*pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
+              layerFilter: function(layer) {
+                return pageData.poisLayer === layer || pageData.clusterCircles === layer || pageData.rutasLayers.includes(layer);
+              },
+              hitTolerance: 5
+            }) ? 'pointer' : '';*/
+
+            if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+              layerFilter: function(layer) {
+                return pageData.clusterCircles === layer;
+              }
+            })) {
+              // POIs cluster spiderfied
+              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+
+                if (!feature.get('cluster') && feature.get('spiderfied')) {
+                  let features = feature.get('features');
+                  for (var i = features.length - 1; i >= 0; --i) {
+                    if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+                      let title = features[i].get('nom_' + pageData.lang),
+                          foto = features[i].get('imatge_1');
+                      //console.log(title, features[i].getGeometry().getExtent());
+                      pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
+                      return true;
+                    }
+                  }
+                }
+              }, {
+                layerFilter: function(layer) {
+                  return pageData.clusterCircles === layer;
+                }
+              });
+            }
             if (pageData.map.hasFeatureAtPixel(evt.pixel, {
               layerFilter: function(layer) {
                 return pageData.poisLayer === layer;
@@ -803,11 +857,8 @@
             })) {
               // POIs
               pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-                if (feature.get('cluster')) {
-                  pageData.tooltip.hide();
-                  return false;
-                }
-                else {
+
+                if (!feature.get('cluster') && !feature.get('spiderfied')) {
                   let features = feature.get('features');
                   for (var i = features.length - 1; i >= 0; --i) {
                     if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
@@ -844,8 +895,9 @@
                 hitTolerance: 5
               });
             }
-            else
+            /*else {
               pageData.tooltip.hide();
+            }*/
           }
         });
 
@@ -881,19 +933,48 @@
           });
 
           if (feature) {
-            if (feature.get("cluster") && pageData.map.getView().getZoom() < pageData.map.getView().getMaxZoom()) {
+            //if (feature.get("cluster") && pageData.map.getView().getZoom() < pageData.map.getView().getMaxZoom()) {
+            if (feature.get("cluster")) {
 
               // marker or cluster -> zoom to area
-              pageData.map.getView().animate({
+              /*pageData.map.getView().animate({
                 zoom: pageData.map.getView().getZoom()+2, 
                 center: evt.coordinate
+              });*/
+
+              pageData.poisLayer.getFeatures(evt.pixel).then((features) => {
+                if (features.length > 0) {
+                  const clusterMembers = features[0].get('features');
+                  if (clusterMembers.length > 1) {
+                    // Calculate the extent of the cluster members.
+                    const extent = createEmpty();
+                    clusterMembers.forEach((feature) =>
+                      extend(extent, feature.getGeometry().getExtent())
+                    );
+                    const view = pageData.map.getView();
+                    const resolution = view.getResolution();
+
+                    if (view.getZoom() === view.getMaxZoom() || (getWidth(extent) < resolution && getHeight(extent) < resolution)) {
+                      // Show an expanded view of the cluster members.
+                      pageData.clickFeature = features[0];
+                      pageData.clickResolution = resolution;
+                      pageData.clusterCircles.setStyle(clusterCircleStyle);
+
+                      //tooltip
+                    } 
+                    else {
+                      // Zoom to the extent of the cluster members.
+                      view.fit(extent, {duration: 1000, padding: [50, 50, 50, 50]});
+                    }
+                  }
+                }
               });
             }
             else {
               // popup
               if (pageData.map.hasFeatureAtPixel(evt.pixel, {
                 layerFilter: function(layer) {
-                  return pageData.poisLayer === layer;
+                  return pageData.poisLayer === layer || pageData.clusterCircles === layer;
                 },
                 hitTolerance: 5
               })) {
@@ -976,6 +1057,7 @@
             pageData.windowTablePois.hide();
             pageData.windowTableRutas.hide();
             pageData.windowInfo.hide();
+            pageData.popup.hide();
           }
         });
       }
@@ -984,7 +1066,7 @@
       /*
        * WFS styles
        *****************************************/
-      let initiativesLayer,
+      /*let initiativesLayer,
           maxFeatureCount;
       let calculateClusterInfo = function(resolution) {
         maxFeatureCount = 0;
@@ -1056,8 +1138,7 @@
           }
         }
         return style;
-      }
-
+      }*/
 
       function iconStyleFunction(feature) {
         let tipus = feature.get('tipus_cat'),
@@ -1067,7 +1148,7 @@
         else if (feature.get("nom_cat") === "Oficina d'informació de l'Epicentre, centre de visitants del Geoparc Orígens") icon = "epicentre";
 
         //console.log(feature.get('nom_cat'), tipusPoi[feature.get('tipus_cat')], feature.getGeometry().getCoordinates());
-        return [
+        /*return [
           new Style({
             image: new Circle({
               fill: new Fill({
@@ -1086,7 +1167,17 @@
             }),
             //zIndex: 20-tipusPoiArray.indexOf(tipus)
           })
-        ]
+        ]*/
+        return new Style({
+          geometry: feature.getGeometry(),
+          image: new Icon({
+            //size: [20, 20],
+            //src: "icons/" + icon + ".png"
+            scale: 0.06,
+            src: "simbols/" + icon + ".svg"
+          }),
+          //zIndex: 20-tipusPoiArray.indexOf(tipus)
+        })
       }
 
       /*function iconHighlightStyleFunction(feature) {
@@ -1143,6 +1234,141 @@
             })
           });
         }
+      }
+
+
+      /*
+       * Cluster Style function
+       *****************************************/
+      function clusterStyle(feature) {
+        let size = 0,
+            features = feature.get('features');
+        //remove not selected categories
+        for (var i = features.length - 1; i >= 0; --i) {
+          if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+            size++;
+          }
+        }
+
+        if (size > 1) {
+          feature.set('cluster', true);
+          return [
+            new Style({
+              image: new Circle({
+                radius: 20,
+                fill: new Fill({
+                  color: 'rgba(255, 153, 102, 0.3)',
+                })
+              })
+            }),
+            new Style({
+              image: new Circle({
+                radius: 14,
+                fill: new Fill({
+                  color: 'rgba(255, 165, 0, 0.7)',
+                })
+              }),
+              text: new Text({
+                text: size.toString(),
+                fill: new Fill({
+                  color: '#fff',
+                }),
+                stroke: new Stroke({
+                  color: 'rgba(0, 0, 0, 0.6)',
+                  width: 3,
+                })
+              })
+            }),
+          ];
+        }
+        else if (size > 0) {
+          feature.set('cluster', false);
+          for (var i = features.length - 1; i >= 0; --i) {
+            if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+              return iconStyleFunction(features[i]);
+              break;
+            }
+          }
+        }
+        return null;
+      }
+
+      /**
+       * From
+       * https://github.com/openlayers/openlayers/blob/main/examples/clusters-dynamic.js#L77
+       * Style for clusters with features that are too close to each other, activated on click.
+       * @param {Feature} cluster A cluster with overlapping members.
+       * @param {number} resolution The current view resolution.
+       * @return {Style} A style to render an expanded view of the cluster members.
+       */
+      function clusterCircleStyle(cluster, resolution) {
+        if (cluster !== pageData.clickFeature || resolution !== pageData.clickResolution) {
+          return;
+        }
+        cluster.set('cluster', false);
+        cluster.set('spiderfied', true);
+        const clusterMembers = cluster.get('features');
+        const centerCoordinates = cluster.getGeometry().getCoordinates();
+        return generatePointsCircle(
+          clusterMembers.length,
+          cluster.getGeometry().getCoordinates(),
+          resolution
+        ).reduce((styles, coordinates, i) => {
+          const point = new Point(coordinates);
+          const line = new LineString([centerCoordinates, coordinates]);
+          styles.unshift(
+            new Style({
+              geometry: line,
+              stroke: new Stroke({
+                color: 'rgba(204, 85, 0, 1)',
+                width: 1.5,
+              })
+            })
+          );
+          styles.push(
+            iconStyleFunction(
+              new Feature({
+                ...clusterMembers[i].getProperties(),
+                geometry: point
+              })
+            )
+          );
+          return styles;
+        }, []);
+      }
+
+      /**
+       * From
+       * https://github.com/Leaflet/Leaflet.markercluster/blob/31360f2/src/MarkerCluster.Spiderfier.js#L55-L72
+       * Arranges points in a circle around the cluster center, with a line pointing from the center to
+       * each point.
+       * @param {number} count Number of cluster members.
+       * @param {Array<number>} clusterCenter Center coordinate of the cluster.
+       * @param {number} resolution Current view resolution.
+       * @return {Array<Array<number>>} An array of coordinates representing the cluster members.
+       */
+      function generatePointsCircle(count, clusterCenter, resolution) {
+        const circleDistanceMultiplier = 1;
+        const circleFootSeparation = 28;
+        const circleStartAngle = Math.PI / 2;
+        const circumference = circleDistanceMultiplier * circleFootSeparation * (2 + count);
+        let legLength = circumference / (Math.PI * 2); //radius from circumference
+        const angleStep = (Math.PI * 2) / count;
+        const res = [];
+        let angle;
+
+        legLength = Math.max(legLength, 35) * resolution; // Minimum distance to get outside the cluster icon.
+
+        for (let i = 0; i < count; ++i) {
+          // Clockwise, like spiral.
+          angle = circleStartAngle + i * angleStep;
+          res.push([
+            clusterCenter[0] + legLength * Math.cos(angle),
+            clusterCenter[1] + legLength * Math.sin(angle),
+          ]);
+        }
+
+        return res;
       }
 
 
