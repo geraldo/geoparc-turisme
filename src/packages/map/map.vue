@@ -91,6 +91,7 @@
   import Overlay from 'ol-ext/control/Overlay';
   import GeolocationButton from 'ol-ext/control/GeolocationButton';
   import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
+  import { ol_coordinate_offsetCoords } from 'ol-ext/geom/GeomUtils';
 
   //import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
   import LayerSwitcher from 'ol-layerswitcher';
@@ -1205,7 +1206,7 @@
         });
       }*/
 
-      function rutaStyleFunction(feature) {
+      function rutaStyleFunction(feature, resolution) {
         if (feature.get('tipologia_cat') === 'Georuta') {
           return new Style({
             stroke: new Stroke({
@@ -1251,12 +1252,43 @@
           });
         }
         else if (feature.get('tipologia_cat') === 'Ruta en ferrocarril') {
-          return new Style({
-            stroke: new Stroke({
-              color: '#232323',
-              width: 1
+          let offset = 5;
+          return [
+            new Style({
+              stroke: new Stroke({
+                color: '#232323',
+                width: 1
+              })
+            }),
+            new Style({
+              stroke: new Stroke({
+                color: "#8B4513",
+                width: 2*offset,
+                lineDash: [1.5,10],
+                lineCap: 'butt',
+                lineJoin: 'bevel'
+              }),
+              geometry: function (feature) { 
+                let coords = feature.getGeometry().getCoordinates();
+                coords = ol_coordinate_offsetCoords(coords, 5*resolution);
+                return new LineString(coords);
+              }
+            }),
+            new Style({
+              stroke: new Stroke({
+                color: "#8B4513",
+                width: -2*offset,
+                lineDash: [1.5,10],
+                lineCap: 'butt',
+                lineJoin: 'bevel'
+              }),
+              geometry: function (feature) { 
+                let coords = feature.getGeometry().getCoordinates();
+                coords = ol_coordinate_offsetCoords(coords, 5*resolution);
+                return new LineString(coords);
+              }
             })
-          });
+          ]
         }
       }
 
