@@ -38,10 +38,17 @@
       <span class="title">Informació</span>
     </h2>
     <div class="content">
+      <p>El Geoparc Orígens és un territorio espectacular reconegut per la UNESCO des de l'any 2018.<br>Hi pots fer un autèntic viatge en el temps per descobrir els orígens i l'evolució de la Terra i de la vida.<br>S'hi pot gaudir d'experiències diverses i impressionants com seguir el rastre dels últims dinosaures que van viure a Europa o recórrer espectaculars congostos com el de Mont-rebei o el de Collegats.</p>
+      <p>En aquest visor trobaràs els destacats del Geoparc Orígens.</p>
+      <div><a class="logo1" title="Geoparc Orígens als Pirineus Catalans" href="https://www.geoparcorigens.cat/"><img src="/logo-geoparc.jpg"></a><a class="logo2" title="UNESCO Global Geoparks" href="https://en.unesco.org/global-geoparks"><img src="/logo-unesco.png"></a></div>
+      <div class="wp-block-image">
+        <figure class="aligncenter size-medium is-resized" style="float: left;"><a href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg" alt="" class="wp-image-14986" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-150x105.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo.jpg 580w" sizes="(max-width: 75px) 100vw, 75px" width="75" height="52"></a></figure>
+        <figure class="wp-block-image size-medium is-resized"><a href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg 292w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-996x1024.jpg 996w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-768x790.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-146x150.jpg 146w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW.jpg 1489w" sizes="(max-width: 73px) 100vw, 73px" width="73" height="75"></a></figure>
+      </div>
       <h3>Contacte</h3>
       <p>Orígens UNESCO Global Geopark<br>
-      Carrer de Soldevila, 3 – 25620 Tremp (Lleida)<br>
-      Tlf. +34 973 651 088 / +34 636 868 713<br>
+      Carrer de Soldevila, 3<br>
+      25620 Tremp (Lleida)<br>
       info@geoparcorigens.cat</p>
       <h3>Amb el soport de</h3>
       <div class="wp-block-image">
@@ -52,10 +59,6 @@
       </div>
       <div class="wp-block-image">
         <figure class="aligncenter size-medium is-resized"><a href="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01.jpg"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-300x65.jpg" alt="" class="wp-image-13491" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-300x65.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-1024x223.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-768x167.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-1536x334.jpg 1536w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-150x33.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01.jpg 1781w" sizes="(max-width: 300px) 100vw, 300px" width="300" height="65"></a></figure>
-      </div>
-      <div class="wp-block-image">
-        <figure class="aligncenter size-medium is-resized" style="float: left;"><a href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg" alt="" class="wp-image-14986" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-150x105.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo.jpg 580w" sizes="(max-width: 75px) 100vw, 75px" width="75" height="52"></a></figure>
-        <figure class="wp-block-image size-medium is-resized"><a href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg 292w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-996x1024.jpg 996w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-768x790.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-146x150.jpg 146w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW.jpg 1489w" sizes="(max-width: 73px) 100vw, 73px" width="73" height="75"></a></figure>
       </div>
     </div>
   </div>
@@ -122,6 +125,7 @@
     "Zona de bany": "zona_bany"
   };
   const tipologiasRuta = {
+    "Ruta en ferrocarril": "Ruta en ferrocarril",
     "Ruta a peu": "Ruta a peu",
     "Ruta en bicicleta": "Ruta en bicicleta",
     "El Cinquè Llac": "El Cinquè Llac",
@@ -832,6 +836,22 @@
               pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
 
                 if (!feature.get('cluster') && feature.get('spiderfied')) {
+
+                  /*let spiderFeature = pageData.clusterSource.getClosestFeatureToCoordinate(
+                    evt.coordinate,
+                    (f) => {
+                      return feature.get("features").includes(f.get("features")[0])
+                    }
+                  );
+                  console.log(spiderFeature.get("features")[0]);
+
+                  if (spiderFeature) {
+                    let title = spiderFeature.get('nom_' + pageData.lang),
+                        foto = spiderFeature.get('imatge_1');
+                    pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
+                    return true;
+                  }*/
+
                   let features = feature.get('features');
                   for (var i = features.length - 1; i >= 0; --i) {
                     if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
@@ -839,7 +859,6 @@
                           foto = features[i].get('imatge_1');
                       //console.log(title, features[i].getGeometry().getExtent());
                       pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
-                      return true;
                     }
                   }
                 }
@@ -1162,7 +1181,7 @@
             image: new Icon({
               //size: [20, 20],
               //src: "icons/" + icon + ".png"
-              scale: 0.06,
+              scale: 0.08,
               src: "simbols/" + icon + ".svg"
             }),
             //zIndex: 20-tipusPoiArray.indexOf(tipus)
@@ -1173,7 +1192,7 @@
           image: new Icon({
             //size: [20, 20],
             //src: "icons/" + icon + ".png"
-            scale: 0.06,
+            scale: 0.08,
             src: "simbols/" + icon + ".svg"
           }),
           //zIndex: 20-tipusPoiArray.indexOf(tipus)
@@ -1230,6 +1249,14 @@
           return new Style({
             stroke: new Stroke({
               color: '#11b76c',
+              width: 3
+            })
+          });
+        }
+        else if (feature.get('tipologia_cat') === 'Ruta en ferrocarril') {
+          return new Style({
+            stroke: new Stroke({
+              color: '#232323',
               width: 3
             })
           });
