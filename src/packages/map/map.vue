@@ -57,9 +57,6 @@
       <div class="wp-block-image">
         <figure class="aligncenter size-medium"><a href="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif" alt="" class="wp-image-3099" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif 300w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-150x39.gif 150w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif 574w" sizes="(max-width: 300px) 100vw, 300px" width="300" height="78"></a></figure>
       </div>
-      <div class="wp-block-image">
-        <figure class="aligncenter size-medium is-resized"><a href="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01.jpg"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-300x65.jpg" alt="" class="wp-image-13491" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-300x65.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-1024x223.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-768x167.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-1536x334.jpg 1536w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01-150x33.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2021/07/Logo-FEDER-01.jpg 1781w" sizes="(max-width: 300px) 100vw, 300px" width="300" height="65"></a></figure>
-      </div>
     </div>
   </div>
 </template>
@@ -1257,7 +1254,7 @@
           return new Style({
             stroke: new Stroke({
               color: '#232323',
-              width: 3
+              width: 1
             })
           });
         }
