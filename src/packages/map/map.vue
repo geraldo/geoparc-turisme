@@ -411,6 +411,7 @@
           fold: 'close'
         }),
         
+        vectorSource: null,
         clusterSource: null,
         clusterCircles: null,
         clickFeature: null,
@@ -644,13 +645,15 @@
       }
 
       function loadWfsLayer(layer) {
+        pageData.vectorSource = new VectorSource({
+          format: new GeoJSON(),
+          url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000'
+        });
+
         pageData.clusterSource = new Cluster({
           distance: 100,
           minDistance: 0,
-          source: new VectorSource({
-            format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000'
-          })
+          source: pageData.vectorSource
         });
 
         // Layer displaying the expanded view of overlapping cluster members.
@@ -802,108 +805,30 @@
         /*
          * Tooltip
          *****************************************/
-        pageData.map.on('pointermove', function(evt) {
+        let hoverFeature;
+        pageData.map.on("pointermove", (event) => {
           if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowTableRutas").is(':visible') && !$("#windowInfo").is(':visible')) {
 
-            if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+            // Change the cursor style to indicate that the cluster is clickable.
+            pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(event.pixel, {
               layerFilter: function(layer) {
                 return pageData.poisLayer === layer || pageData.clusterCircles === layer || pageData.rutasLayers.includes(layer);
               },
               hitTolerance: 5
-            })) {
-              pageData.map.getTargetElement().style.cursor = 'pointer';
-            }
-            else {
-              pageData.map.getTargetElement().style.cursor = '';
-              pageData.tooltip.hide();
-            }
+            }) ? 'pointer' : '';
 
-            /*pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(evt.pixel, {
-              layerFilter: function(layer) {
-                return pageData.poisLayer === layer || pageData.clusterCircles === layer || pageData.rutasLayers.includes(layer);
-              },
-              hitTolerance: 5
-            }) ? 'pointer' : '';*/
-
-            if (pageData.map.hasFeatureAtPixel(evt.pixel, {
-              layerFilter: function(layer) {
-                return pageData.clusterCircles === layer;
-              }
-            })) {
-              // POIs cluster spiderfied
-              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-
-                if (!feature.get('cluster') && feature.get('spiderfied')) {
-
-                  /*let spiderFeature = pageData.clusterSource.getClosestFeatureToCoordinate(
-                    evt.coordinate,
-                    (f) => {
-                      return feature.get("features").includes(f.get("features")[0])
-                    }
-                  );
-                  console.log(spiderFeature.get("features")[0]);
-
-                  if (spiderFeature) {
-                    let title = spiderFeature.get('nom_' + pageData.lang),
-                        foto = spiderFeature.get('imatge_1');
-                    pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
-                    return true;
-                  }*/
-
-                  let features = feature.get('features');
-                  for (var i = features.length - 1; i >= 0; --i) {
-                    if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
-                      let title = features[i].get('nom_' + pageData.lang),
-                          foto = features[i].get('imatge_1');
-                      //console.log(title, features[i].getGeometry().getExtent());
-                      pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
-                    }
-                  }
-                }
-              }, {
-                layerFilter: function(layer) {
-                  return pageData.clusterCircles === layer;
-                }
-              });
-            }
-            if (pageData.map.hasFeatureAtPixel(evt.pixel, {
-              layerFilter: function(layer) {
-                return pageData.poisLayer === layer;
-              },
-              hitTolerance: 5
-            })) {
-              // POIs
-              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-
-                if (!feature.get('cluster') && !feature.get('spiderfied')) {
-                  let features = feature.get('features');
-                  for (var i = features.length - 1; i >= 0; --i) {
-                    if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
-                      let title = features[i].get('nom_' + pageData.lang),
-                          foto = features[i].get('imatge_1');
-                      pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
-                      return true;
-                    }
-                  }
-                }
-              }, {
-                layerFilter: function(layer) {
-                  return pageData.poisLayer === layer;
-                },
-                hitTolerance: 5
-              });
-            }
-            else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
+            // rutas
+            if (pageData.map.hasFeatureAtPixel(event.pixel, {
               layerFilter: function(layer) {
                 return pageData.rutasLayers.includes(layer);
               },
               hitTolerance: 5
             })) {
               // rutas
-              pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+              pageData.map.forEachFeatureAtPixel(event.pixel, function (feature) {
                 let title = feature.get('georuta_2_' + pageData.lang),
                     foto = feature.get('imatge_1');
-                pageData.tooltip.show(evt.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
+                pageData.tooltip.show(event.coordinate, '<div><div class="imgDiv"><img src="fotos/' + foto + '"/></div><h2>' + title + '</h2></div>');
                 return true;
               }, {
                 layerFilter: function(layer) {
@@ -912,9 +837,38 @@
                 hitTolerance: 5
               });
             }
-            /*else {
-              pageData.tooltip.hide();
-            }*/
+
+            // POIs
+            else {
+              pageData.poisLayer.getFeatures(event.pixel).then((features) => {
+                if (features[0] !== hoverFeature) {
+                  hoverFeature = features[0];
+                  pageData.tooltip.hide();
+                }
+                if (features.length > 0) {
+                  let feature = null;
+                  if (hoverFeature.get('spiderfied')) {
+                    feature = pageData.vectorSource.getClosestFeatureToCoordinate(
+                      event.coordinate,
+                      (feature) => hoverFeature.get("features").includes(feature)
+                    );
+                  }
+                  else if (!hoverFeature.get('cluster')) {
+                    feature = hoverFeature.get("features")[0];
+                  }
+                  else {
+                    pageData.tooltip.hide();
+                    return true;
+                  }
+
+                  pageData.tooltip.show(
+                    event.coordinate,
+                    //feature.getGeometry().getCoordinates(),
+                    '<div><div class="imgDiv"><img src="fotos/' + feature.get('imatge_1') + '"/></div><h2>' + feature.get('nom_' + pageData.lang) + '</h2></div>'
+                  );
+                }
+              });
+            }
           }
         });
 
@@ -947,6 +901,8 @@
           // cluster and pois
           let feature = pageData.map.forEachFeatureAtPixel(evt.pixel, function(feature) {
             return feature;
+          }, {
+            hitTolerance: 5
           });
 
           if (feature) {
@@ -995,12 +951,31 @@
                 },
                 hitTolerance: 5
               })) {
-                let features = feature.get('features');
-                for (var i = features.length - 1; i >= 0; --i) {
-                  if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
-                    showPopupPoi(evt, features[i]);
+
+                pageData.poisLayer.getFeatures(evt.pixel).then((features) => {
+                  if (features[0] !== hoverFeature) {
+                    hoverFeature = features[0];
+                    pageData.popup.hide();
                   }
-                }
+                  if (features.length > 0) {
+                    let feature = null;
+                    if (hoverFeature.get('spiderfied')) {
+                      feature = pageData.vectorSource.getClosestFeatureToCoordinate(
+                        evt.coordinate,
+                        (feature) => hoverFeature.get("features").includes(feature)
+                      );
+                    }
+                    else if (!hoverFeature.get('cluster')) {
+                      feature = hoverFeature.get("features")[0];
+                    }
+                    else {
+                      pageData.popup.hide();
+                      return true;
+                    }
+
+                    showPopupPoi(evt, feature);
+                  }
+                });
               }
               else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
                 layerFilter: function(layer) {
@@ -1083,80 +1058,6 @@
       /*
        * WFS styles
        *****************************************/
-      /*let initiativesLayer,
-          maxFeatureCount;
-      let calculateClusterInfo = function(resolution) {
-        maxFeatureCount = 0;
-        let features = pageData.poisLayer.getSource().getFeatures(),
-            feature, 
-            radius;
-        for (var i = features.length - 1; i >= 0; --i) {
-          feature = features[i];
-          let originalFeatures = feature.get('features'),
-              extent = createEmpty(),
-              j = (void 0), 
-              jj = (void 0);
-          for (j = 0, jj = originalFeatures.length; j < jj; ++j) {
-            extend(extent, originalFeatures[j].getGeometry().getExtent());
-          }
-          maxFeatureCount = Math.max(maxFeatureCount, jj);
-          //radius = 0.75 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent)) /
-              resolution;
-          feature.set('radius', 25);
-        }
-      };
-
-      let currentResolution;
-      function clusterStyleFunction(feature, resolution) {
-        if (resolution != currentResolution) {
-          calculateClusterInfo(resolution);
-          currentResolution = resolution;
-        }
-
-        let size = 0,
-            features = feature.get('features');
-        //remove not selected categories
-        for (var i = features.length - 1; i >= 0; --i) {
-          if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
-            size++;
-          }
-        }
-        
-        let style;
-        if (size > 1 && pageData.map.getView().getZoom() < pageData.map.getView().getMaxZoom()) {
-          // cluster style - but not on last zoom
-          feature.set('cluster', true);
-          style = new Style({
-            image: new Circle({
-              radius: feature.get('radius'),
-              fill: new Fill({
-                color: [255, 255, 0, Math.min(0.8, 0.2 + (size / maxFeatureCount))]
-              })
-            }),
-            text: new Text({
-              text: size.toString(),
-              fill: new Fill({
-                color: '#fff'
-              }),
-              stroke: new Stroke({
-                color: 'rgba(0, 0, 0, 0.6)',
-                width: 3
-              })
-            })
-          });
-        } else {
-          // icon style
-          feature.set('cluster', false);
-          for (var i = features.length - 1; i >= 0; --i) {
-            if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
-              style = iconStyleFunction(features[i]);
-              break;
-            }
-          }
-        }
-        return style;
-      }*/
-
       function iconStyleFunction(feature) {
         let tipus = feature.get('tipus_cat'),
             icon = tipusPoi[tipus];
@@ -1164,27 +1065,6 @@
         else if (tipus === "centre_interpretacio") icon = "centre_interpretacio";
         else if (feature.get("nom_cat") === "Oficina d'informació de l'Epicentre, centre de visitants del Geoparc Orígens") icon = "epicentre";
 
-        //console.log(feature.get('nom_cat'), tipusPoi[feature.get('tipus_cat')], feature.getGeometry().getCoordinates());
-        /*return [
-          new Style({
-            image: new Circle({
-              fill: new Fill({
-                color: "rgba(255,255,0,0.8)"
-              }),
-              radius: 16
-            }),
-            //zIndex: 20-tipusPoiArray.indexOf(tipus)
-          }),
-          new Style({
-            image: new Icon({
-              //size: [20, 20],
-              //src: "icons/" + icon + ".png"
-              scale: 0.08,
-              src: "simbols/" + icon + ".svg"
-            }),
-            //zIndex: 20-tipusPoiArray.indexOf(tipus)
-          })
-        ]*/
         return new Style({
           geometry: feature.getGeometry(),
           image: new Icon({
@@ -1311,9 +1191,17 @@
           return [
             new Style({
               image: new Circle({
+                radius: 40,
+                fill: new Fill({
+                  color: "rgba(0, 0, 0, 0)"
+                })
+              })
+            }),
+            new Style({
+              image: new Circle({
                 radius: 20,
                 fill: new Fill({
-                  color: 'rgba(255, 153, 102, 0.3)',
+                  color: 'rgba(231, 221, 11, 0.3)',
                 })
               })
             }),
@@ -1321,7 +1209,7 @@
               image: new Circle({
                 radius: 14,
                 fill: new Fill({
-                  color: 'rgba(255, 165, 0, 0.7)',
+                  color: 'rgba(231, 221, 11, 0.7)',
                 })
               }),
               text: new Text({
@@ -1413,7 +1301,7 @@
         const res = [];
         let angle;
 
-        legLength = Math.max(legLength, 35) * resolution; // Minimum distance to get outside the cluster icon.
+        legLength = Math.max(legLength, 25) * resolution; // Minimum distance to get outside the cluster icon.
 
         for (let i = 0; i < count; ++i) {
           // Clockwise, like spiral.
