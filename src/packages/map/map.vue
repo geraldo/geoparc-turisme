@@ -304,6 +304,7 @@
           const target = e.target;
           LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
           render(lyr);
+          LayerSwitcherWithLegend.addPois(map, poisLayer);          
         };
         li.appendChild(input);
 
@@ -354,8 +355,16 @@
         // toggle selected initiative icons
         $(this).toggleClass("off");
         poisLayer.getSource().changed();
-        map.getView().setZoom(map.getView().getZoom()-0.01);
-        //pageData.popup.hide();
+
+        // close spiderfier
+        let view = map.getView();
+        if (view.getResolution() <= view.getMinResolution())
+          view.setZoom(view.getZoom()-0.01);
+      });
+
+      $("#layerSwitcher li.layer").click(function() {
+        // toggle selected initiative icons
+        $(this).toggleClass("off");
       });
 
       $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").unbind("click");
@@ -370,8 +379,11 @@
           $("#layerSwitcher li.poiLayer").removeClass("off");
         }
         poisLayer.getSource().changed();
-        map.getView().setZoom(map.getView().getZoom()-0.01);
-        //pageData.popup.hide();
+
+        // close spiderfier
+        let view = map.getView();
+        if (view.getResolution() <= view.getMinResolution())
+          view.setZoom(view.getZoom()-0.01);
       });
     }
   }
