@@ -271,7 +271,7 @@
               const target = e.target;
               LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
               render(lyr);
-              LayerSwitcherWithLegend.addPois(poisLayer);
+              LayerSwitcherWithLegend.addPois(map, poisLayer);
             }
           };
           li.appendChild(input);
@@ -339,7 +339,7 @@
       return li;
     }
 
-    static addPois(poisLayer) {
+    static addPois(map, poisLayer) {
       // add pois to layerswitcher
       let html = "";
       for (let tipo in tipusPoi) {
@@ -354,6 +354,7 @@
         // toggle selected initiative icons
         $(this).toggleClass("off");
         poisLayer.getSource().changed();
+        map.getView().setZoom(map.getView().getZoom()-0.01);
         //pageData.popup.hide();
       });
 
@@ -369,6 +370,7 @@
           $("#layerSwitcher li.poiLayer").removeClass("off");
         }
         poisLayer.getSource().changed();
+        map.getView().setZoom(map.getView().getZoom()-0.01);
         //pageData.popup.hide();
       });
     }
@@ -659,7 +661,7 @@
         // Layer displaying the expanded view of overlapping cluster members.
         pageData.clusterCircles = new VectorLayer({
           source: pageData.clusterSource,
-          style: clusterCircleStyle,
+          style: new Style({})
         });
 
         pageData.poisLayer = new VectorLayer({
@@ -1328,7 +1330,7 @@
         pageData.map.addControl(pageData.windowLayers);
 
         LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, document.getElementById("layerSwitcher"), { reverse: true });
-        LayerSwitcherWithLegend.addPois(pageData.poisLayer);
+        LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer);
 
         pageData.windowTablePois = new Overlay({
           closeBox : true,
@@ -1508,7 +1510,7 @@
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(1) label").text(i18next.t('switcher.baseGroupTopo'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(2) label").text(i18next.t('switcher.baseGroupOrto'));
         LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, document.getElementById("layerSwitcher"), { reverse: true });
-        LayerSwitcherWithLegend.addPois(pageData.poisLayer);
+        LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer);
       }
 
       /*
