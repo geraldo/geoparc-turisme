@@ -661,7 +661,7 @@
       function loadWfsLayer(layer) {
         pageData.vectorSource = new VectorSource({
           format: new GeoJSON(),
-          url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000'
+          url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true'
         });
 
         pageData.clusterSource = new Cluster({
@@ -697,7 +697,7 @@
           type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipus_cat=' + tipo
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipus_cat=' + tipo
           }),
           style: iconStyleFunction
         });
@@ -715,7 +715,7 @@
           type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&tipologia_cat=' + tipologia
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipologia_cat=' + tipologia
           }),
           style: rutaStyleFunction
         });
@@ -1535,7 +1535,7 @@
           responsible: true,
           search: true,
           ajax: { 
-            url :"https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000", type : "GET",
+            url :"https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true", type : "GET",
             dataSrc: 'features'
           },
           columns: [
@@ -1563,7 +1563,7 @@
           responsible: true,
           search: true,
           ajax: { 
-            url :"https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000", type : "GET",
+            url :"https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true", type : "GET",
             dataSrc: 'features'
           },
           columns: [
