@@ -76,7 +76,7 @@
   import { ref, reactive, shallowReactive, toRefs, toRef, onMounted, onBeforeUnmount } from 'vue';
 
   import { Map, View, Feature, Collection, Overlay as OverlayOL } from 'ol';
-  import { OSM, Cluster, XYZ as xyzSource, Vector as VectorSource, TileWMS, VectorTile as VectorTileSource } from 'ol/source';
+  import { Cluster, XYZ as xyzSource, Vector as VectorSource, TileWMS, VectorTile as VectorTileSource } from 'ol/source';
   import { Group as LayerGroup, Tile as TileLayer, Vector as VectorLayer, VectorTile } from 'ol/layer';
   import { ScaleLine, FullScreen, defaults as defaultControls, Control } from 'ol/control';
   import { Point, Polygon, LineString, Geometry } from 'ol/geom';
@@ -462,28 +462,6 @@
           visible: false,
           preview: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ortofoto_color_provisional&WIDTH=256&HEIGHT=256&SRS=EPSG%3A3857&STYLES=&BBOX=195678.7924100496%2C5087648.602661332%2C234814.55089205984%2C5126784.361143342'
         }),
-        baseLayerTopo: new LayerGroup({
-          title: 'Topogràfic (ICGC)',
-          baseLayer: true,
-          combine: true,
-          visible: false,
-          layers: [
-            new TileLayer({
-              minZoom: 14,
-              source: new xyzSource({
-                url: 'https://tilemaps.icgc.cat/mapfactory/wmts/topo_suau/CAT3857/{z}/{x}/{y}.png',
-                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-               })
-            }),
-            new TileLayer({
-              maxZoom: 14,
-              source: new xyzSource({
-                url: 'https://tilemaps.icgc.cat/mapfactory/wmts/osm_suau/CAT3857_15/{z}/{x}/{y}.png',
-                attributions: ['Cartografia topogràfica de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-               })
-            })
-          ]
-        }),
         /*baseLayerVector: new MapLibreLayer({
           title: 'Topogràfic (ICGC)',
           baseLayer: true,
@@ -500,12 +478,6 @@
             url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/{z}/{x}/{y}.png",
             attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
           })
-        }),
-        baseLayerOSM: new TileLayer({
-          title: 'Openstreetmap',
-          baseLayer: true,
-          visible: false,
-          source: new OSM()
         }),
 
         /*baseLayers: new LayerGroup({
@@ -782,9 +754,7 @@
           layers: [
             //pageData.baseLayers,
             pageData.baseLayerOrto,
-            pageData.baseLayerTopo,
             pageData.baseLayerContext,
-            pageData.baseLayerOSM,
             pageData.qgisWmsLayers,
             pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
