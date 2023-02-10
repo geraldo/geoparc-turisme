@@ -6,16 +6,16 @@
    height="5.2916665mm"
    viewBox="0 0 5.2916665 5.2916665"
    version="1.1"
-   id="svg851"
+   id="svg5"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
-   sodipodi:docname="Ruta a peu.svg"
+   sodipodi:docname="Parades ferrocarril.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
-     id="namedview853"
+     id="namedview7"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
@@ -29,8 +29,8 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="0.69664703"
-     inkscape:cx="349.53139"
-     inkscape:cy="312.20976"
+     inkscape:cx="309.33886"
+     inkscape:cy="-30.862114"
      inkscape:window-width="1870"
      inkscape:window-height="1016"
      inkscape:window-x="0"
@@ -38,22 +38,22 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
-     id="defs848" />
+     id="defs2" />
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-12.545982,-65.717339)">
+     transform="translate(-23.180254,-156.48843)">
     <image
        width="5.2916665"
        height="5.2916665"
        preserveAspectRatio="none"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAEJJREFU
-OI1j/P///38GKgImaho2auBIMZCFgYGBIercTKoYtswoHWLgjldXqGIgAwOtvOwhpkM1AxlH8/Ko
-gYPAQADSfA4ld1NVhgAAAABJRU5ErkJggg==
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAF9JREFU
+OI3t07ENgDAMRNELovQ+3iYLeBwP4ClTHw3JAOiQgsQvU7zGuUaSEHYosR/cHawqLTjG0IKq2lxK
+7x3u/hiKCADAOR9IQrJC3mUmFb33bcxMAq6jqPrQ9LYFL/QKaGAlx/ZoAAAAAElFTkSuQmCC
 "
-       id="image920"
-       x="12.545982"
-       y="65.717339" />
+       id="image832"
+       x="23.180254"
+       y="156.48843" />
   </g>
 </svg>

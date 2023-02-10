@@ -6,8 +6,8 @@
    id="svg2"
    width="20"
    height="20"
-   viewBox="0 0 20 20"
-   sodipodi:docname="Ruta en bicicleta.svg"
+   viewBox="0 0 25.000001 25.000001"
+   sodipodi:docname="El Cinquè Llac.svg"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,9 +25,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="21.599902"
-     inkscape:cx="2.6620491"
-     inkscape:cy="5.0231709"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="29.324999"
+     inkscape:cx="1.5856778"
+     inkscape:cy="13.316284"
      inkscape:window-width="1870"
      inkscape:window-height="1016"
      inkscape:window-x="0"
@@ -39,22 +43,20 @@
      inkscape:label="Image"
      id="g8">
     <image
-       width="20"
-       height="20"
+       width="26.666668"
+       height="26.666668"
        preserveAspectRatio="none"
        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9
-kT1Iw1AUhU/TSkUqHewg4pChdrIgKsVRq1CECqFWaNXB5KV/0KQhSXFxFFwLDv4sVh1cnHV1cBUE
-wR8QVxcnRRcp8b6m0CLGC4/3cd49h/fuA4RmlWlWYALQdNvMpJJiLr8qBl/hQwBhJBCTmWXMSVIa
-nvV1T91Ud3Ge5d33Zw2qBYsBPpF4lhmmTbxBnNi0Dc77xBFWllXic+Jxky5I/Mh1xeU3zqU2Czwz
-YmYz88QRYrHUw0oPs7KpEU8TR1VNp3wh57LKeYuzVq2zzj35C0MFfWWZ67RGkcIiliBBhII6KqjC
-Rpx2nRQLGTpPevhH2n6JXAq5KmDkWEANGuS2H/wPfs/WKk5NukmhJND34jgfY0BwF2g1HOf72HFa
-J4D/GbjSu/5aE5j5JL3R1aJHQHgbuLjuasoecLkDDD8Zsim3JT8toVgE3s/om/LA0C0wsObOrXOO
-0wcgS7NK3wAHh0CsRNnrHu/u753bvz2d+f0AiSxysCdzDxAAAAAGYktHRAD/AP8A/6C9p5MAAAAJ
-cEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfnAQQPOQh+lH3IAAAAGXRFWHRDb21tZW50AENyZWF0
-ZWQgd2l0aCBHSU1QV4EOFwAAAIVJREFUOMtj/P///38GKgImBiqDUQNHgoEsyJzvJ05DbOHmYmDX
-0WJgYGTE0PDv02eGn9duMDAwMDAwcnAwcOhpMzAwIdzFiJyw78hrwyUEc9MZhEvyUA379p3hoaUz
-w98PH+Fi/HGRDKLNNbTzMooLSfUyEycnA7uuFm4vj6bDUQMHyEAAd4cuF1j+GrgAAAAASUVORK5C
-YII=
+kT1Iw0AcxV9TpSIVBYuIOGSoThZERQQXrUIRKoRaoVUHk0s/hCYNSYqLo+BacPBjserg4qyrg6sg
+CH6AODo5KbpIif9LCi1iPDjux7t7j7t3gFArMc1qGwU03TZTibiYya6IoVeE0YceTCMoM8uYlaQk
+fMfXPQJ8vYvxLP9zf44uNWcxICASzzDDtInXiSc3bYPzPnGEFWWV+Jx4xKQLEj9yXfH4jXPBZYFn
+Rsx0ao44QiwWWlhpYVY0NeIJ4qiq6ZQvZDxWOW9x1koV1rgnf2E4py8vcZ3mIBJYwCIkiFBQwQZK
+sBGjVSfFQor24z7+AdcvkUsh1wYYOeZRhgbZ9YP/we9urfz4mJcUjgPtL47zMQSEdoF61XG+jx2n
+fgIEn4Ervekv14CpT9KrTS16BHRvAxfXTU3ZAy53gP4nQzZlVwrSFPJ54P2MvikL9N4Cnateb419
+nD4AaeoqeQMcHALDBcpe83l3R2tv/55p9PcDh3dyr2QT8kMAAAAJcEhZcwAACxMAAAsTAQCanBgA
+AAAHdElNRQfmDBYREyj19ZdSAAAAS0lEQVQ4y2P8////fwYqAiYGKoNRA0cNJAOwMDAwMNwtKyHb
+AImEJAZuLS1UAz8ePUK2gSJ+/nTwMr+1DfkGCAmj8BlHC4dRA0kHABjnDv/g1ZMkAAAAAElFTkSu
+QmCC
 "
        id="image10" />
   </g>

@@ -304,6 +304,17 @@ h3 {
   max-height: 600px;
 }
 
+.window.infoWindow .columns {
+  display: flex;
+}
+.window.infoWindow .columns .col2 {
+  width: 60%;
+}
+.window.infoWindow .columns .col2.right {
+  padding-left: 100px;
+  width: 40%;
+}
+
 /*
  * layer switcher
  * ************************/

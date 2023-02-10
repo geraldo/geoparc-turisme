@@ -38,24 +38,30 @@
       <span class="title">Informació</span>
     </h2>
     <div class="content">
-      <p>El Geoparc Orígens és un territorio espectacular reconegut per la UNESCO des de l'any 2018.<br>Hi pots fer un autèntic viatge en el temps per descobrir els orígens i l'evolució de la Terra i de la vida.<br>S'hi pot gaudir d'experiències diverses i impressionants com seguir el rastre dels últims dinosaures que van viure a Europa o recórrer espectaculars congostos com el de Mont-rebei o el de Collegats.</p>
-      <p>En aquest visor trobaràs els destacats del Geoparc Orígens.</p>
-      <div><a class="logo1" title="Geoparc Orígens als Pirineus Catalans" href="https://www.geoparcorigens.cat/"><img src="/logo-geoparc.jpg"></a><a class="logo2" title="UNESCO Global Geoparks" href="https://en.unesco.org/global-geoparks"><img src="/logo-unesco.png"></a></div>
-      <div class="wp-block-image">
-        <figure class="aligncenter size-medium is-resized" style="float: left;"><a href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg" alt="" class="wp-image-14986" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-150x105.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo.jpg 580w" sizes="(max-width: 75px) 100vw, 75px" width="75" height="52"></a></figure>
-        <figure class="wp-block-image size-medium is-resized"><a href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg 292w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-996x1024.jpg 996w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-768x790.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-146x150.jpg 146w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW.jpg 1489w" sizes="(max-width: 73px) 100vw, 73px" width="73" height="75"></a></figure>
+      <div class="columns">
+        <div class="col2">
+          <p>El Geoparc Orígens és un territori espectacular reconegut per la UNESCO des de l'any 2018.<br>Hi pots fer un autèntic viatge en el temps per descobrir els orígens i l'evolució de la Terra i de la vida.<br>S'hi pot gaudir d'experiències diverses i impressionants com seguir el rastre dels últims dinosaures que van viure a Europa o recórrer espectaculars congostos com el de Mont-rebei o el de Collegats.</p>
+          <p>En aquest visor trobaràs els destacats del Geoparc Orígens.</p>
+        </div>
+        <div class="col2 right">
+          <div><a class="logo1" title="Geoparc Orígens als Pirineus Catalans" href="https://www.geoparcorigens.cat/"><img src="/logo-geoparc.jpg"></a><a class="logo2" title="UNESCO Global Geoparks" href="https://en.unesco.org/global-geoparks"><img src="/logo-unesco.png"></a></div>
+          <div class="wp-block-image">
+            <figure class="aligncenter size-medium is-resized" style="float: left;"><a href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg" alt="" class="wp-image-14986" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-150x105.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo.jpg 580w" sizes="(max-width: 75px) 100vw, 75px" width="75" height="52"></a></figure>
+            <figure class="wp-block-image size-medium is-resized"><a href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg 292w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-996x1024.jpg 996w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-768x790.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-146x150.jpg 146w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW.jpg 1489w" sizes="(max-width: 73px) 100vw, 73px" width="73" height="75"></a></figure>
+          </div>
+        </div>
       </div>
       <h3>Contacte</h3>
       <p>Orígens UNESCO Global Geopark<br>
       Carrer de Soldevila, 3<br>
       25620 Tremp (Lleida)<br>
       info@geoparcorigens.cat</p>
-      <h3>Amb el soport de</h3>
+      <h3>Amb el suport de</h3>
       <div class="wp-block-image">
-        <figure class="aligncenter size-medium is-resized"><a href="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1.jpg"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg" alt="" class="wp-image-6401" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-1024x192.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-768x144.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-150x28.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1.jpg 1400w" sizes="(max-width: 225px) 100vw, 225px" width="225" height="42"></a></figure>
+        <img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif" alt="" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif 300w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-150x39.gif 150w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif 574w" width="300" height="78">
       </div>
       <div class="wp-block-image">
-        <figure class="aligncenter size-medium"><a href="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif" alt="" class="wp-image-3099" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif 300w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-150x39.gif 150w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif 574w" sizes="(max-width: 300px) 100vw, 300px" width="300" height="78"></a></figure>
+        <img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg" alt="" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-1024x192.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-768x144.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-150x28.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1.jpg 1400w" height="42">
       </div>
     </div>
   </div>
@@ -104,30 +110,55 @@
   import DataTable from 'datatables.net';
 
   const tipusPoi = {
-    "Centre d'Interpretació": "centre_interpretacio", // centre_interpretacio
-    "Informació turística": "info_turistica",
-    "Lloc interès Geoparc": "lloc_interes_geoparc",
-    "Jaciment arqueològic": "jacimentarqueologic",
-    "Castell": "castell",
-    "Església": "esglesia",
-    "Cova visitable": "cova_visitable",
-    "Exposició a l'aire lliure": "exposicio_aire_lliure", // exposicio_aire_lliure
+    "Epicentre": "epicentre",
+    "Informació turística": "informacio_turistica",
+    "Centre d'Interpretació": "centre_interpretacio",
+    "Geologia": "lloc_interes_geoparc",
+    "Dinosaures": "dinosaures",
+    "Àrea de lleure": "area_lleure",
     "Mirador": "mirador",
-    "Establiment recomanat": "establiment_recomanat_1",
-    "Telefèric": "teleferic",
+    "Establiment recomanat": "establiment_recomanat",
+    "Jaciment arqueològic": "jaciment_arqueologic",
+    "Església": "esglesia",
+    "Castell": "castell",
+    "Llegenda": "llegenda",
+    "Exposició a l'aire lliure": "exposicio_aire_lliure",
+    "Patrimoni industrial": "patrimoni_industrial",
     "Caiac": "caiac",
     "Parapent": "parapent",
     "Rafting": "rafting",
-    "Via Ferrata": "viaferrata",
-    "Vol en Globus": "globus",
-    "Zona de bany": "zona_bany"
+    "Telefèric": "telefèric",
+    "Via Ferrata": "via_ferrata",
+    "Vol en Globus": "vol_en_globus",
+    "Zona de bany": "zona_de_bany"
   };
+  /*const tipusPoi = {
+    "epicentre": "Epicentre",
+    "informacio_turistica": "Informació turística",
+    "centre_interpretacio": "Centre d'Interpretació",
+    "lloc_interes_geoparc": "Geologia",
+    "dinosaures": "Dinosaures",
+    "area_lleure": "Àrea de lleure",
+    "mirador": "Mirador",
+    "establiment_recomanat": "Establiment recomanat",
+    "jaciment_arqueologic": "Jaciment arqueològic",
+    "esglesia": "Església",
+    "castell": "Castell",
+    "llegenda": "Llegenda",
+    "exposicio_aire_lliure": "Exposició a l'aire lliure",
+    "patrimoni_industrial": "Patrimoni industrial",
+    "caiac": "Caiac",
+    "parapent": "Parapent",
+    "rafting": "Rafting",
+    "telefèric": "Telefèric",
+    "via_ferrata": "Via Ferrata",
+    "vol_en_globus": "Vol en Globus",
+    "zona_de_bany": "Zona de bany"
+  };*/
   const tipologiasRuta = {
     "Ruta en ferrocarril": "Ruta en ferrocarril",
-    "Ruta a peu": "Ruta a peu",
-    "Ruta en bicicleta": "Ruta en bicicleta",
+    "Altres rutes": "altres rutes",
     "El Cinquè Llac": "El Cinquè Llac",
-    "Ruta Geològica": "Ruta Geològica",
     "Georuta": "Georuta"
   };
 
@@ -344,10 +375,7 @@
       // add pois to layerswitcher
       let html = "";
       for (let tipo in tipusPoi) {
-        let tipologia = tipo;
-        if (tipologia === "Exposició a l'aire lliure") tipologia = "exposicio_aire_lliure";
-        else if (tipologia === "Centre d'Interpretació") tipologia = "centre_interpretacio";
-        html += "<li class='poiLayer " + makeSafeForCSS(tipologia) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + tipo+"</li>";
+        html += "<li class='poiLayer " + makeSafeForCSS(tipo) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + tipo+"</li>";
       }
 
       $("#layerSwitcher li.group ul").first().append(html);
@@ -1073,19 +1101,13 @@
        * WFS styles
        *****************************************/
       function iconStyleFunction(feature) {
-        let tipus = feature.get('tipus_cat'),
-            icon = tipusPoi[tipus];
-        if (tipus === "exposicio_aire_lliure") icon = "exposicio_aire_lliure";
-        else if (tipus === "centre_interpretacio") icon = "centre_interpretacio";
-        else if (feature.get("nom_cat") === "Oficina d'informació de l'Epicentre, centre de visitants del Geoparc Orígens") icon = "epicentre";
+        let tipus = feature.get('tipus_cat');
 
         return new Style({
           geometry: feature.getGeometry(),
           image: new Icon({
-            //size: [20, 20],
-            //src: "icons/" + icon + ".png"
             scale: 0.08,
-            src: "simbols/" + icon + ".svg"
+            src: "simbols/" + tipus + ".svg"
           }),
           //zIndex: 20-tipusPoiArray.indexOf(tipus)
         })
@@ -1110,15 +1132,6 @@
             })
           });
         }
-        else if (feature.get('tipologia_cat') === 'Ruta Geològica') {
-          return new Style({
-            stroke: new Stroke({
-              color: '#b19395',
-              lineDash: [4,4],
-              width: 3
-            })
-          });
-        }
         else if (feature.get('tipologia_cat') === 'El Cinquè Llac') {
           return new Style({
             stroke: new Stroke({
@@ -1128,26 +1141,24 @@
             })
           });
         }
-        else if (feature.get('tipologia_cat') === 'Ruta en bicicleta') {
+        else if (feature.get('tipologia_cat') === 'Altres rutes') {
           return new Style({
             stroke: new Stroke({
-              color: '#db1e2a',
-              lineDash: [2,6],
-              width: 3
-            })
-          });
-        }
-        else if (feature.get('tipologia_cat') === 'Ruta a peu') {
-          return new Style({
-            stroke: new Stroke({
-              color: '#11b76c',
+              color: '#b19395',
+              lineDash: [4,4],
               width: 3
             })
           });
         }
         else if (feature.get('tipologia_cat') === 'Ruta en ferrocarril') {
           let offset = 5;
-          return [
+          return new Style({
+            stroke: new Stroke({
+              color: '#232323',
+              width: 1
+            })
+          })
+          /*return [
             new Style({
               stroke: new Stroke({
                 color: '#232323',
@@ -1182,7 +1193,7 @@
                 return new LineString(coords);
               }
             })
-          ]
+          ]*/
         }
       }
 
