@@ -132,31 +132,8 @@
     "Vol en Globus": "vol_en_globus",
     "Zona de bany": "zona_de_bany"
   };
-  /*const tipusPoi = {
-    "epicentre": "Epicentre",
-    "informacio_turistica": "Informació turística",
-    "centre_interpretacio": "Centre d'Interpretació",
-    "lloc_interes_geoparc": "Geologia",
-    "dinosaures": "Dinosaures",
-    "area_lleure": "Àrea de lleure",
-    "mirador": "Mirador",
-    "establiment_recomanat": "Establiment recomanat",
-    "jaciment_arqueologic": "Jaciment arqueològic",
-    "esglesia": "Església",
-    "castell": "Castell",
-    "llegenda": "Llegenda",
-    "exposicio_aire_lliure": "Exposició a l'aire lliure",
-    "patrimoni_industrial": "Patrimoni industrial",
-    "caiac": "Caiac",
-    "parapent": "Parapent",
-    "rafting": "Rafting",
-    "telefèric": "Telefèric",
-    "via_ferrata": "Via Ferrata",
-    "vol_en_globus": "Vol en Globus",
-    "zona_de_bany": "Zona de bany"
-  };*/
   const tipologiasRuta = {
-    "Ruta en ferrocarril": "Ruta en ferrocarril",
+    "Tren dels Llacs": "Tren dels Llacs",
     "Altres rutes": "altres rutes",
     "El Cinquè Llac": "El Cinquè Llac",
     "Georuta": "Georuta"
@@ -214,7 +191,7 @@
    * LayerSwitcher extended with legends
    *****************************************/
   class LayerSwitcherWithLegend extends LayerSwitcher {
-    static renderPanel(map, poisLayer, panel, options) {
+    static renderPanel(map, poisLayer, paradesLayer, panel, options) {
       // Create the event.
       const render_event = new Event('render');
       // Dispatch the event.
@@ -243,8 +220,8 @@
       const ul = document.createElement('ul');
       panel.appendChild(ul);
       // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-      LayerSwitcherWithLegend.renderLayers_(map, map, poisLayer, ul, options, function render(_changedLyr) {
-        LayerSwitcherWithLegend.renderPanel(map, poisLayer, panel, options);
+      LayerSwitcherWithLegend.renderLayers_(map, map, poisLayer, paradesLayer, ul, options, function render(_changedLyr) {
+        LayerSwitcherWithLegend.renderPanel(map, poisLayer, paradesLayer, panel, options);
       });
       // Create the event.
       const rendercomplete_event = new Event('rendercomplete');
@@ -252,19 +229,19 @@
       panel.dispatchEvent(rendercomplete_event);
     }
 
-    static renderLayers_(map, lyr, poisLayer, elm, options, render) {
+    static renderLayers_(map, lyr, poisLayer, paradesLayer, elm, options, render) {
       let lyrs = lyr.getLayers().getArray().slice();
       if (options.reverse)
         lyrs = lyrs.reverse();
       for (let i = 0, l; i < lyrs.length; i++) {
         l = lyrs[i];
         if (l.get('title')) {
-            elm.appendChild(LayerSwitcherWithLegend.renderLayer_(map, poisLayer, l, i, options, render));
+            elm.appendChild(LayerSwitcherWithLegend.renderLayer_(map, poisLayer, paradesLayer, l, i, options, render));
         }
       }
     }
 
-    static renderLayer_(map, poisLayer, lyr, idx, options, render) {
+    static renderLayer_(map, poisLayer, paradesLayer, lyr, idx, options, render) {
       const li = document.createElement('li'),
             lyrTitle = lyr.get('title'),
             checkboxId = LayerSwitcher.uuid(),
@@ -316,7 +293,7 @@
         li.appendChild(label);
         const ul = document.createElement('ul');
         li.appendChild(ul);
-        LayerSwitcherWithLegend.renderLayers_(map, lyr, poisLayer, ul, options, render);
+        LayerSwitcherWithLegend.renderLayers_(map, lyr, poisLayer, paradesLayer, ul, options, render);
       }
       else {
         // layer
@@ -335,7 +312,9 @@
           const target = e.target;
           LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
           render(lyr);
-          LayerSwitcherWithLegend.addPois(map, poisLayer);          
+          LayerSwitcherWithLegend.addPois(map, poisLayer);
+          if (lyrTitle === "Tren dels Llacs")
+            paradesLayer.setVisible(target.checked);
         };
         li.appendChild(input);
 
@@ -442,6 +421,7 @@
           title: 'Capes temàtiques',
           fold: 'close'
         }),
+        paradesLayer: null,
         invisibleWmsLayers: [],
         qgisInvisibleWmsLayers: new LayerGroup({}),
         qgisWfsLayersPoi: new LayerGroup({
@@ -632,7 +612,11 @@
             }
           }
           else if (layer.hidden) {
-            pageData.invisibleWmsLayers.push(defineQgisLayer(layer));
+            let thisLayer = defineQgisLayer(layer);
+            if (layer.name === "@Parades ferrocarril") {
+              pageData.paradesLayer = thisLayer;
+            }
+            pageData.invisibleWmsLayers.push(thisLayer);
           }
           else {
             layers.push(defineQgisLayer(layer));
@@ -743,7 +727,7 @@
           type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipologia_cat=' + tipologia
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipologia_cat=' + tipologiasRuta[tipologia]
           }),
           style: rutaStyleFunction
         });
@@ -1141,7 +1125,7 @@
             })
           });
         }
-        else if (feature.get('tipologia_cat') === 'Altres rutes') {
+        else if (feature.get('tipologia_cat') === 'altres rutes') {
           return new Style({
             stroke: new Stroke({
               color: '#b19395',
@@ -1150,16 +1134,17 @@
             })
           });
         }
-        else if (feature.get('tipologia_cat') === 'Ruta en ferrocarril') {
+        else if (feature.get('tipologia_cat') === 'Tren dels Llacs') {
           let offset = 5;
-          return new Style({
-            stroke: new Stroke({
-              color: '#232323',
-              width: 1
-            })
-          })
-          /*return [
+          return [
             new Style({
+              stroke: new Stroke({
+                color: '#232323',
+                lineDash: [2,4],
+                width: 2
+              })
+            })
+            /*new Style({
               stroke: new Stroke({
                 color: '#232323',
                 width: 1
@@ -1175,7 +1160,9 @@
               }),
               geometry: function (feature) { 
                 let coords = feature.getGeometry().getCoordinates();
-                coords = ol_coordinate_offsetCoords(coords, 5*resolution);
+                console.log(coords);
+                coords = ol_coordinate_offsetCoords(coords, offset*resolution);
+                console.log(coords);
                 return new LineString(coords);
               }
             }),
@@ -1189,11 +1176,11 @@
               }),
               geometry: function (feature) { 
                 let coords = feature.getGeometry().getCoordinates();
-                coords = ol_coordinate_offsetCoords(coords, 5*resolution);
+                coords = ol_coordinate_offsetCoords(coords, offset*resolution);
                 return new LineString(coords);
               }
-            })
-          ]*/
+            })*/
+          ]
         }
       }
 
@@ -1352,7 +1339,7 @@
         })
         pageData.map.addControl(pageData.windowLayers);
 
-        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, document.getElementById("layerSwitcher"), { reverse: true });
+        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, pageData.paradesLayer, document.getElementById("layerSwitcher"), { reverse: true });
         LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer);
 
         pageData.windowTablePois = new Overlay({
@@ -1532,7 +1519,7 @@
         //pageData.baseLayerOrto.set("title", i18next.t('switcher.baseGroupOrto'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(1) label").text(i18next.t('switcher.baseGroupTopo'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(2) label").text(i18next.t('switcher.baseGroupOrto'));
-        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, document.getElementById("layerSwitcher"), { reverse: true });
+        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, pageData.paradesLayer, document.getElementById("layerSwitcher"), { reverse: true });
         LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer);
       }
 
