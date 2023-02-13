@@ -108,6 +108,10 @@
 .ol-control {
   padding: 0;
 }
+.ol-control.ol-bar {
+  min-height: 0;
+  min-width: 0;
+}
 .ol-control.ol-toggle button {
   cursor: pointer;
 }
@@ -117,9 +121,9 @@
 .menuBar.ol-control.ol-bar.ol-top.ol-right {
   top: 0;
   right: 0;
-  border: 2px solid #b2b019;
+  border: none;
   border-radius: 0;
-  width: 340px;
+  width: 0;
   max-width: 95%;
   background: #b2b019;
 }
@@ -202,7 +206,6 @@
   min-height: 500px;
   max-height: 100%;
   bottom: unset;
-  border: 2px solid #b2b019;
 }
 
 .ol-overlay.window {
@@ -213,6 +216,7 @@
 .ol-overlay.infoWindow {
   left: 3em;
   padding: 0;
+  border: 2px solid #b2b019;
 }
 .ol-touch .ol-overlay.infoWindow {
   left: .5em;
@@ -278,6 +282,7 @@ h3 {
 
 #windowLayers {
   height: 100%;
+  border: 2px solid #b2b019;
 }
 
 #windowLayers .content {
@@ -293,6 +298,7 @@ h3 {
   top: 100px;
   right: 50px;
   z-index: 12;
+  border: 2px solid #b2b019;
 }
 #pois-table,
 #rutas-table {
@@ -320,18 +326,27 @@ h3 {
  * ************************/
 .layer-control {
   right: 0.5em;
-  top: 3em;
+  top: 1em;
   transition: right 500ms;
 }
 .layer-control.open {
   right: 344px;
 }
 
+.menuBar,
 .layersWindow {
   transition: right 500ms;
 }
+.menuBar.open,
 .layersWindow.open {
-  width: 344px;
+  width: 344px !important;
+}
+
+.menuBar .langBar {
+  width: 0;
+}
+.menuBar.open .langBar {
+  width: auto;
 }
 
 .layer-switcher {
@@ -560,6 +575,7 @@ img.leyenda.off {
   position: relative;
   min-height: 500px;
   padding-top: 25px;
+  border: 2px solid #b2b019;
 }
 
 .featureTooltip {
@@ -659,18 +675,26 @@ img.leyenda.off {
     width: 100%;
   }
 
+  .menuBar,
   .layer-control {
     right: 0;
   }
+  .menuBar.open,
   .layer-control.open {
     left: 0;
     z-index: 13;
   }
+  .layersWindow.open {
+    width: 100% !important;
+  }
+  .menuBar {
+    height: 3em;
+  }
 
-  .menuBar.ol-control.ol-bar.ol-top.ol-right {
+  /*.menuBar.ol-control.ol-bar.ol-top.ol-right {
     width: 100%;
     max-width: 100%;
-  }
+  }*/
 
   .ol-full-screen {
     top: 3.5em;

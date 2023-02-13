@@ -184,6 +184,7 @@
     handleLayerControl() {
       $(".layersWindow").toggleClass("open");
       $(".layer-control").toggleClass("open");
+      $(".menuBar").toggleClass("open");
     }
   }
 
@@ -1334,7 +1335,7 @@
         pageData.map.addControl(pageData.windowInfo);
 
         let menuBar = new Bar({
-          className: "ol-top ol-right menuBar"
+          className: "ol-top ol-right menuBar open"
         });
         pageData.map.addControl(menuBar);
 
@@ -1581,6 +1582,7 @@
             setTimeout(function() {
               $(".layersWindow").removeClass("open");
               $(".layer-control").removeClass("open");
+              $(".menuBar").removeClass("open");
             }, 3000);
           }
         })
