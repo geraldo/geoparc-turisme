@@ -99,7 +99,7 @@
   import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
   import { ol_coordinate_offsetCoords } from 'ol-ext/geom/GeomUtils';
 
-  //import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
+  import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
   import LayerSwitcher from 'ol-layerswitcher';
   import Popup from 'ol-popup';
   //import SLDReader from '@nieuwlandgeo/sldreader';
@@ -454,10 +454,8 @@
         rasterLayer: null,
 
         baseSourceOrto: new TileWMS({
-          //url: 'https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wms/service?',
           url: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms',
           params: {
-            //'LAYERS': 'ortogris',
             'LAYERS': 'ortofoto_color_provisional',
             'VERSION': '1.1.1'
           },
@@ -469,22 +467,24 @@
           visible: false,
           preview: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ortofoto_color_provisional&WIDTH=256&HEIGHT=256&SRS=EPSG%3A3857&STYLES=&BBOX=195678.7924100496%2C5087648.602661332%2C234814.55089205984%2C5126784.361143342'
         }),
-        /*baseLayerVector: new MapLibreLayer({
-          title: 'Topogràfic (ICGC)',
-          baseLayer: true,
-          visible: false,
-          maplibreOptions: {
-            style: "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_estandard.json",
-          }
-        }),*/
         baseLayerContext: new TileLayer({
           title: 'Topogràfic (ICGC)',
           baseLayer: true,
+          visible: false,
           source: new xyzSource({
             maxZoom: 19,
             url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/{z}/{x}/{y}.png",
             attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
           })
+        }),
+        baseLayerVector: new MapLibreLayer({
+          title: 'Topogràfic (ICGC)',
+          baseLayer: true,
+          maplibreOptions: {
+            //style: "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_estandard.json",
+            style: "https://betaserver2.icgc.cat/contextmaps-server/api/style/e2cc670b-1077-4e32-95ed-95a9307f9f0b"
+          },
+          preview: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/10/512/349.png"
         }),
 
         /*baseLayers: new LayerGroup({
@@ -783,6 +783,7 @@
             //pageData.baseLayers,
             pageData.baseLayerOrto,
             pageData.baseLayerContext,
+            pageData.baseLayerVector,
             pageData.qgisWmsLayers,
             pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
