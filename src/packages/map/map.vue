@@ -353,12 +353,37 @@
 
     static addPois(map, poisLayer, epiLayer) {
       // add pois to layerswitcher
-      let html = "";
+      let html = "",
+          i = 0,
+          layer = "principalLayer";
       for (let tipo in tipusPoi) {
-        html += "<li class='poiLayer " + makeSafeForCSS(tipusPoi[tipo]) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + tipo+"</li>";
+        html += "<li class='" + layer + " poiLayer " + makeSafeForCSS(tipusPoi[tipo]) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + tipo+"</li>";
+        if (i === 7) {
+          html += "</ul>";
+          $("#layerSwitcher li.group ul").first().append(html);
+          html = '<li class="group ' + makeSafeForCSS("Cultura") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> Cultura</label><ul>';
+          layer = "culturaLayer";
+        }
+        else if (i === 13) {
+          html += "</ul></li>";
+          $("#layerSwitcher li.group." + makeSafeForCSS("Rutes recomanades")).before(html);
+          html = '<li class="group ' + makeSafeForCSS("Activitats") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> Activitats</label><ul>';
+          layer = "activitatsLayer";
+        }
+        i++;
       }
+      html += "</ul></li>";
+      $("#layerSwitcher li.group." + makeSafeForCSS("Rutes recomanades")).before(html);
 
-      $("#layerSwitcher li.group ul").first().append(html);
+      // copy fold event
+      $('#layerSwitcher li.group.' + makeSafeForCSS("Cultura") + ' button').click(function() {
+        $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
+      });
+      $('#layerSwitcher li.group.' + makeSafeForCSS("Activitats") + ' button').click(function() {
+        $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
+      });
+
+      // interaction
       $("#layerSwitcher li.poiLayer").click(function() {
         // toggle selected initiative icons
         $(this).toggleClass("off");
@@ -381,23 +406,36 @@
 
       $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").unbind("click");
       $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").click(function() {
-        $(this).toggleClass("off");
-        $(this).children().eq(0).toggleClass("fa-eye");
-        $(this).children().eq(0).toggleClass("fa-eye-slash");
-        if ($(this).hasClass("off")) {
-          $("#layerSwitcher li.poiLayer").addClass("off");
+        groupToggle($(this), "principalLayer");
+        epiLayer.setVisible(!$(this).hasClass("off"));
+      });
+      $("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label").unbind("click");
+      $("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label").click(function() {
+        groupToggle($(this), "culturaLayer");
+      });
+      $("#layerSwitcher li.group."+makeSafeForCSS("Activitats")+" label").unbind("click");
+      $("#layerSwitcher li.group."+makeSafeForCSS("Activitats")+" label").click(function() {
+        groupToggle($(this), "activitatsLayer");
+      });
+
+      function groupToggle(ele, layer) {
+        ele.toggleClass("off");
+        ele.children().eq(0).toggleClass("fa-eye");
+        ele.children().eq(0).toggleClass("fa-eye-slash");
+        if (ele.hasClass("off")) {
+          $("#layerSwitcher li."+layer).addClass("off");
         }
         else {
-          $("#layerSwitcher li.poiLayer").removeClass("off");
+          $("#layerSwitcher li."+layer).removeClass("off");
         }
         poisLayer.getSource().changed();
-        epiLayer.setVisible(!$(this).hasClass("off"));
 
         // close spiderfier
         let view = map.getView();
         if (view.getResolution() <= view.getMinResolution())
           view.setZoom(view.getZoom()-0.01);
-      });
+
+      }
     }
   }
 
