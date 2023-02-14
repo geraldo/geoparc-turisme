@@ -113,7 +113,7 @@
     "Epicentre": "epicentre",
     "Informació turística": "informacio_turistica",
     "Centre d'Interpretació": "centre_interpretacio",
-    "Geologia": "lloc_interes_geoparc",
+    "Geologia": "geologia",
     "Dinosaures": "dinosaures",
     "Àrea de lleure": "area_lleure",
     "Mirador": "mirador",
@@ -123,7 +123,7 @@
     "Castell": "castell",
     "Llegenda": "llegenda",
     "Exposició a l'aire lliure": "exposicio_aire_lliure",
-    "Patrimoni industrial": "patrimoni_industrial",
+    "Patrimoni industrial": "patrimoni_Industrial",
     "Caiac": "caiac",
     "Parapent": "parapent",
     "Rafting": "rafting",
@@ -192,7 +192,7 @@
    * LayerSwitcher extended with legends
    *****************************************/
   class LayerSwitcherWithLegend extends LayerSwitcher {
-    static renderPanel(map, poisLayer, paradesLayer, panel, options) {
+    static renderPanel(map, poisLayer, epiLayer, paradesLayer, panel, options) {
       // Create the event.
       const render_event = new Event('render');
       // Dispatch the event.
@@ -221,8 +221,8 @@
       const ul = document.createElement('ul');
       panel.appendChild(ul);
       // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-      LayerSwitcherWithLegend.renderLayers_(map, map, poisLayer, paradesLayer, ul, options, function render(_changedLyr) {
-        LayerSwitcherWithLegend.renderPanel(map, poisLayer, paradesLayer, panel, options);
+      LayerSwitcherWithLegend.renderLayers_(map, map, poisLayer, epiLayer, paradesLayer, ul, options, function render(_changedLyr) {
+        LayerSwitcherWithLegend.renderPanel(map, poisLayer, epiLayer, paradesLayer, panel, options);
       });
       // Create the event.
       const rendercomplete_event = new Event('rendercomplete');
@@ -230,19 +230,19 @@
       panel.dispatchEvent(rendercomplete_event);
     }
 
-    static renderLayers_(map, lyr, poisLayer, paradesLayer, elm, options, render) {
+    static renderLayers_(map, lyr, poisLayer, epiLayer, paradesLayer, elm, options, render) {
       let lyrs = lyr.getLayers().getArray().slice();
       if (options.reverse)
         lyrs = lyrs.reverse();
       for (let i = 0, l; i < lyrs.length; i++) {
         l = lyrs[i];
         if (l.get('title')) {
-            elm.appendChild(LayerSwitcherWithLegend.renderLayer_(map, poisLayer, paradesLayer, l, i, options, render));
+            elm.appendChild(LayerSwitcherWithLegend.renderLayer_(map, poisLayer, epiLayer, paradesLayer, l, i, options, render));
         }
       }
     }
 
-    static renderLayer_(map, poisLayer, paradesLayer, lyr, idx, options, render) {
+    static renderLayer_(map, poisLayer, epiLayer, paradesLayer, lyr, idx, options, render) {
       const li = document.createElement('li'),
             lyrTitle = lyr.get('title'),
             checkboxId = LayerSwitcher.uuid(),
@@ -280,7 +280,7 @@
               const target = e.target;
               LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
               render(lyr);
-              LayerSwitcherWithLegend.addPois(map, poisLayer);
+              LayerSwitcherWithLegend.addPois(map, poisLayer, epiLayer);
             }
           };
           li.appendChild(input);
@@ -294,7 +294,7 @@
         li.appendChild(label);
         const ul = document.createElement('ul');
         li.appendChild(ul);
-        LayerSwitcherWithLegend.renderLayers_(map, lyr, poisLayer, paradesLayer, ul, options, render);
+        LayerSwitcherWithLegend.renderLayers_(map, lyr, poisLayer, epiLayer, paradesLayer, ul, options, render);
       }
       else {
         // layer
@@ -313,7 +313,7 @@
           const target = e.target;
           LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
           render(lyr);
-          LayerSwitcherWithLegend.addPois(map, poisLayer);
+          LayerSwitcherWithLegend.addPois(map, poisLayer, epiLayer);
           if (lyrTitle === "Tren dels Llacs")
             paradesLayer.setVisible(target.checked);
         };
@@ -351,18 +351,22 @@
       return li;
     }
 
-    static addPois(map, poisLayer) {
+    static addPois(map, poisLayer, epiLayer) {
       // add pois to layerswitcher
       let html = "";
       for (let tipo in tipusPoi) {
-        html += "<li class='poiLayer " + makeSafeForCSS(tipo) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + tipo+"</li>";
+        html += "<li class='poiLayer " + makeSafeForCSS(tipusPoi[tipo]) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + tipo+"</li>";
       }
 
       $("#layerSwitcher li.group ul").first().append(html);
       $("#layerSwitcher li.poiLayer").click(function() {
         // toggle selected initiative icons
         $(this).toggleClass("off");
-        poisLayer.getSource().changed();
+
+        if ($(this).hasClass("epicentre"))
+          epiLayer.setVisible(!epiLayer.getVisible());
+        else
+          poisLayer.getSource().changed();
 
         // close spiderfier
         let view = map.getView();
@@ -387,6 +391,7 @@
           $("#layerSwitcher li.poiLayer").removeClass("off");
         }
         poisLayer.getSource().changed();
+        epiLayer.setVisible(!$(this).hasClass("off"));
 
         // close spiderfier
         let view = map.getView();
@@ -440,6 +445,7 @@
         clickFeature: null,
         clickResolution: null,
 
+        epiLayer: null,
         poisLayer: null,
         poisLayers: [],
         rutasLayers: [],
@@ -644,13 +650,24 @@
       }
 
       function loadWfsLayer(layer) {
+        // cargar puntos de interés para cluster
         pageData.vectorSource = new VectorSource({
           format: new GeoJSON(),
           url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true'
         });
+        // quitar epicentre del cluster
+        pageData.vectorSource.on("featuresloadend", function() {
+          let epicentre = null;
+          pageData.vectorSource.forEachFeature(function (feature) {
+            if (feature.get("tipus_" + pageData.lang) === "epicentre") {
+              epicentre = feature;
+            }
+          });
+          pageData.vectorSource.removeFeature(epicentre);
+        });
 
         pageData.clusterSource = new Cluster({
-          distance: 100,
+          distance: 70,
           minDistance: 0,
           source: pageData.vectorSource
         });
@@ -669,6 +686,16 @@
           style: clusterStyle
         });
         pageData.poisLayers.push(pageData.poisLayer);
+
+        // epicentre
+        pageData.epiLayer = new VectorLayer({
+          type: "layer",
+          source: new VectorSource({
+            format: new GeoJSON(),
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipus_' + pageData.lang + '=epicentre'
+          }),
+          style: iconStyleFunction
+        });
       }
 
       /*function loadWfsLayerPoi(tipologia) {
@@ -682,7 +709,7 @@
           type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipus_cat=' + tipo
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipus_' + pageData.lang + '=' + tipo
           }),
           style: iconStyleFunction
         });
@@ -700,7 +727,7 @@
           type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipologia_cat=' + tipologiasRuta[tipologia]
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipologia_' + pageData.lang + '=' + tipologiasRuta[tipologia]
           }),
           style: rutaStyleFunction
         });
@@ -760,7 +787,8 @@
             pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
             pageData.qgisWfsLayersPoi,
-            pageData.clusterCircles
+            pageData.clusterCircles,
+            pageData.epiLayer
           ],
           view: new View({
             enableRotation: false,
@@ -809,19 +837,37 @@
             // Change the cursor style to indicate that the cluster is clickable.
             pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(event.pixel, {
               layerFilter: function(layer) {
-                return pageData.poisLayer === layer || pageData.clusterCircles === layer || pageData.rutasLayers.includes(layer);
+                return pageData.poisLayer === layer || pageData.epiLayer === layer || pageData.clusterCircles === layer || pageData.rutasLayers.includes(layer);
               },
               hitTolerance: 5
             }) ? 'pointer' : '';
 
-            // rutas
+            // epicentre
             if (pageData.map.hasFeatureAtPixel(event.pixel, {
+              layerFilter: function(layer) {
+                return pageData.epiLayer === layer;
+              },
+              hitTolerance: 5
+            })) {
+              pageData.epiLayer.getFeatures(event.pixel).then((features) => {
+                if (features.length > 0)
+                  pageData.tooltip.show(
+                    event.coordinate,
+                    //feature.getGeometry().getCoordinates(),
+                    '<div><div class="imgDiv"><img src="fotos/' + features[0].get('imatge_1') + '"/></div><h2>' + features[0].get('nom_' + pageData.lang) + '</h2></div>'
+                  );
+                else
+                  pageData.tooltip.hide();
+              });
+            }
+
+            // rutas
+            else if (pageData.map.hasFeatureAtPixel(event.pixel, {
               layerFilter: function(layer) {
                 return pageData.rutasLayers.includes(layer);
               },
               hitTolerance: 5
             })) {
-              // rutas
               pageData.map.forEachFeatureAtPixel(event.pixel, function (feature) {
                 let title = feature.get('georuta_2_' + pageData.lang),
                     foto = feature.get('imatge_1');
@@ -864,6 +910,8 @@
                     '<div><div class="imgDiv"><img src="fotos/' + feature.get('imatge_1') + '"/></div><h2>' + feature.get('nom_' + pageData.lang) + '</h2></div>'
                   );
                 }
+                else
+                  pageData.tooltip.hide();
               });
             }
           }
@@ -944,35 +992,42 @@
               // popup
               if (pageData.map.hasFeatureAtPixel(evt.pixel, {
                 layerFilter: function(layer) {
-                  return pageData.poisLayer === layer || pageData.clusterCircles === layer;
+                  return pageData.poisLayer === layer || pageData.epiLayer === layer || pageData.clusterCircles === layer;
                 },
                 hitTolerance: 5
               })) {
 
-                pageData.poisLayer.getFeatures(evt.pixel).then((features) => {
-                  if (features[0] !== hoverFeature) {
-                    hoverFeature = features[0];
-                    pageData.popup.hide();
-                  }
-                  if (features.length > 0) {
-                    let feature = null;
-                    if (hoverFeature.get('spiderfied')) {
-                      feature = pageData.vectorSource.getClosestFeatureToCoordinate(
-                        evt.coordinate,
-                        (feature) => hoverFeature.get("features").includes(feature)
-                      );
-                    }
-                    else if (!hoverFeature.get('cluster')) {
-                      feature = hoverFeature.get("features")[0];
-                    }
-                    else {
+                if (feature.get("tipus_" + pageData.lang) === "epicentre") {
+                  // epicentre
+                  showPopupPoi(evt, feature);
+                }
+                else {
+                  // resto
+                  pageData.poisLayer.getFeatures(evt.pixel).then((features) => {
+                    if (features[0] !== hoverFeature) {
+                      hoverFeature = features[0];
                       pageData.popup.hide();
-                      return true;
                     }
+                    if (features.length > 0) {
+                      let feature = null;
+                      if (hoverFeature.get('spiderfied')) {
+                        feature = pageData.vectorSource.getClosestFeatureToCoordinate(
+                          evt.coordinate,
+                          (feature) => hoverFeature.get("features").includes(feature)
+                        );
+                      }
+                      else if (!hoverFeature.get('cluster')) {
+                        feature = hoverFeature.get("features")[0];
+                      }
+                      else {
+                        pageData.popup.hide();
+                        return true;
+                      }
 
-                    showPopupPoi(evt, feature);
-                  }
-                });
+                      showPopupPoi(evt, feature);
+                    }
+                  });
+                }
               }
               else if (pageData.map.hasFeatureAtPixel(evt.pixel, {
                 layerFilter: function(layer) {
@@ -1056,7 +1111,7 @@
        * WFS styles
        *****************************************/
       function iconStyleFunction(feature) {
-        let tipus = feature.get('tipus_cat');
+        let tipus = feature.get('tipus_' + pageData.lang);
 
         return new Style({
           geometry: feature.getGeometry(),
@@ -1072,13 +1127,13 @@
         return new Style({
           image: new Icon({
             size: [20, 20],
-            src: "icons/" + tipusPoi[feature.get('tipus_cat')] + ".png"
+            src: "icons/" + tipusPoi[feature.get('tipus_' + pageData.lang)] + ".png"
           })
         });
       }*/
 
       function rutaStyleFunction(feature, resolution) {
-        if (feature.get('tipologia_cat') === 'Georuta') {
+        if (feature.get('tipologia_' + pageData.lang) === 'Georuta') {
           return new Style({
             stroke: new Stroke({
               color: '#4f1c23',
@@ -1087,7 +1142,7 @@
             })
           });
         }
-        else if (feature.get('tipologia_cat') === 'El Cinquè Llac') {
+        else if (feature.get('tipologia_' + pageData.lang) === 'El Cinquè Llac') {
           return new Style({
             stroke: new Stroke({
               color: '#cd3a37',
@@ -1096,7 +1151,7 @@
             })
           });
         }
-        else if (feature.get('tipologia_cat') === 'altres rutes') {
+        else if (feature.get('tipologia_' + pageData.lang) === 'altres rutes') {
           return new Style({
             stroke: new Stroke({
               color: '#b19395',
@@ -1105,7 +1160,7 @@
             })
           });
         }
-        else if (feature.get('tipologia_cat') === 'Tren dels Llacs') {
+        else if (feature.get('tipologia_' + pageData.lang) === 'Tren dels Llacs') {
           let offset = 5;
           return [
             new Style({
@@ -1164,7 +1219,7 @@
             features = feature.get('features');
         //remove not selected categories
         for (var i = features.length - 1; i >= 0; --i) {
-          if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+          if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_" + pageData.lang))).hasClass("off")) {
             size++;
           }
         }
@@ -1211,7 +1266,7 @@
         else if (size > 0) {
           feature.set('cluster', false);
           for (var i = features.length - 1; i >= 0; --i) {
-            if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
+            if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_" + pageData.lang))).hasClass("off")) {
               return iconStyleFunction(features[i]);
               break;
             }
@@ -1310,8 +1365,8 @@
         })
         pageData.map.addControl(pageData.windowLayers);
 
-        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, pageData.paradesLayer, document.getElementById("layerSwitcher"), { reverse: true });
-        LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer);
+        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, pageData.epiLayer, pageData.paradesLayer, document.getElementById("layerSwitcher"), { reverse: true });
+        LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer, pageData.epiLayer);
 
         pageData.windowTablePois = new Overlay({
           closeBox : true,
@@ -1490,8 +1545,8 @@
         //pageData.baseLayerOrto.set("title", i18next.t('switcher.baseGroupOrto'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(1) label").text(i18next.t('switcher.baseGroupTopo'));
         //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(2) label").text(i18next.t('switcher.baseGroupOrto'));
-        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, pageData.paradesLayer, document.getElementById("layerSwitcher"), { reverse: true });
-        LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer);
+        LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, pageData.epiLayer, pageData.paradesLayer, document.getElementById("layerSwitcher"), { reverse: true });
+        LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer, pageData.epiLayer);
       }
 
       /*
