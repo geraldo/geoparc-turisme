@@ -322,6 +322,13 @@ h3 {
   width: 40%;
 }
 
+a.button {
+  background-color: #b2b019;
+  color: white;
+  padding: 5px;
+  text-decoration: none;
+}
+
 /*
  * layer switcher
  * ************************/
