@@ -710,10 +710,14 @@ img.leyenda.off {
 
   .ol-geobt {
     top: 5.5em !important;
+    right: 0.5em !important;
+    left: auto !important;
   }
 
   .ol-zoom {
     top: 7.5em;
+    right: 0.5em;
+    left: auto;
   }
 
   .ol-scale-line {
@@ -722,6 +726,8 @@ img.leyenda.off {
 
   .ol-attribution {
     bottom: 5.5em;
+    right: 0.5em;
+    left: auto;
   }
 
   .ol-full-screen {
