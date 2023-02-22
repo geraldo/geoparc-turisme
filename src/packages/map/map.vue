@@ -140,11 +140,6 @@
   };
   const nonClusterIds = [119, 5, 38, 43, 49, 59, 68, 87, 98, 105, 110, 118, 127, 144];
 
-  let tipusPoiArray = [];
-  for (let tipo in tipusPoi) {
-    tipusPoiArray.push(tipo);
-  }
-
   function makeSafeForCSS(name) {
     if (name)
       return name.replace(/[^a-z0-9\_\-]/g, function(s) {
@@ -376,6 +371,10 @@
       html += "</ul></li>";
       $("#layerSwitcher li.group." + makeSafeForCSS("Rutes recomanades")).before(html);
 
+      // turn off Cultura i Activitats
+      groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label"), "culturaLayer");
+      groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Activitats")+" label"), "activitatsLayer");
+
       // copy fold event
       $('#layerSwitcher li.group.' + makeSafeForCSS("Cultura") + ' button').click(function() {
         $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
@@ -389,9 +388,9 @@
         // toggle selected initiative icons
         $(this).toggleClass("off");
 
-        if ($(this).hasClass("epicentre"))
-          nonClusterLayer.setVisible(!nonClusterLayer.getVisible());
-        else
+        //if ($(this).hasClass("epicentre"))
+          //nonClusterLayer.setVisible(!nonClusterLayer.getVisible());
+        //else
           poisLayer.getSource().changed();
 
         // close spiderfier
@@ -408,7 +407,7 @@
       $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").unbind("click");
       $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").click(function() {
         groupToggle($(this), "principalLayer");
-        nonClusterLayer.setVisible(!$(this).hasClass("off"));
+        //nonClusterLayer.setVisible(!$(this).hasClass("off"));
       });
       $("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label").unbind("click");
       $("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label").click(function() {
@@ -435,7 +434,6 @@
         let view = map.getView();
         if (view.getResolution() <= view.getMinResolution())
           view.setZoom(view.getZoom()-0.01);
-
       }
     }
   }
