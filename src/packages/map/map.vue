@@ -508,14 +508,14 @@
         baseLayerContext: new TileLayer({
           title: 'Topogràfic (ICGC)',
           baseLayer: true,
-          visible: false,
+          //visible: false,
           source: new xyzSource({
             maxZoom: 19,
             url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/{z}/{x}/{y}.png",
             attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
           })
         }),
-        baseLayerVector: new MapLibreLayer({
+        /*baseLayerVector: new MapLibreLayer({
           title: 'Topogràfic (ICGC)',
           baseLayer: true,
           maplibreOptions: {
@@ -523,7 +523,7 @@
             style: "https://betaserver2.icgc.cat/contextmaps-server/api/style/e2cc670b-1077-4e32-95ed-95a9307f9f0b"
           },
           preview: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/10/512/349.png"
-        }),
+        }),*/
 
         /*baseLayers: new LayerGroup({
           title: 'Capes de referència',
@@ -829,7 +829,7 @@
             //pageData.baseLayers,
             pageData.baseLayerOrto,
             pageData.baseLayerContext,
-            pageData.baseLayerVector,
+            //pageData.baseLayerVector,
             pageData.qgisWmsLayers,
             pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
