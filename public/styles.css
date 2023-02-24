@@ -295,6 +295,7 @@ h3 {
 .window.tableWindow,
 .window.infoWindow {
   width: 90%;
+  max-width: 900px;
   top: 100px;
   right: 50px;
   z-index: 12;
@@ -309,17 +310,6 @@ h3 {
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 600px;
-}
-
-.window.infoWindow .columns {
-  display: flex;
-}
-.window.infoWindow .columns .col2 {
-  width: 60%;
-}
-.window.infoWindow .columns .col2.right {
-  padding-left: 100px;
-  width: 40%;
 }
 
 a.button {
@@ -519,6 +509,9 @@ img.leyenda.off {
 
 .logo2 img {
   width: 90px;
+}
+
+.logox img {
   margin-left: 20px;
 }
 

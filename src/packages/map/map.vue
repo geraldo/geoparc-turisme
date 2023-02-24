@@ -38,31 +38,20 @@
       <span class="title">Informació</span>
     </h2>
     <div class="content">
-      <div class="columns">
-        <div class="col2">
-          <p>El Geoparc Orígens és un territori espectacular reconegut per la UNESCO des de l'any 2018.<br>Hi pots fer un autèntic viatge en el temps per descobrir els orígens i l'evolució de la Terra i de la vida.<br>S'hi pot gaudir d'experiències diverses i impressionants com seguir el rastre dels últims dinosaures que van viure a Europa o recórrer espectaculars congostos com el de Mont-rebei o el de Collegats.</p>
-          <p>En aquest visor trobaràs els destacats del Geoparc Orígens.</p>
-        </div>
-        <div class="col2 right">
-          <div><a class="logo1" title="Geoparc Orígens als Pirineus Catalans" href="https://www.geoparcorigens.cat/"><img src="/logo-geoparc.jpg"></a><a class="logo2" title="UNESCO Global Geoparks" href="https://en.unesco.org/global-geoparks"><img src="/logo-unesco.png"></a></div>
-          <div class="wp-block-image">
-            <figure class="aligncenter size-medium is-resized" style="float: left;"><a href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg" alt="" class="wp-image-14986" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-150x105.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo.jpg 580w" sizes="(max-width: 75px) 100vw, 75px" width="75" height="52"></a></figure>
-            <figure class="wp-block-image size-medium is-resized"><a href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg 292w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-996x1024.jpg 996w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-768x790.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-146x150.jpg 146w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW.jpg 1489w" sizes="(max-width: 73px) 100vw, 73px" width="73" height="75"></a></figure>
-          </div>
-        </div>
-      </div>
+      <p>El Geoparc Orígens és un territori espectacular reconegut per la UNESCO des de l'any 2018.<br>Hi pots fer un autèntic viatge en el temps per descobrir els orígens i l'evolució de la Terra i de la vida.<br>S'hi pot gaudir d'experiències diverses i impressionants com seguir el rastre dels últims dinosaures que van viure a Europa o recórrer espectaculars congostos com el de Mont-rebei o el de Collegats.</p>
+      <p>En aquest visor trobaràs els destacats del Geoparc Orígens.</p>
+      <p><a class="logo1" title="Geoparc Orígens als Pirineus Catalans" href="https://www.geoparcorigens.cat/"><img src="/logo-geoparc.jpg"></a> 
+      <a class="logo2 logox" title="UNESCO Global Geoparks" href="https://en.unesco.org/global-geoparks"><img src="/logo-unesco.png"></a> 
+      <a class="logox" href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg" alt="" class="wp-image-14986" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-150x105.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo.jpg 580w" width="75" height="52"></a> 
+      <a class="logox" href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg 292w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-996x1024.jpg 996w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-768x790.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-146x150.jpg 146w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW.jpg 1489w" width="73" height="75"></a></p>
       <h3>Contacte</h3>
       <p>Orígens UNESCO Global Geopark<br>
       Carrer de Soldevila, 3<br>
       25620 Tremp (Lleida)<br>
       info@geoparcorigens.cat</p>
       <h3>Amb el suport de</h3>
-      <div class="wp-block-image">
-        <img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif" alt="" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif 300w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-150x39.gif 150w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif 574w" width="300" height="78">
-      </div>
-      <div class="wp-block-image">
-        <img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg" alt="" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-1024x192.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-768x144.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-150x28.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1.jpg 1400w" height="42">
-      </div>
+      <img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg" alt="" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-1024x192.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-768x144.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-150x28.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1.jpg 1400w" height="42">
+      <img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif" alt="" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif 300w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-150x39.gif 150w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif 574w" width="300" height="78">
     </div>
   </div>
 </template>
@@ -372,8 +361,8 @@
       $("#layerSwitcher li.group." + makeSafeForCSS("Rutes recomanades")).before(html);
 
       // turn off Cultura i Activitats
-      groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label"), "culturaLayer");
-      groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Activitats")+" label"), "activitatsLayer");
+      //groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label"), "culturaLayer");
+      //groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Activitats")+" label"), "activitatsLayer");
 
       // copy fold event
       $('#layerSwitcher li.group.' + makeSafeForCSS("Cultura") + ' button').click(function() {
