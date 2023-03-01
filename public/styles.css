@@ -602,7 +602,7 @@ img.leyenda.off {
 .featurePopup .ol-popup-content {
     min-width: 570px;
     max-height: 600px;
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 
