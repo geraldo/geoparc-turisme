@@ -7,22 +7,21 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
-    "@geoblocks/ol-maplibre-layer": "^0.0.5",
-    "@nieuwlandgeo/sldreader": "^0.2.17",
-    "datatables.net": "^1.13.1",
-    "datatables.net-dt": "^1.13.1",
+    "@geoblocks/ol-maplibre-layer": "^0.0.6",
+    "datatables.net": "^1.13.3",
+    "datatables.net-dt": "^1.13.3",
     "font-awesome": "^4.7.0",
-    "i18next": "^22.4.9",
+    "i18next": "^22.4.10",
     "jquery": "^3.6.3",
     "js-cookie": "^3.0.1",
     "ol": "latest",
-    "ol-ext": "^4.0.4",
+    "ol-ext": "^4.0.6",
     "ol-layerswitcher": "latest",
     "ol-popup": "^5.0.0",
-    "vue": "^3.2.45"
+    "vue": "^3.2.47"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
-    "vite": "^4.0.4"
+    "vite": "^4.1.4"
   }
 }

@@ -726,4 +726,12 @@ img.leyenda.off {
   .ol-full-screen {
     display: none;
   }
+
+  #windowLayers .content {
+    height: calc(100% - 195px);
+  }
+
+  .logos {
+    bottom: 70px;
+  }
 }
