@@ -14,6 +14,7 @@
 
 .ol-zoom,
 .ol-geobt,
+.ol-geolocation,
 .ol-full-screen,
 .ol-attribution {
   left: .5em;
@@ -39,25 +40,20 @@
   bottom: 2.5em;
 }
 
-.ol-geobt {
+.ol-geobt,
+.ol-geolocation {
   left: .5em !important;
   right: auto !important;
   top: 2.5em !important;
   bottom: auto !important;
 }
 
-.ol-control.ol-geobt button:before {
-  font-family: "FontAwesome";
-  content: "\f041";
-  display: inline-block;
-  padding-right: 3px;
-  vertical-align: middle;
-  font-weight: 900;
-  border: none;
-  width: auto;
+.ol-control.ol-geolocation button {
+  background-color: rgba(0,60,136,0.7) !important;
 }
-.ol-control.ol-geobt button:after {
-  width: 0;
+
+.ol-control.ol-geolocation .ol-geolocation-false {
+  background-color: #aaa !important;
 }
 
 .ol-zoom .ol-zoom-in,
@@ -701,7 +697,8 @@ img.leyenda.off {
     top: 3.5em;
   }
 
-  .ol-geobt {
+  .ol-geobt,
+  .ol-geolocation {
     top: 5.5em !important;
     right: 0.5em !important;
     left: auto !important;

@@ -70,7 +70,6 @@
   import { ScaleLine, FullScreen, defaults as defaultControls, Control } from 'ol/control';
   import { Point, Polygon, LineString, Geometry } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
-  //import { register } from 'ol/proj/proj4';
   import { createEmpty, extend, getHeight, getWidth } from 'ol/extent';
   import { get as getProjection, getPointResolution, fromLonLat, toLonLat, transformExtent, METERS_PER_UNIT } from 'ol/proj';
   import { getLength, getArea } from 'ol/sphere';
@@ -79,12 +78,13 @@
   import { GeoJSON, MVT } from 'ol/format';
   import { Select } from 'ol/interaction';
   import { pointerMove } from 'ol/events/condition';
+  import Geolocation from 'ol/Geolocation';
 
   import Bar from 'ol-ext/control/Bar';
   import Button from 'ol-ext/control/Button';
   import Toggle from 'ol-ext/control/Toggle';
   import Overlay from 'ol-ext/control/Overlay';
-  import GeolocationButton from 'ol-ext/control/GeolocationButton';
+  //import GeolocationButton from 'ol-ext/control/GeolocationButton';
   import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
   import { ol_coordinate_offsetCoords } from 'ol-ext/geom/GeomUtils';
 
@@ -92,7 +92,6 @@
   import LayerSwitcher from 'ol-layerswitcher';
   import Popup from 'ol-popup';
   //import SLDReader from '@nieuwlandgeo/sldreader';
-  //import proj4 from 'proj4';
   import $ from 'jquery';
   import Cookies from 'js-cookie';
   import i18next from 'i18next';
@@ -139,6 +138,58 @@
       });
     else
       return "";
+  }
+
+  /*
+   * Location control
+   *****************************************/
+  class GeolocationControl extends Control {
+
+    /**
+     * @param {Object} [opt_options] Control options.
+     */
+    constructor(opt_options) {
+      const options = opt_options || {};
+
+      const button = document.createElement('button');
+      button.className = 'ol-geolocation-false';
+      button.id = 'ol-geoBtn';
+      button.innerHTML = '<i class="fa fa-map-marker" aria-hidden="true"></i>';
+
+      const element = document.createElement('div');
+      element.className = 'ol-geolocation ol-unselectable ol-control';
+      element.appendChild(button);
+
+      super({
+        element: element,
+        target: options.target,
+      });
+
+      this.button = button;
+      this.geolocation = options.geolocation;
+      this.map = options.map;
+      this.layer = options.layer;
+      this.updateView = options.updateView;
+      this.geoMarker = options.geoMarker;
+
+      button.addEventListener('click', this.handleGeolocation.bind(this), false);
+    }
+
+    handleGeolocation() {
+      let locate = this.button.classList.contains("ol-geolocation-false");
+      console.log(locate);
+      this.geolocation.setTracking(locate);
+      this.button.classList.toggle("ol-geolocation-false");
+
+      if (locate) {
+        //this.layer.on('postrender', this.updateView);
+        this.updateView();
+        this.map.render();
+      }
+      else {
+        this.geoMarker.setPosition(undefined);
+      }
+    }
   }
 
   /*
@@ -594,6 +645,14 @@
         popup: new Popup({
           className: "featurePopup"
         }),
+
+        // LineString to store the different geolocation positions. This LineString is time aware.
+        // The Z dimension is actually used to store the rotation (heading).
+        geoPositions: new LineString([], 'XYZM'),
+        deltaMean: 500,     // the geolocation sampling period mean in ms
+        geolocation: null,
+        geoMarker: null,
+        geoMarkerEl: null,
       });
 
       /*
@@ -810,9 +869,9 @@
           target: pageData.mapEle,
           controls: defaultControls().extend([
             new FullScreen(),
-            new GeolocationButton({
+            /*new GeolocationButton({
               delay: 5000
-            })
+            })*/
           ]),
           layers: [
             //pageData.baseLayers,
@@ -833,7 +892,7 @@
             minZoom: 9,
             maxZoom: 19,
             showFullExtent: true,
-            extent: [25000, 5100000, 200000, 5280000]
+            //extent: [25000, 5100000, 200000, 5280000]
           }),
         });
 
@@ -960,6 +1019,110 @@
           style: iconHighlightStyleFunction
         });
         pageData.map.addInteraction(selectMove);*/
+
+        /*
+         * Geolocation Control
+         *****************************************/
+        pageData.geoMarkerEl = document.getElementById('geolocation_marker');
+        pageData.geoMarker = new OverlayOL({
+          positioning: 'center-center',
+          element: pageData.geoMarkerEl,
+          stopEvent: false,
+        });
+        pageData.map.addOverlay(pageData.geoMarker);
+
+        pageData.geolocation = new Geolocation({
+          projection: pageData.map.getView().getProjection(),
+          trackingOptions: {
+            maximumAge: 10000,
+            enableHighAccuracy: true,
+            timeout: 600000,
+          },
+        });
+
+        let previousM = 0;
+        function updateView() {
+          // use sampling period to get a smooth transition
+          let m = Date.now() - pageData.deltaMean * 1.5;
+          m = Math.max(m, previousM);
+          previousM = m;
+          // interpolate position along positions LineString
+          const c = pageData.geoPositions.getCoordinateAtM(m, true);
+          if (c) {
+            console.log("change view", c, getCenterWithHeading(c, -c[2], view.getResolution()));
+            let view = pageData.map.getView();
+            view.setCenter(getCenterWithHeading(c, -c[2], view.getResolution()));
+            view.setRotation(-c[2]);
+            pageData.geoMarker.setPosition(c);
+            pageData.map.render();
+          }
+        }
+
+        pageData.map.addControl(new GeolocationControl({
+          geolocation: pageData.geolocation,
+          map: pageData.map,
+          layer: pageData.baseLayerContext,
+          updateView: updateView,
+          geoMarker: pageData.geoMarker
+        }));
+
+        // Listen to position changes
+        pageData.geolocation.on('change', function () {
+          const position = pageData.geolocation.getPosition();
+          const accuracy = pageData.geolocation.getAccuracy();
+          const heading = pageData.geolocation.getHeading() || 0;
+          const speed = pageData.geolocation.getSpeed() || 0;
+          const m = Date.now();
+
+          console.log(position);
+          addPosition(position, heading, m, speed);
+
+          const coords = pageData.geoPositions.getCoordinates();
+          const len = coords.length;
+          if (len >= 2) {
+            pageData.deltaMean = (coords[len - 1][3] - coords[0][3]) / (len - 1);
+          }
+        });
+
+        function addPosition(position, heading, m, speed) {
+          const x = position[0];
+          const y = position[1];
+          const fCoords = pageData.geoPositions.getCoordinates();
+          const previous = fCoords[fCoords.length - 1];
+          const prevHeading = previous && previous[2];
+          if (prevHeading) {
+            let headingDiff = heading - mod(prevHeading);
+
+            // force the rotation change to be less than 180°
+            if (Math.abs(headingDiff) > Math.PI) {
+              const sign = headingDiff >= 0 ? 1 : -1;
+              headingDiff = -sign * (2 * Math.PI - Math.abs(headingDiff));
+            }
+            heading = prevHeading + headingDiff;
+          }
+          pageData.geoPositions.appendCoordinate([x, y, heading, m]);
+
+          // only keep the 20 last coordinates
+          pageData.geoPositions.setCoordinates(pageData.geoPositions.getCoordinates().slice(-20));
+
+          // FIXME use speed instead
+          if (heading && speed && pageData.geoMarkerEl) {
+            pageData.geoMarkerEl.src = '/geolocation_marker_heading.png';
+          } else {
+            pageData.geoMarkerEl.src = '/geolocation_marker.png';
+          }
+        }
+
+        // recenters the view by putting the given coordinates at 3/4 from the top or the screen
+        function getCenterWithHeading(position, rotation, resolution) {
+          const size = pageData.map.getSize();
+          const height = size[1];
+
+          return [
+            position[0] - (Math.sin(rotation) * height * resolution * 1) / 4,
+            position[1] + (Math.cos(rotation) * height * resolution * 1) / 4,
+          ];
+        }
 
         /*
          * Click to zoom or show popup
@@ -1138,6 +1301,10 @@
             pageData.windowTableRutas.hide();
             pageData.windowInfo.hide();
             pageData.popup.hide();
+            // turn off geolocate
+            pageData.geolocation.setTracking(false);
+            pageData.geoMarker.setPosition(undefined);
+            document.getElementById("ol-geoBtn").classList.add("ol-geolocation-false");
           }
         });
       }
@@ -1675,6 +1842,7 @@
 
           if (window.mobilecheck()) {
             setTimeout(function() {
+              // close layer switcher
               $(".layersWindow").removeClass("open");
               $(".layer-control").removeClass("open");
               $(".menuBar").removeClass("open");
