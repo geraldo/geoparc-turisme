@@ -734,4 +734,24 @@ img.leyenda.off {
   .logos {
     bottom: 70px;
   }
+
+  #pois-table .descripcio, 
+  #pois-table .imatge,
+  #pois-table .ruta,
+  #pois-table .tematica,
+  #pois-table .tipus,
+  #rutas-table .descripcio,
+  #rutas-table .imatge,
+  #rutas-table .desnivell,
+  #rutas-table .dificultat,
+  #rutas-table .distancia,
+  #rutas-table .tipologia,
+  #rutas-table .modalitat {
+    display: none;
+  }
+
+  .window.tableWindow {
+    width: 100%;
+    right: auto;
+  }
 }
