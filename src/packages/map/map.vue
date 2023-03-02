@@ -84,7 +84,6 @@
   import Button from 'ol-ext/control/Button';
   import Toggle from 'ol-ext/control/Toggle';
   import Overlay from 'ol-ext/control/Overlay';
-  //import GeolocationButton from 'ol-ext/control/GeolocationButton';
   import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
   import { ol_coordinate_offsetCoords } from 'ol-ext/geom/GeomUtils';
 
@@ -177,7 +176,7 @@
 
     handleGeolocation() {
       let locate = this.button.classList.contains("ol-geolocation-false");
-      console.log(locate);
+      //console.log("locate", locate);
       this.geolocation.setTracking(locate);
       this.button.classList.toggle("ol-geolocation-false");
 
@@ -868,10 +867,7 @@
         pageData.map = new Map({
           target: pageData.mapEle,
           controls: defaultControls().extend([
-            new FullScreen(),
-            /*new GeolocationButton({
-              delay: 5000
-            })*/
+            new FullScreen()
           ]),
           layers: [
             //pageData.baseLayers,
@@ -1023,7 +1019,12 @@
         /*
          * Geolocation Control
          *****************************************/
+        const img = document.createElement('img');
+        img.id = 'geolocation_marker';
+        img.src = 'geolocation_marker.png';
+        document.body.appendChild(img);
         pageData.geoMarkerEl = document.getElementById('geolocation_marker');
+
         pageData.geoMarker = new OverlayOL({
           positioning: 'center-center',
           element: pageData.geoMarkerEl,
@@ -1033,6 +1034,7 @@
 
         pageData.geolocation = new Geolocation({
           projection: pageData.map.getView().getProjection(),
+          tracking: false,
           trackingOptions: {
             maximumAge: 10000,
             enableHighAccuracy: true,
@@ -1049,8 +1051,8 @@
           // interpolate position along positions LineString
           const c = pageData.geoPositions.getCoordinateAtM(m, true);
           if (c) {
-            console.log("change view", c, getCenterWithHeading(c, -c[2], view.getResolution()));
             let view = pageData.map.getView();
+            //console.log("change view", c, getCenterWithHeading(c, -c[2], view.getResolution()));
             view.setCenter(getCenterWithHeading(c, -c[2], view.getResolution()));
             view.setRotation(-c[2]);
             pageData.geoMarker.setPosition(c);
@@ -1074,8 +1076,9 @@
           const speed = pageData.geolocation.getSpeed() || 0;
           const m = Date.now();
 
-          console.log(position);
+          //console.log(position);
           addPosition(position, heading, m, speed);
+          updateView();
 
           const coords = pageData.geoPositions.getCoordinates();
           const len = coords.length;
@@ -1105,11 +1108,13 @@
           // only keep the 20 last coordinates
           pageData.geoPositions.setCoordinates(pageData.geoPositions.getCoordinates().slice(-20));
 
+          //console.log(heading, speed, pageData.geoMarkerEl);
+
           // FIXME use speed instead
           if (heading && speed && pageData.geoMarkerEl) {
-            pageData.geoMarkerEl.src = '/geolocation_marker_heading.png';
+            pageData.geoMarkerEl.src = 'geolocation_marker_heading.png';
           } else {
-            pageData.geoMarkerEl.src = '/geolocation_marker.png';
+            pageData.geoMarkerEl.src = 'geolocation_marker.png';
           }
         }
 
