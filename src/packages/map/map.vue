@@ -67,7 +67,7 @@
   import { Map, View, Feature, Collection, Overlay as OverlayOL } from 'ol';
   import { Cluster, XYZ as xyzSource, Vector as VectorSource, TileWMS, VectorTile as VectorTileSource } from 'ol/source';
   import { Group as LayerGroup, Tile as TileLayer, Vector as VectorLayer, VectorTile } from 'ol/layer';
-  import { ScaleLine, FullScreen, defaults as defaultControls, Control } from 'ol/control';
+  import { ScaleLine, FullScreen, defaults as defaultControls, Control, Rotate } from 'ol/control';
   import { Point, Polygon, LineString, Geometry } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
   import { createEmpty, extend, getHeight, getWidth } from 'ol/extent';
@@ -76,7 +76,7 @@
   import { unByKey } from 'ol/Observable';
   import { easeOut } from 'ol/easing';
   import { GeoJSON, MVT } from 'ol/format';
-  import { Select } from 'ol/interaction';
+  import { Select, defaults as defaultInteractions } from 'ol/interaction';
   import { pointerMove } from 'ol/events/condition';
   import Geolocation from 'ol/Geolocation';
 
@@ -180,6 +180,8 @@
       this.geolocation.setTracking(locate);
       this.button.classList.toggle("ol-geolocation-false");
 
+      //this.changeView(locate);
+
       if (locate) {
         //this.layer.on('postrender', this.updateView);
         this.updateView();
@@ -187,7 +189,16 @@
       }
       else {
         this.geoMarker.setPosition(undefined);
+        this.map.getView().setRotation(0);
       }
+    }
+
+    changeView(enableRotation) {
+      let viewObj = this.map.getView();
+      viewObj.enableRotation = enableRotation;
+      viewObj.rotation = Math.PI;
+      console.log(enableRotation, viewObj);
+      this.map.setView(viewObj);
     }
   }
 
@@ -492,6 +503,7 @@
           lng: 0.88,
           lat: 42.16
         }],
+        extent: [25000, 5100000, 200000, 5280000],
         map: null,
         mapEle: null,
 
@@ -869,6 +881,10 @@
           controls: defaultControls().extend([
             new FullScreen()
           ]),
+          interactions: defaultInteractions({
+            dragRotate: false, 
+            pinchRotate: false
+          }), 
           layers: [
             //pageData.baseLayers,
             pageData.baseLayerOrto,
@@ -882,14 +898,14 @@
             pageData.nonClusterLayer
           ],
           view: new View({
-            enableRotation: false,
+            //enableRotation: false,
             center: fromLonLat([pageData.center[0].lng, pageData.center[0].lat]),
             zoom: 10,
             minZoom: 9,
             maxZoom: 19,
             showFullExtent: true,
-            //extent: [25000, 5100000, 200000, 5280000]
-          }),
+            //extent: pageData.extent
+          })
         });
 
         //olms(pageData.map, "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_estandard.json");
@@ -1855,7 +1871,17 @@
             }, 3000);
 
             // set initial position
-            // pageData.geolocation.setTracking(true);
+            navigator.geolocation.getCurrentPosition((position) => {
+              let myLoc = fromLonLat([position.coords.longitude, position.coords.latitude]);
+              console.log(myLoc, pageData.extent);
+
+              // is inside geoparc
+              if (myLoc[0] > pageData.extent[0] && myLoc[0] < pageData.extent[2] && myLoc[1] > pageData.extent[1] && myLoc[1] > pageData.extent[3]) {
+                let view = pageData.map.getView();
+                view.setCenter(myLoc);
+                view.setZoom(view.getZoom()+5);
+              }
+            });
           }
         })
         .fail(function() {

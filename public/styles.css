@@ -40,6 +40,11 @@
   bottom: 2.5em;
 }
 
+.ol-rotate {
+  top: 8em;
+  left: .5em;
+}
+
 .ol-geobt,
 .ol-geolocation {
   left: .5em !important;
@@ -716,6 +721,12 @@ img.leyenda.off {
 
   .ol-attribution {
     bottom: 5.5em;
+    right: 0.5em;
+    left: auto;
+  }
+
+  .ol-rotate {
+    top: 12em;
     right: 0.5em;
     left: auto;
   }
