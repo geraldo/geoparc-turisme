@@ -1299,7 +1299,7 @@
 
             let htmlStr = '<div><h2>' + title + '</h2>';
             htmlStr += description ? '<p>' + description + '</p>' : '';
-            htmlStr += web ? '<p><a target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
+            htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
             htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
             htmlStr += distancia ? '<p>' + i18next.t("dtRuta.distancia") + ': ' + distancia + '</br>' : '';
