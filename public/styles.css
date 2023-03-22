@@ -45,11 +45,17 @@
   left: .5em;
 }
 
-.ol-geobt,
 .ol-geolocation {
   left: .5em !important;
   right: auto !important;
   top: 2.5em !important;
+  bottom: auto !important;
+}
+
+.ol-geobt {
+  left: .5em !important;
+  right: auto !important;
+  top: 8em !important;
   bottom: auto !important;
 }
 
@@ -702,9 +708,14 @@ img.leyenda.off {
     top: 3.5em;
   }
 
-  .ol-geobt,
   .ol-geolocation {
     top: 5.5em !important;
+    right: 0.5em !important;
+    left: auto !important;
+  }
+
+  .ol-geobt {
+    top: 12.5em !important;
     right: 0.5em !important;
     left: auto !important;
   }

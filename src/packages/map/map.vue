@@ -86,6 +86,7 @@
   import Overlay from 'ol-ext/control/Overlay';
   import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
   import { ol_coordinate_offsetCoords } from 'ol-ext/geom/GeomUtils';
+  import GeolocationButton from 'ol-ext/control/GeolocationButton';
 
   import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
   import LayerSwitcher from 'ol-layerswitcher';
@@ -933,6 +934,21 @@
         pageData.map.addOverlay(pageData.tooltip);
         pageData.map.addOverlay(pageData.popup);
 
+        // Add control
+        let geoloc = new GeolocationButton({
+          title: 'On estic?',
+          delay: 5000
+        });
+        pageData.map.addControl(geoloc);
+
+        // Show position
+        let here = new Popup({ positioning: 'bottom-center' });
+        pageData.map.addOverlay(here);
+        geoloc.on('position', function(e) {
+          if (e.coordinate) here.show(fromLonLat(e.coordinate), "Ets<br/>aquí!");
+          else here.hide();
+        });
+
 
         /*
          * Tooltip
@@ -969,7 +985,7 @@
             }
 
             // rutas
-            else if (pageData.map.hasFeatureAtPixel(event.pixel, {
+            /*else if (pageData.map.hasFeatureAtPixel(event.pixel, {
               layerFilter: function(layer) {
                 return pageData.rutasLayers.includes(layer);
               },
@@ -986,7 +1002,7 @@
                 },
                 hitTolerance: 5
               });
-            }
+            }*/
 
             // POIs
             else {
