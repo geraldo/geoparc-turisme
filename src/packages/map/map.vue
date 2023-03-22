@@ -190,17 +190,17 @@
       }
       else {
         this.geoMarker.setPosition(undefined);
-        this.map.getView().setRotation(0);
+        //this.map.getView().setRotation(0);
       }
     }
 
-    changeView(enableRotation) {
+    /*changeView(enableRotation) {
       let viewObj = this.map.getView();
       viewObj.enableRotation = enableRotation;
       viewObj.rotation = Math.PI;
       console.log(enableRotation, viewObj);
       this.map.setView(viewObj);
-    }
+    }*/
   }
 
   /*
@@ -899,7 +899,7 @@
             pageData.nonClusterLayer
           ],
           view: new View({
-            //enableRotation: false,
+            enableRotation: false,
             center: fromLonLat([pageData.center[0].lng, pageData.center[0].lat]),
             zoom: 10,
             minZoom: 9,
@@ -1086,7 +1086,7 @@
             let view = pageData.map.getView();
             //console.log("change view", c, getCenterWithHeading(c, -c[2], view.getResolution()));
             view.setCenter(getCenterWithHeading(c, -c[2], view.getResolution()));
-            view.setRotation(-c[2]);
+            //view.setRotation(-c[2]);
             pageData.geoMarker.setPosition(c);
             pageData.map.render();
           }
@@ -1143,11 +1143,11 @@
           //console.log(heading, speed, pageData.geoMarkerEl);
 
           // FIXME use speed instead
-          if (heading && speed && pageData.geoMarkerEl) {
+          /*if (heading && speed && pageData.geoMarkerEl) {
             pageData.geoMarkerEl.src = 'geolocation_marker_heading.png';
           } else {
             pageData.geoMarkerEl.src = 'geolocation_marker.png';
-          }
+          }*/
         }
 
         // recenters the view by putting the given coordinates at 3/4 from the top or the screen
