@@ -1708,7 +1708,8 @@
           url: './translations.json',
           dataType: 'json',
           success: function(response){
-            let lang = getCookies();
+            //let lang = getCookies();
+            let lang = 'ca';
 
             i18next.init({
               lng: lang,
