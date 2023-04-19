@@ -87,6 +87,7 @@
   import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
   import { ol_coordinate_offsetCoords } from 'ol-ext/geom/GeomUtils';
   //import GeolocationButton from 'ol-ext/control/GeolocationButton';
+  import GeolocationDraw from 'ol-ext/interaction/GeolocationDraw';
 
   import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
   import LayerSwitcher from 'ol-layerswitcher';
@@ -144,6 +145,49 @@
    * Location control
    *****************************************/
   class GeolocationControl extends Control {
+
+    /**
+     * @param {Object} [opt_options] Control options.
+     */
+    constructor(opt_options) {
+      const options = opt_options || {};
+
+      const button = document.createElement('button');
+      button.className = 'ol-geolocation-false';
+      button.id = 'ol-geoBtn';
+      button.innerHTML = '<i class="fa fa-map-marker" aria-hidden="true"></i>';
+
+      const element = document.createElement('div');
+      element.className = 'ol-geolocation ol-unselectable ol-control';
+      element.appendChild(button);
+
+      super({
+        element: element,
+        target: options.target,
+      });
+
+      this.button = button;
+      this.geoDraw = options.geoDraw;
+      this.map = options.map;
+
+      button.addEventListener('click', this.handleGeolocation.bind(this), false);
+    }
+
+    handleGeolocation() {
+      let locate = this.button.classList.contains("ol-geolocation-false");
+      //console.log("locate", locate);
+      this.button.classList.toggle("ol-geolocation-false");
+
+      if (locate) {
+        this.geoDraw.start();
+      }
+      else {
+        this.geoDraw.stop();
+      }
+    }
+  }
+
+  class GeolocationControl2 extends Control {
 
     /**
      * @param {Object} [opt_options] Control options.
@@ -665,6 +709,8 @@
         geolocation: null,
         geoMarker: null,
         geoMarkerEl: null,
+
+        geoDraw: null,
       });
 
       /*
@@ -934,6 +980,27 @@
         pageData.map.addOverlay(pageData.tooltip);
         pageData.map.addOverlay(pageData.popup);
 
+        // Draw vector layer
+        let vectorDraw = new VectorLayer({
+          source: new VectorSource()
+        });
+        pageData.map.addLayer(vectorDraw);
+
+        // Draw interaction
+        pageData.geoDraw = new GeolocationDraw({
+          source: vectorDraw.getSource(),
+          //zoom: 16,
+          followTrack: 'position',
+          type: 'Point',
+          attributes: {
+            accuracy: false,
+            accuracyGeometry: false,
+            heading: true,
+            speed: true
+          },
+        });
+        pageData.map.addInteraction(pageData.geoDraw);
+
         // Add control
         /*let geoloc = new GeolocationButton({
           title: 'On estic?',
@@ -1091,12 +1158,17 @@
           }
         }
 
-        pageData.map.addControl(new GeolocationControl({
+        /*pageData.map.addControl(new GeolocationControl({
           geolocation: pageData.geolocation,
           map: pageData.map,
           layer: pageData.baseLayerContext,
           updateView: updateView,
           geoMarker: pageData.geoMarker
+        }));*/
+
+        pageData.map.addControl(new GeolocationControl({
+          geoDraw: pageData.geoDraw,
+          map: pageData.map
         }));
 
         // Listen to position changes
