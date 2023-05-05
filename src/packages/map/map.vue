@@ -1451,7 +1451,7 @@
         if (feature.get('tipologia_' + pageData.lang) === 'Georuta') {
           return new Style({
             stroke: new Stroke({
-              color: '#4f1c23',
+              color: '#e7bd14',
               lineDash: [4,4],
               width: 3
             })

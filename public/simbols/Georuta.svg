@@ -27,8 +27,8 @@
      showgrid="false"
      scale-x="1.25"
      inkscape:zoom="29.324999"
-     inkscape:cx="13.316284"
-     inkscape:cy="13.316284"
+     inkscape:cx="13.316283"
+     inkscape:cy="10.588236"
      inkscape:window-width="1870"
      inkscape:window-height="1016"
      inkscape:window-x="0"
@@ -43,17 +43,18 @@
        width="26.666668"
        height="26.666668"
        preserveAspectRatio="none"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9
-kT1Iw0AcxV9TpSIVBYuIOGSoThZERQQXrUIRKoRaoVUHk0s/hCYNSYqLo+BacPBjserg4qyrg6sg
-CH6AODo5KbpIif9LCi1iPDjux7t7j7t3gFArMc1qGwU03TZTibiYya6IoVeE0YceTCMoM8uYlaQk
-fMfXPQJ8vYvxLP9zf44uNWcxICASzzDDtInXiSc3bYPzPnGEFWWV+Jx4xKQLEj9yXfH4jXPBZYFn
-Rsx0ao44QiwWWlhpYVY0NeIJ4qiq6ZQvZDxWOW9x1koV1rgnf2E4py8vcZ3mIBJYwCIkiFBQwQZK
-sBGjVSfFQor24z7+AdcvkUsh1wYYOeZRhgbZ9YP/we9urfz4mJcUjgPtL47zMQSEdoF61XG+jx2n
-fgIEn4Ervekv14CpT9KrTS16BHRvAxfXTU3ZAy53gP4nQzZlVwrSFPJ54P2MvikL9N4Cnateb419
-nD4AaeoqeQMcHALDBcpe83l3R2tv/55p9PcDh3dyr2QT8kMAAAAJcEhZcwAACxMAAAsTAQCanBgA
-AAAHdElNRQfmDBYRHAvQCvrvAAAALElEQVQ4y2P8//8/A7mAiYECMKqZnppZIFSArApJ2jY8vjN0
-/cw4mrZHhGYAVMAJI3i/E+IAAAAASUVORK5CYII=
-"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9 kT1Iw0AcxV9TpSIVBYuIOGSoThZERQQXrUIRKoRaoVUHk0s/hCYNSYqLo+BacPBjserg4qyrg6sg CH6AODo5KbpIif9LCi1iPDjux7t7j7t3gFArMc1qGwU03TZTibiYya6IoVeE0YceTCMoM8uYlaQk fMfXPQJ8vYvxLP9zf44uNWcxICASzzDDtInXiSc3bYPzPnGEFWWV+Jx4xKQLEj9yXfH4jXPBZYFn Rsx0ao44QiwWWlhpYVY0NeIJ4qiq6ZQvZDxWOW9x1koV1rgnf2E4py8vcZ3mIBJYwCIkiFBQwQZK sBGjVSfFQor24z7+AdcvkUsh1wYYOeZRhgbZ9YP/we9urfz4mJcUjgPtL47zMQSEdoF61XG+jx2n fgIEn4Ervekv14CpT9KrTS16BHRvAxfXTU3ZAy53gP4nQzZlVwrSFPJ54P2MvikL9N4Cnateb419 nD4AaeoqeQMcHALDBcpe83l3R2tv/55p9PcDh3dyr2QT8kMAAAAJcEhZcwAACxMAAAsTAQCanBgA AAAHdElNRQfmDBYRHAvQCvrvAAAALElEQVQ4y2P8//8/A7mAiYECMKqZnppZIFSArApJ2jY8vjN0 /cw4mrZHhGYAVMAJI3i/E+IAAAAASUVORK5CYII= "
        id="image10" />
+    <image
+       width="30"
+       height="26.25"
+       preserveAspectRatio="none"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAABHNCSVQICAgIfAhkiAAAADlJREFU
+OI1j/P///38GGgImWho+asGoBdQBLMicF/tEqWKohNNrOHvoBxHNLWAcLYtGLRi1gPYWAAAxNwsj
+qikhFQAAAABJRU5ErkJggg==
+"
+       id="image830"
+       x="-3.3333321"
+       y="0.41666794" />
   </g>
 </svg>
