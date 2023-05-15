@@ -78,7 +78,6 @@
   import { GeoJSON, MVT } from 'ol/format';
   import { Select, defaults as defaultInteractions } from 'ol/interaction';
   import { pointerMove } from 'ol/events/condition';
-  import Geolocation from 'ol/Geolocation';
 
   import Bar from 'ol-ext/control/Bar';
   import Button from 'ol-ext/control/Button';
@@ -87,6 +86,7 @@
   import LayerSwitcherImage from 'ol-ext/control/LayerSwitcherImage';
   import { ol_coordinate_offsetCoords } from 'ol-ext/geom/GeomUtils';
   import GeolocationDraw from 'ol-ext/interaction/GeolocationDraw';
+  import GeolocationButton from 'ol-ext/control/GeolocationButton';
 
   import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
   import LayerSwitcher from 'ol-layerswitcher';
@@ -931,12 +931,12 @@
           zoom: 15,
           followTrack: 'auto',
           type: 'Point',
-          attributes: {
+          /*attributes: {
             accuracy: false,
             accuracyGeometry: false,
             heading: true,
             speed: true
-          },
+          },*/
         });
         pageData.map.addInteraction(pageData.geoDraw);
 
@@ -948,6 +948,9 @@
           geoDraw: pageData.geoDraw,
           map: pageData.map
         }));
+
+        let geoBtn = new GeolocationButton();
+        pageData.map.addControl(geoBtn);
 
         /*
          * Tooltip
@@ -1038,108 +1041,6 @@
             }
           }
         });
-
-        /*
-         * Geolocation Control
-         *****************************************/
-        /*const img = document.createElement('img');
-        img.id = 'geolocation_marker';
-        img.src = 'geolocation_marker.png';
-        document.body.appendChild(img);
-        pageData.geoMarkerEl = document.getElementById('geolocation_marker');
-
-        pageData.geoMarker = new OverlayOL({
-          positioning: 'center-center',
-          element: pageData.geoMarkerEl,
-          stopEvent: false,
-        });
-        pageData.map.addOverlay(pageData.geoMarker);
-
-        pageData.geolocation = new Geolocation({
-          projection: pageData.map.getView().getProjection(),
-          tracking: false,
-          trackingOptions: {
-            maximumAge: 10000,
-            enableHighAccuracy: true,
-            timeout: 600000,
-          },
-        });
-
-        let previousM = 0;
-        function updateView() {
-          // use sampling period to get a smooth transition
-          let m = Date.now() - pageData.deltaMean * 1.5;
-          m = Math.max(m, previousM);
-          previousM = m;
-          // interpolate position along positions LineString
-          const c = pageData.geoPositions.getCoordinateAtM(m, true);
-          if (c) {
-            let view = pageData.map.getView();
-            //console.log("change view", c, getCenterWithHeading(c, -c[2], view.getResolution()));
-            view.setCenter(getCenterWithHeading(c, -c[2], view.getResolution()));
-            pageData.geoMarker.setPosition(c);
-            pageData.map.render();
-          }
-        }
-
-        pageData.map.addControl(new GeolocationControl({
-          geoDraw: pageData.geoDraw,
-          map: pageData.map
-        }));
-
-        // Listen to position changes
-        pageData.geolocation.on('change', function () {
-          const position = pageData.geolocation.getPosition();
-          const accuracy = pageData.geolocation.getAccuracy();
-          const heading = pageData.geolocation.getHeading() || 0;
-          const speed = pageData.geolocation.getSpeed() || 0;
-          const m = Date.now();
-
-          //console.log(position);
-          addPosition(position, heading, m, speed);
-          updateView();
-
-          const coords = pageData.geoPositions.getCoordinates();
-          const len = coords.length;
-          if (len >= 2) {
-            pageData.deltaMean = (coords[len - 1][3] - coords[0][3]) / (len - 1);
-          }
-        });
-
-        function addPosition(position, heading, m, speed) {
-          const x = position[0];
-          const y = position[1];
-          const fCoords = pageData.geoPositions.getCoordinates();
-          const previous = fCoords[fCoords.length - 1];
-          const prevHeading = previous && previous[2];
-          if (prevHeading) {
-            let headingDiff = heading - mod(prevHeading);
-
-            // force the rotation change to be less than 180°
-            if (Math.abs(headingDiff) > Math.PI) {
-              const sign = headingDiff >= 0 ? 1 : -1;
-              headingDiff = -sign * (2 * Math.PI - Math.abs(headingDiff));
-            }
-            heading = prevHeading + headingDiff;
-          }
-          pageData.geoPositions.appendCoordinate([x, y, heading, m]);
-
-          // only keep the 20 last coordinates
-          pageData.geoPositions.setCoordinates(pageData.geoPositions.getCoordinates().slice(-20));
-
-          //console.log(heading, speed, pageData.geoMarkerEl);
-        }
-
-        // recenters the view by putting the given coordinates at 3/4 from the top or the screen
-        function getCenterWithHeading(position, rotation, resolution) {
-          const size = pageData.map.getSize();
-          const height = size[1];
-
-          return [
-            position[0] - (Math.sin(rotation) * height * resolution * 1) / 4,
-            position[1] + (Math.cos(rotation) * height * resolution * 1) / 4,
-          ];
-        }*/
 
         /*
          * Click to zoom or show popup
@@ -1311,6 +1212,11 @@
             hitTolerance: 5
           });
         }
+
+        pageData.map.on('pointerdrag', function(evt) {
+          pageData.geoDraw.setActive(false);
+          $("#ol-geoBtn").addClass("ol-geolocation-false");
+        });
 
         $(document).keyup(function(e) {
           if (e.keyCode === 27) { // escape
@@ -1865,9 +1771,7 @@
 
               // is inside geoparc
               if (myLoc[0] > pageData.extent[0] && myLoc[0] < pageData.extent[2] && myLoc[1] > pageData.extent[1] && myLoc[1] > pageData.extent[3]) {
-                let view = pageData.map.getView();
-                view.setCenter(myLoc);
-                view.setZoom(view.getZoom()+5);
+                $(".ol-geobt button").click();
               }
             });
           }

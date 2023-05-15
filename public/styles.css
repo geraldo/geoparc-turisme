@@ -57,6 +57,7 @@
   right: auto !important;
   top: 8em !important;
   bottom: auto !important;
+  display: none;
 }
 
 .ol-control.ol-geolocation button {
