@@ -88,7 +88,7 @@
   import GeolocationDraw from 'ol-ext/interaction/GeolocationDraw';
   import GeolocationButton from 'ol-ext/control/GeolocationButton';
 
-  import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
+  //import MapLibreLayer from '@geoblocks/ol-maplibre-layer';
   import LayerSwitcher from 'ol-layerswitcher';
   import Popup from 'ol-popup';
   //import SLDReader from '@nieuwlandgeo/sldreader';
@@ -526,20 +526,17 @@
         mousePosition: null,
         rasterLayer: null,
 
-        baseSourceOrto: new TileWMS({
-          url: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms',
-          params: {
-            'LAYERS': 'ortofoto_color_provisional',
-            'VERSION': '1.1.1'
-          },
-          attributions: ['Ortofoto 2022 de l’<a target="_blank" href="https://www.icgc.cat/">Institut Cartogràfic i Geològic de Catalunya (ICGC)</a>, sota una llicència <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ca">CC BY 4.0</a>'],
-         }),
         baseLayerOrto: new TileLayer({
           title: 'Ortofoto (ICGC)',
           baseLayer: true,
-          visible: false,
-          preview: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ortofoto_color_provisional&WIDTH=256&HEIGHT=256&SRS=EPSG%3A3857&STYLES=&BBOX=195678.7924100496%2C5087648.602661332%2C234814.55089205984%2C5126784.361143342'
+          //visible: false,
+          source: new xyzSource({
+            maxZoom: 19,
+            url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-orto-estandard/MON3857NW/{z}/{x}/{y}.png",
+            attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
+          })
         }),
+
         baseLayerContext: new TileLayer({
           title: 'Topogràfic (ICGC)',
           baseLayer: true,
@@ -550,6 +547,7 @@
             attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
           })
         }),
+
         /*baseLayerVector: new MapLibreLayer({
           title: 'Topogràfic (ICGC)',
           baseLayer: true,
@@ -858,8 +856,6 @@
       function initMap(layersData) {
         pageData.qgisWmsLayers.setLayers(new Collection(loadWmsLayers(layersData)));
         pageData.qgisInvisibleWmsLayers.setLayers(new Collection(pageData.invisibleWmsLayers));
-
-        pageData.baseLayerOrto.setSource(pageData.baseSourceOrto);
 
         pageData.mapEle = document.getElementById('map');
         pageData.map = new Map({
