@@ -529,7 +529,7 @@
         baseLayerOrto: new TileLayer({
           title: 'Ortofoto (ICGC)',
           baseLayer: true,
-          //visible: false,
+          visible: false,
           source: new xyzSource({
             maxZoom: 19,
             url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-orto-estandard/MON3857NW/{z}/{x}/{y}.png",
