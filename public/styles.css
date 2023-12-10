@@ -530,7 +530,6 @@ img.leyenda.off {
   display: none;
   position: absolute;
   background-color: white;
-  padding: 15px;
   border: 1px solid #cccccc;
   bottom: 12px;
   left: -50px;
@@ -560,16 +559,16 @@ img.leyenda.off {
   margin-left: -11px;
 }
 
-.ol-popup-content {
+.ol-popup .ol-popup-content {
   min-width: 200px;
   max-height: 450px;
   overflow-x: auto;
+  padding: 0;
 }
 
 .ol-popup-content h2 {
   text-align: center;
   line-height: 1;
-  margin: 0;
 }
 
 .featurePopup {
@@ -583,13 +582,22 @@ img.leyenda.off {
 .featurePopup .ol-popup {
   position: relative;
   min-height: 500px;
-  padding-top: 25px;
   border: 2px solid #b2b019;
+}
+
+.featurePopup .ol-popup .padding {
+  padding-top: 25px;
+  padding: 15px;
 }
 
 .featureTooltip {
   z-index: 13;
 }
+
+/*.featureTooltip .ol-popup-content {
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+}*/
 
 .featurePopup img {
   max-width: 800px;
@@ -608,41 +616,65 @@ img.leyenda.off {
 }
 
 .featurePopup .ol-popup-content {
-    min-width: 570px;
-    max-height: 600px;
-    overflow-x: hidden;
-    overflow-y: scroll;
+  min-width: 570px;
+  max-height: 600px;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .featurePopup .ol-popup-closer {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    font-size: 150%;
-    padding: 0 4px;
-    color: gray;
-    text-decoration: none;
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  font-size: 2em;
+  padding: 0 4px;
+  color: #4f1c23;
+  text-decoration: none;
 }
 
 .featurePopup .ol-popup-closer:after {
-    content: "\2716";
+  content: "\2716";
 }
 
 .ol-popup div.infoResult {
-    min-width: 130px;
+  min-width: 130px;
 }
 
 .ol-popup div.infoResult p {
-    padding: 0.1em;
-    margin: 0;
+  padding: 0.1em;
+  margin: 0;
 }
 
 .ol-popup-content h3 {
-    margin: 0.25em 0;
+  margin: 0.25em 0;
 }
 
 .ol-popup.marker {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
+}
+
+/*
+ * accordion
+ * ************************/
+.accordion-header {
+  background-color: #b2b019;
+  padding: 8px;
+  margin: 0 auto 1px;
+  cursor: pointer;
+  text-align: left !important;
+  font-size: 1.5em;
+}
+
+.accordion-header i {
+  margin-right: 5px;
+}
+
+.accordion-content {
+  padding: 15px;
+}
+
+.accordion-pois {
+  display: none;
 }
 
 /*

@@ -78,6 +78,7 @@
   import { GeoJSON, MVT } from 'ol/format';
   import { Select, defaults as defaultInteractions } from 'ol/interaction';
   import { pointerMove } from 'ol/events/condition';
+  import Link from 'ol/interaction/Link.js';
 
   import Bar from 'ol-ext/control/Bar';
   import Button from 'ol-ext/control/Button';
@@ -948,6 +949,17 @@
         let geoBtn = new GeolocationButton();
         pageData.map.addControl(geoBtn);
 
+        // check of initial interactions
+        const link = new Link();
+        const openPopup = link.track('open');
+        const popupNum = parseInt(link.track('num'));
+        const popupPoi = link.track('poi');
+        pageData.map.addInteraction(link);
+
+        if (openPopup === "georuta" && popupNum === 6) {
+          showPopupRutaInteractive(popupPoi);
+        }
+
         /*
          * Tooltip
          *****************************************/
@@ -1090,8 +1102,6 @@
                       pageData.clickFeature = features[0];
                       pageData.clickResolution = resolution;
                       pageData.clusterCircles.setStyle(clusterCircleStyle);
-
-                      //tooltip
                     } 
                     else {
                       // Zoom to the extent of the cluster members.
@@ -1137,7 +1147,12 @@
                         return true;
                       }
 
-                      showPopupPoi(evt, feature);
+                      if (feature.get('nom_ruta_cat') === 'Georuta 6') {
+                        let poiNum = feature.get('nom_' + pageData.lang).split(" ")[0];
+                        showPopupRutaInteractive(poiNum.slice(0, -1));
+                      }
+                      else
+                        showPopupPoi(evt, feature);
                     }
                   });
                 }
@@ -1148,7 +1163,10 @@
                 },
                 hitTolerance: 5
               })) {
-                showPopupRuta(evt);
+                if (feature.get('georuta_2_cat') === 'Georuta 6')
+                  showPopupRutaInteractive();
+                else
+                  showPopupRuta(evt);
               }
               else {
                 pageData.popup.hide();
@@ -1167,7 +1185,7 @@
               autor = feature.get('imatge1_autor'),
               web = feature.get('web_' + pageData.lang);
 
-          let htmlStr = '<div><h2>' + title + '</h2>';
+          let htmlStr = '<div class="padding"><h2>' + title + '</h2>';
           htmlStr += description ? '<p>' + description + '</p>' : '';
           htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
           htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
@@ -1190,7 +1208,7 @@
                 dificultad = feature.get('dificultat_' + pageData.lang),
                 web = feature.get('web_' + pageData.lang);
 
-            let htmlStr = '<div><h2>' + title + '</h2>';
+            let htmlStr = '<div class="padding"><h2>' + title + '</h2>';
             htmlStr += description ? '<p>' + description + '</p>' : '';
             htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
@@ -1209,6 +1227,81 @@
           });
         }
 
+        function showPopupRutaInteractive(poiNum=null) {
+          // get interactive "Georuta 6" (for now only number 6, but easy to activate for others)
+          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true", function() {})
+          .done(function(data) {
+
+            data.features.forEach(function(feature) {
+
+              if (feature.properties.georuta_2_cat === "Georuta 6") {
+
+                let point = pageData.map.getPixelFromCoordinate(fromLonLat(feature.geometry.coordinates[0][0]));
+
+                if (point) {
+
+                  let html = '<div class="accordion">';
+
+                  html += '<h2 class="accordion-header"><i class="fa fa-caret-up" aria-hidden="true"></i>INTRODUCCIÓ</h2>';
+                  html += '<div class="accordion-content">' + feature.properties['descripcio_' + pageData.lang] + '</div>';
+
+                  // get POIs from this georuta
+                  $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true", function() {})
+                  .done(function(data) {
+
+                    let fs = [];
+                    data.features.forEach(function(f) {
+                      if (f.properties.nom_ruta_cat === "Georuta 6") {
+                        fs.push(f);
+                      }
+                    });
+
+                    // sort by name to order POIs shown in accordion
+                    fs.sort((f1, f2) => {
+                      const nameF1 = f1.properties['nom_' + pageData.lang].toUpperCase();
+                      const nameF2 = f2.properties['nom_' + pageData.lang].toUpperCase();
+                      if (nameF1 < nameF2) {
+                        return -1;
+                      }
+                      if (nameF1 > nameF2) {
+                        return 1;
+                      }
+                      return 0;
+                    });
+
+                    fs.forEach(function(f) {
+                      let poiNum = f.properties['nom_' + pageData.lang].split(" ")[0];
+                      html += '<h2 id="' + poiNum.slice(0, -1) + '" class="accordion-header"><i class="fa fa-caret-down" aria-hidden="true"></i>' + f.properties['nom_' + pageData.lang] + '</h2>';
+                      html += '<div class="accordion-content accordion-pois">' + f.properties['descripcio_' + pageData.lang] + '</div>';
+                    });
+
+                    // show popup
+                    pageData.popup.show(point, html);
+                    pageData.tooltip.hide();
+
+                    $(".accordion-header").on("click", function() {
+                      let open = false;
+                      if ($(this).next().is(":visible"))
+                        open = true;
+                      $(".accordion-content").hide();
+                      if (!open) {
+                        $(this).next().show();
+                        $(this).get(0).scrollIntoView();
+                      }
+                    });
+
+                    if (poiNum) {
+                      $(".accordion-content").hide();
+                      $(".accordion-header#"+poiNum).next().show();
+                      $(".accordion-header#"+poiNum).get(0).scrollIntoView();
+                    }
+                  });
+                }
+              }
+            });
+          });
+        }
+
         pageData.map.on('pointerdrag', function(evt) {
           pageData.geoDraw.setActive(false);
           $("#ol-geoBtn").addClass("ol-geolocation-false");
@@ -1222,8 +1315,10 @@
             pageData.popup.hide();
             // turn off geolocate
             //pageData.geolocation.setTracking(false);
-            pageData.geoMarker.setPosition(undefined);
-            document.getElementById("ol-geoBtn").classList.add("ol-geolocation-false");
+            if (pageData.geoMarker) {
+              pageData.geoMarker.setPosition(undefined);
+              document.getElementById("ol-geoBtn").classList.add("ol-geolocation-false");
+            }
           }
         });
       }
