@@ -951,13 +951,18 @@
 
         // check of initial interactions
         const link = new Link();
-        const openPopup = link.track('open');
-        const popupNum = parseInt(link.track('num'));
-        const popupPoi = link.track('poi');
+        const openPopup = link.track('open'),
+              popupNum = parseInt(link.track('num')),
+              popupPoi = link.track('poi'),
+              popupId = link.track('id');
         pageData.map.addInteraction(link);
 
         if (openPopup === "georuta" && popupNum === 6) {
           showPopupRutaInteractive(popupPoi);
+        }
+        else if (openPopup === "poi") {
+          // for now only for testing
+          showPopupPoiById(popupId);
         }
 
         /*
@@ -1122,7 +1127,7 @@
 
                 if (nonClusterIds.includes(feature.get("id"))) {
                   // epicentre
-                  showPopupPoi(evt, feature);
+                  showPopupPoi(evt.coordinate, feature);
                 }
                 else {
                   // resto
@@ -1147,12 +1152,12 @@
                         return true;
                       }
 
-                      if (feature.get('nom_ruta_cat') === 'Georuta 6') {
+                      if (feature.get('num_ruta') === '6') {
                         let poiNum = feature.get('nom_' + pageData.lang).split(" ")[0];
                         showPopupRutaInteractive(poiNum.slice(0, -1));
                       }
                       else
-                        showPopupPoi(evt, feature);
+                        showPopupPoi(evt.coordinate, feature);
                     }
                   });
                 }
@@ -1178,7 +1183,7 @@
           }
         });
 
-        function showPopupPoi(evt, feature) {
+        function showPopupPoi(coords, feature) {
           let title = feature.get('nom_' + pageData.lang),
               description = feature.get('descripcio_' + pageData.lang),
               foto = feature.get('imatge_1'),
@@ -1191,8 +1196,29 @@
           htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
           htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
           htmlStr += '</div>';
-          pageData.popup.show(evt.coordinate, htmlStr);
+          pageData.popup.show(coords, htmlStr);
           pageData.tooltip.hide();
+        }
+
+        function showPopupPoiById(id) {
+          if (Number.isInteger(parseInt(id))) {
+
+            // get geojson for this POI num
+            $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true&id="+id, function() {})
+            .done(function(data) {
+
+              data.features.forEach(function(feature) {
+                //if (f.properties.nom_ruta_cat === "Georuta 6") {
+                if (feature.id === id) {
+                  let format = new GeoJSON();
+                  showPopupPoi(feature.geometry.coordinates, format.readFeature(feature));
+                }
+              });
+            });
+          }
+          else {
+            console.log("no POI with id ", id);
+          }
         }
 
         function showPopupRuta(evt) {
@@ -1251,7 +1277,8 @@
 
                     let fs = [];
                     data.features.forEach(function(f) {
-                      if (f.properties.nom_ruta_cat === "Georuta 6") {
+                      //if (f.properties.nom_ruta_cat === "Georuta 6") {
+                      if (f.properties.num_ruta === "6") {
                         fs.push(f);
                       }
                     });
