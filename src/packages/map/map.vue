@@ -1153,8 +1153,8 @@
                       }
 
                       if (feature.get('num_ruta') === '6') {
-                        let poiNum = feature.get('nom_' + pageData.lang).split(" ")[0];
-                        showPopupRutaInteractive(poiNum.slice(0, -1));
+                        let poiNum = feature.get('nom_' + pageData.lang).split("-")[0];
+                        showPopupRutaInteractive(poiNum);
                       }
                       else
                         showPopupPoi(evt.coordinate, feature);
@@ -1297,8 +1297,8 @@
                     });
 
                     fs.forEach(function(f) {
-                      let poiNum = f.properties['nom_' + pageData.lang].split(" ")[0];
-                      html += '<h2 id="' + poiNum.slice(0, -1) + '" class="accordion-header"><i class="fa fa-caret-down" aria-hidden="true"></i>' + f.properties['nom_' + pageData.lang] + '</h2>';
+                      let poiNum = f.properties['nom_' + pageData.lang].split("-")[0];
+                      html += '<h2 id="' + poiNum + '" class="accordion-header"><i class="fa fa-caret-down" aria-hidden="true"></i>' + f.properties['nom_' + pageData.lang] + '</h2>';
                       html += '<div class="accordion-content accordion-pois">' + f.properties['descripcio_' + pageData.lang] + '</div>';
                     });
 
