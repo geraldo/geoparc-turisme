@@ -40,7 +40,10 @@
         "tipologia": "Tipología",
         "modalitat": "Modalitat",
         "web": "Web",
-        "link": "Més informació"
+        "link": "Més informació",
+        "gmaps": "Google Maps",
+        "gpx": "Descarregar GPX",
+        "kml": "Descarregar KML"
       }
     }
   },
@@ -86,7 +89,10 @@
         "tipologia": "Tipología",
         "modalitat": "Modalitad",
         "web": "Web",
-        "link": "Més informació"
+        "link": "Més informació",
+        "gmaps": "Google Maps",
+        "gpx": "Descargar GPX",
+        "kml": "Descargar KML"
       }
     }
   }

@@ -17,7 +17,8 @@
     "ol-ext": "^4.0.13",
     "ol-layerswitcher": "latest",
     "ol-popup": "^5.1.0",
-    "vue": "^3.3.10"
+    "vue": "^3.3.10",
+    "html2pdf.js": "^0.10.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.2",

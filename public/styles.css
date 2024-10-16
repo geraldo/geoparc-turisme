@@ -320,11 +320,19 @@ h3 {
   max-height: 600px;
 }
 
-a.button {
+a.button, #exportPdf {
   background-color: #b2b019;
   color: white;
   padding: 5px;
   text-decoration: none;
+}
+#exportPdf {
+  border: none;
+  cursor: pointer;
+}
+
+.coords {
+  float: right;
 }
 
 /*

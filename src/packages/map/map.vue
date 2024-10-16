@@ -97,6 +97,7 @@
   import Cookies from 'js-cookie';
   import i18next from 'i18next';
   import DataTable from 'datatables.net';
+  import html2pdf from 'html2pdf.js';
 
   const tipusPoi = {
     "Epicentre": "epicentre",
@@ -1236,7 +1237,20 @@
 
             let htmlStr = '<div class="padding"><h2>' + title + '</h2>';
             htmlStr += description ? '<p>' + description + '</p>' : '';
-            htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
+            htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a>' : '<p>';
+
+            // gpx kml button
+            htmlStr += '<span class="coords"><a class="button" href="downloads/' + feature.get('georuta_cat') + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
+            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_cat') + '.kml" download>' + i18next.t("dtRuta.kml") + '</a> ';
+
+            // google maps button
+            let geom = feature.getGeometry().getExtent();
+            let lng = geom[0] + (geom[2]-geom[0])/2;
+            let lat = geom[1] + (geom[3]-geom[1])/2;
+            let center = toLonLat([lng, lat]);
+            console.log(geom, center);
+            htmlStr += '<a class="button" target="_blank" href="https://maps.google.com/?q=' + center[1] + ',' + center[0] + '">' + i18next.t("dtRuta.gmaps") + '</a></span></p>';
+
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
             htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
             htmlStr += distancia ? '<p>' + i18next.t("dtRuta.distancia") + ': ' + distancia + '</br>' : '';
@@ -1266,10 +1280,10 @@
 
                 if (point) {
 
-                  let html = '<div class="accordion">';
+                  let html = '<div class="accordion" id="windowPdf">';
 
-                  html += '<h2 class="accordion-header"><i class="fa fa-caret-up" aria-hidden="true"></i>INTRODUCCIÓ</h2>';
-                  html += '<div class="accordion-content">' + feature.properties['descripcio_' + pageData.lang] + '</div>';
+                  html += '<h2 id="P0" class="accordion-header"><i class="fa fa-caret-up" aria-hidden="true"></i>INTRODUCCIÓ</h2>';
+                  html += '<div class="accordion-content">' + feature.properties['descripcio_' + pageData.lang] + '<button id="exportPdf" class="dt-button buttons-pdf buttons-html5" type="button"><span>Descarrega ruta (PDF)</span></button>' + '</div>';
 
                   // get POIs from this georuta
                   $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true", function() {})
@@ -1315,6 +1329,42 @@
                         $(this).next().show();
                         $(this).get(0).scrollIntoView();
                       }
+                    });
+
+                    $('#exportPdf').click(function() {
+                      //$(".featurePopup").css("width", "1200px");
+                      //$(".featurePopup").css("max-width", "1200px");
+                      $(".accordion-content").show();
+                      $('#exportPdf').hide();
+
+                      html2pdf(document.getElementById('windowPdf'), {
+                        filename: 'Georuta6.pdf',
+                        image: { 
+                          type: 'jpeg', 
+                          quality: 0.9,
+                        },
+                        html2canvas:  {
+                          useCORS: true,
+                          scale: 1,
+                        },
+                        jsPDF: { 
+                          format: 'a4', 
+                          orientation: 'portrait', 
+                          //putOnlyUsedFonts: true 
+                        },
+                        pagebreak: { after: '.accordion-content' }
+                      });
+
+                      console.log("not");
+
+                      setTimeout(() => {
+                        console.log("done")
+                        //$(".featurePopup").css("width", "calc(100% - 200px)");
+                        //$(".featurePopup").css("max-width", "860px");
+                        $(".accordion-content").hide();
+                        $(".accordion-header#P0").next().show();
+                        $('#exportPdf').show();
+                      }, 1000);
                     });
 
                     if (poiNum) {
@@ -1805,10 +1855,10 @@
           columns: [
             { "data": "properties.nom_" + pageData.lang, "title" : i18next.t("dtPoi.nom"), "class": "title", "render": function ( data, type, row ) { return "<span class='link' data-coords='[" + row.geometry.coordinates + "]'>" + data + "</span>"; }},
             { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtPoi.descripcio"), "class": "descripcio",},
-            { "data": "properties.imatge_1", "title" : i18next.t("dtPoi.imatge"), "class": "imatge", "render": function ( data, type, row ) { return data!=="" ? "<img class='link' style='max-width:300px;' src='fotos/" + data + "' data-coords='[" + row.geometry.coordinates + "]'/>" : ""; }},
+            /*{ "data": "properties.imatge_1", "title" : i18next.t("dtPoi.imatge"), "class": "imatge", "render": function ( data, type, row ) { return data!=="" ? "<img class='link' style='max-width:300px;' src='fotos/" + data + "' data-coords='[" + row.geometry.coordinates + "]'/>" : ""; }},*/
             { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.georuta"), "class": "ruta"},
-            { "data": "properties.tematica_1_" + pageData.lang, "title" : i18next.t("dtPoi.temática"), "class": "tematica"},
-            { "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.tipus"), "class": "tipus"},
+            /*{ "data": "properties.tematica_1_" + pageData.lang, "title" : i18next.t("dtPoi.temática"), "class": "tematica"},*/
+            /*{ "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.tipus"), "class": "tipus"},*/
             { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }, "class": "web"},
           ],
         }).on( 'init.dt', function () {
@@ -1833,12 +1883,12 @@
           columns: [
             { "data": "properties.georuta_" + pageData.lang, "title" : i18next.t("dtRuta.nom"), "class": "georuta", "render": function ( data, type, row ) { return "<span class='link' data-coords='" + JSON.stringify(row.bbox) + "'>" + data + "</span>"; }},
             { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtRuta.descripcio"), "class": "descripcio"},
-            { "data": "properties.imatge_1", "title" : i18next.t("dtRuta.imatge"), "class": "imatge", "render": function ( data, type, row ) { return data!=="" ? "<img class='link' style='max-width:300px;' src='fotos/" + data + "' data-coords='" + JSON.stringify(row.bbox) + "'/>" : ""; }},
+            /*{ "data": "properties.imatge_1", "title" : i18next.t("dtRuta.imatge"), "class": "imatge", "render": function ( data, type, row ) { return data!=="" ? "<img class='link' style='max-width:300px;' src='fotos/" + data + "' data-coords='" + JSON.stringify(row.bbox) + "'/>" : ""; }},*/
             { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.desnivell"), "class": "desnivell"},
             { "data": "properties.dificultat_" + pageData.lang, "title" : i18next.t("dtRuta.dificultat"), "class": "dificultat"},
             { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.distancia"), "class": "distancia", "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
-            { "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.tipologia"), "class": "tipologia"},
-            { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.modalitat"), "class": "modalitat"},
+            /*{ "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.tipologia"), "class": "tipologia"},
+            { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.modalitat"), "class": "modalitat"},*/
             { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.web"), "class": "web", "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],
         }).on( 'init.dt', function () {
