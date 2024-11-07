@@ -303,8 +303,8 @@ h3 {
 .window.tableWindow,
 .window.infoWindow {
   width: 90%;
-  max-width: 900px;
-  top: 100px;
+  max-width: 700px;
+  top: 20px;
   right: 50px;
   z-index: 12;
   border: 2px solid #b2b019;
@@ -581,11 +581,11 @@ img.leyenda.off {
 
 .featurePopup {
   transform: none !important;
-  top: 100px;
+  top: 20px;
   left: 100px;
   z-index: 12;
   width: calc(100% - 200px);
-  max-width: 860px;
+  max-width: 660px;
 }
 .featurePopup .ol-popup {
   position: relative;
@@ -608,7 +608,7 @@ img.leyenda.off {
 }*/
 
 .featurePopup img {
-  max-width: 800px;
+  max-width: 600px;
 }
 .featureTooltip .imgDiv {
   display: inline-block;
@@ -813,5 +813,13 @@ img.leyenda.off {
   .window.tableWindow {
     width: 100%;
     right: auto;
+  }
+
+  .coords {
+    float: none;
+  }
+
+  a.button {
+    line-height: 2;
   }
 }

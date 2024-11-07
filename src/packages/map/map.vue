@@ -38,18 +38,18 @@
       <span class="title">Informació</span>
     </h2>
     <div class="content">
-      <p>El Geoparc Orígens és un territori espectacular reconegut per la UNESCO des de l'any 2018.<br>Hi pots fer un autèntic viatge en el temps per descobrir els orígens i l'evolució de la Terra i de la vida.<br>S'hi pot gaudir d'experiències diverses i impressionants com seguir el rastre dels últims dinosaures que van viure a Europa o recórrer espectaculars congostos com el de Mont-rebei o el de Collegats.</p>
-      <p>En aquest visor trobaràs els destacats del Geoparc Orígens.</p>
+      <p><span class="infoLine1">El Geoparc Orígens és un territori espectacular reconegut per la UNESCO des de l'any 2018.</span><br><span class="infoLine2">Hi pots fer un autèntic viatge en el temps per descobrir els orígens i l'evolució de la Terra i de la vida.</span><br><span class="infoLine3">S'hi pot gaudir d'experiències diverses i impressionants com seguir el rastre dels últims dinosaures que van viure a Europa o recórrer espectaculars congostos com el de Mont-rebei o el de Collegats.</span></p>
+      <p><span class="infoLine4">En aquest visor trobaràs els destacats del Geoparc Orígens.</span></p>
       <p><a class="logo1" title="Geoparc Orígens als Pirineus Catalans" href="https://www.geoparcorigens.cat/"><img src="/logo-geoparc.jpg"></a> 
       <a class="logo2 logox" title="UNESCO Global Geoparks" href="https://en.unesco.org/global-geoparks"><img src="/logo-unesco.png"></a> 
       <a class="logox" href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg" alt="" class="wp-image-14986" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-300x209.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo-150x105.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/Global_Geoparks_Network_logo.jpg 580w" width="75" height="52"></a> 
       <a class="logox" href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg 292w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-996x1024.jpg 996w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-768x790.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-146x150.jpg 146w, https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW.jpg 1489w" width="73" height="75"></a></p>
-      <h3>Contacte</h3>
+      <h3 class="infoContact">Contacte</h3>
       <p>Orígens UNESCO Global Geopark<br>
       Carrer de Soldevila, 3<br>
       25620 Tremp (Lleida)<br>
       info@geoparcorigens.cat</p>
-      <h3>Amb el suport de</h3>
+      <h3 class="infoSuport">Amb el suport de</h3>
       <img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg" alt="" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-300x56.jpg 300w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-1024x192.jpg 1024w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-768x144.jpg 768w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1-150x28.jpg 150w, https://www.geoparcorigens.cat/wp-content/uploads/2020/01/gencat1.jpg 1400w" height="42">
       <img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif" alt="" srcset="https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-300x78.gif 300w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio-150x39.gif 150w, https://www.geoparcorigens.cat/wp-content/uploads/2015/05/diputacio.gif 574w" width="300" height="78">
     </div>
@@ -123,9 +123,9 @@
     "Zona de bany": "zona_de_bany"
   };
   const tipologiasRuta = {
-    "Tren dels Llacs": "Tren dels Llacs",
-    "Altres rutes": "altres rutes",
-    "El Cinquè Llac": "El Cinquè Llac",
+    "Tren dels Llacs": "tren_dels_llacs",
+    "Altres rutes": "altres_rutes",
+    "El Cinquè Llac": "el_cinque_llac",
     "Georuta": "Georuta"
   };
   const nonClusterIds = [119, 5, 38, 43, 49, 59, 68, 87, 98, 105, 110, 118, 127, 144];
@@ -308,7 +308,7 @@
           input.checked = lyr.getVisible();
           input.indeterminate = lyr.get('indeterminate');
           input.onchange = function (e) {
-            if (lyrTitle !== "Punts de interès") {
+            if (lyrTitle !== "Punts de interès" || lyrTitle !== "Puntos de interés") {
               const target = e.target;
               LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
               render(lyr);
@@ -389,7 +389,7 @@
           i = 0,
           layer = "principalLayer";
       for (let tipo in tipusPoi) {
-        html += "<li class='" + layer + " poiLayer " + makeSafeForCSS(tipusPoi[tipo]) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + tipo+"</li>";
+        html += "<li class='" + layer + " poiLayer " + makeSafeForCSS(tipusPoi[tipo]) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + i18next.t("tipusPoi."+tipusPoi[tipo]) +"</li>";
         if (i === 7) {
           html += "</ul>";
           $("#layerSwitcher li.group ul").first().append(html);
@@ -398,14 +398,14 @@
         }
         else if (i === 13) {
           html += "</ul></li>";
-          $("#layerSwitcher li.group." + makeSafeForCSS("Rutes recomanades")).before(html);
+          $("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
           html = '<li class="group ' + makeSafeForCSS("Activitats") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> Activitats</label><ul>';
           layer = "activitatsLayer";
         }
         i++;
       }
       html += "</ul></li>";
-      $("#layerSwitcher li.group." + makeSafeForCSS("Rutes recomanades")).before(html);
+      $("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
 
       // turn off Cultura i Activitats
       //groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label"), "culturaLayer");
@@ -667,7 +667,7 @@
               }*/
               loadWfsLayer(layer);
             }
-            else if (layer.name === "Rutes recomanades") {
+            else if (layer.name === i18next.t("switcher.wfsGroupRuta")) {
               for (const tipo in tipologiasRuta) {
                 loadWfsLayerRuta(tipo);
               }
@@ -813,12 +813,13 @@
 
       function loadWfsLayerRuta(tipologia) {
         let vectorLayer = new VectorLayer({
+          //title: i18next.t("tipusRuta."+tipologiasRuta[tipologia]),
           title: tipologia,
           vectorial: true,
           type: "layer",
           source: new VectorSource({
             format: new GeoJSON(),
-            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipologia_' + pageData.lang + '=' + tipologiasRuta[tipologia]
+            url: 'https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.geojson?MAP=' + pageData.qgisProjectFile + '&limit=1000&visible=true&tipologia_' + pageData.lang + '=' + tipologia
           }),
           style: rutaStyleFunction
         });
@@ -947,7 +948,9 @@
           map: pageData.map
         }));
 
-        let geoBtn = new GeolocationButton();
+        let geoBtn = new GeolocationButton({
+          title: "Geolocate"
+        });
         pageData.map.addControl(geoBtn);
 
         // check of initial interactions
@@ -1193,7 +1196,18 @@
 
           let htmlStr = '<div class="padding"><h2>' + title + '</h2>';
           htmlStr += description ? '<p>' + description + '</p>' : '';
-          htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a></p>' : '';
+          htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a>' : '';
+
+          // google maps button
+          let geom = feature.getGeometry().flatCoordinates;
+/*          let lng = geom[0] + (geom[2]-geom[0])/2;
+          let lat = geom[1] + (geom[3]-geom[1])/2;
+          let center = toLonLat([lng, lat]);
+*/          
+          let lonlat = toLonLat(geom);
+          console.log(geom, lonlat);
+          htmlStr += '<span class="coords"><a class="button" target="_blank" href="https://maps.google.com/?q=' + lonlat[1] + ',' + lonlat[0] + '"><i class="fa fa-map-marker" aria-hidden="true" title="' + i18next.t("dtRuta.gmaps") + '"></i></a></span></p>';
+
           htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
           htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
           htmlStr += '</div>';
@@ -1239,17 +1253,18 @@
             htmlStr += description ? '<p>' + description + '</p>' : '';
             htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a>' : '<p>';
 
-            // gpx kml button
-            htmlStr += '<span class="coords"><a class="button" href="downloads/' + feature.get('georuta_cat') + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
-            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_cat') + '.kml" download>' + i18next.t("dtRuta.kml") + '</a> ';
-
             // google maps button
             let geom = feature.getGeometry().getExtent();
             let lng = geom[0] + (geom[2]-geom[0])/2;
             let lat = geom[1] + (geom[3]-geom[1])/2;
             let center = toLonLat([lng, lat]);
             console.log(geom, center);
-            htmlStr += '<a class="button" target="_blank" href="https://maps.google.com/?q=' + center[1] + ',' + center[0] + '">' + i18next.t("dtRuta.gmaps") + '</a></span></p>';
+            htmlStr += '<span class="coords"><a class="button" target="_blank" href="https://maps.google.com/?q=' + center[1] + ',' + center[0] + '"><i class="fa fa-map-marker" aria-hidden="true" title="' + i18next.t("dtRuta.gmaps") + '"></i></a> ';
+
+            // gpx kml button
+            htmlStr += i18next.t("dtRuta.download") + ": ";
+            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_cat') + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
+            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_cat') + '.kml" download>' + i18next.t("dtRuta.kml") + '</a></span></p> ';
 
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
             htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
@@ -1282,8 +1297,8 @@
 
                   let html = '<div class="accordion" id="windowPdf">';
 
-                  html += '<h2 id="P0" class="accordion-header"><i class="fa fa-caret-up" aria-hidden="true"></i>INTRODUCCIÓ</h2>';
-                  html += '<div class="accordion-content">' + feature.properties['descripcio_' + pageData.lang] + '<button id="exportPdf" class="dt-button buttons-pdf buttons-html5" type="button"><span>Descarrega ruta (PDF)</span></button>' + '</div>';
+                  html += '<h2 id="P0" class="accordion-header"><i class="fa fa-caret-up" aria-hidden="true"></i>' + i18next.t("dtRuta.intro") + '</h2>';
+                  html += '<div class="accordion-content">' + feature.properties['descripcio_' + pageData.lang] + '<button id="exportPdf" class="dt-button buttons-pdf buttons-html5" type="button"><span>' + i18next.t("dtRuta.pdf") + '</span></button>' + '</div>';
 
                   // get POIs from this georuta
                   $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true", function() {})
@@ -1737,7 +1752,7 @@
       /*
        * Cookies & i18n
        *****************************************/
-      function initCookies() {
+      function initAll(data) {
         /*if (Cookies.get('showinfo') === undefined || Cookies.get('showinfo') === "true") {
           docsToggle.setActive(true);
           windowDocs.show();
@@ -1772,6 +1787,33 @@
                 translateContent();
               });
             });
+
+            initMap(data);
+            initMenu();
+            pageData.windowLayers.show();
+            initDtPois();
+            initDtRutes();
+
+            if (window.mobilecheck()) {
+              // close layer switcher
+              setTimeout(function() {
+                // close layer switcher
+                $(".layersWindow").removeClass("open");
+                $(".layer-control").removeClass("open");
+                $(".menuBar").removeClass("open");
+              }, 3000);
+
+              // set initial position
+              navigator.geolocation.getCurrentPosition((position) => {
+                let myLoc = fromLonLat([position.coords.longitude, position.coords.latitude]);
+                console.log(myLoc, pageData.extent);
+
+                // is inside geoparc
+                if (myLoc[0] > pageData.extent[0] && myLoc[0] < pageData.extent[2] && myLoc[1] > pageData.extent[1] && myLoc[1] > pageData.extent[3]) {
+                  $(".ol-geobt button").click();
+                }
+              });
+            }
           }
         });
       }
@@ -1825,6 +1867,14 @@
         $("#windowTablePois .title").text(i18next.t('gui.windowTablePoisTitle'));
         $("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
         $("#windowInfo .title").text(i18next.t('gui.windowInfoTitle'));
+
+        // info
+        $("#windowInfo .infoLine1").text(i18next.t('gui.infoLine1'));
+        $("#windowInfo .infoLine2").text(i18next.t('gui.infoLine2'));
+        $("#windowInfo .infoLine3").text(i18next.t('gui.infoLine3'));
+        $("#windowInfo .infoLine4").text(i18next.t('gui.infoLine4'));
+        $("#windowInfo .infoContact").text(i18next.t('gui.infoContact'));
+        $("#windowInfo .infoSuport").text(i18next.t('gui.infoSuport'));
 
         // layerswitcher
         pageData.qgisWfsLayersPoi.set("title", i18next.t('switcher.wfsGroupPoi'));
@@ -1908,9 +1958,6 @@
        * Init
        *****************************************/
       function initGui() {
-        initCookies();
-        initMenu();
-        pageData.windowLayers.show();
       }
 
       onMounted(()=>{
@@ -1918,31 +1965,7 @@
         // load layers configuration file
         $.getJSON( "js/data/geoparc-turisme.qgs.json", function() {})
         .done(function(data) {
-          initMap(data);
-          initGui();
-          initDtPois();
-          initDtRutes();
-
-          if (window.mobilecheck()) {
-            // close layer switcher
-            setTimeout(function() {
-              // close layer switcher
-              $(".layersWindow").removeClass("open");
-              $(".layer-control").removeClass("open");
-              $(".menuBar").removeClass("open");
-            }, 3000);
-
-            // set initial position
-            navigator.geolocation.getCurrentPosition((position) => {
-              let myLoc = fromLonLat([position.coords.longitude, position.coords.latitude]);
-              console.log(myLoc, pageData.extent);
-
-              // is inside geoparc
-              if (myLoc[0] > pageData.extent[0] && myLoc[0] < pageData.extent[2] && myLoc[1] > pageData.extent[1] && myLoc[1] > pageData.extent[3]) {
-                $(".ol-geobt button").click();
-              }
-            });
-          }
+          initAll(data);
         })
         .fail(function() {
           console.log( "error loading JSON file" );

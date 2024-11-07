@@ -5,7 +5,13 @@
         "windowLayersTitle": "Gestor de capes",
         "windowTablePoisTitle": "Punts de interès",
         "windowTableRutasTitle": "Rutes recomanades",
-        "windowInfoTitle": "Informació"
+        "windowInfoTitle": "Informació",
+        "infoLine1": "El Geoparc Orígens és un territori espectacular reconegut per la UNESCO des de l'any 2018.",
+        "infoLine2": "Hi pots fer un autèntic viatge en el temps per descobrir els orígens i l'evolució de la Terra i de la vida.",
+        "infoLine3": "S'hi pot gaudir d'experiències diverses i impressionants com seguir el rastre dels últims dinosaures que van viure a Europa o recórrer espectaculars congostos com el de Mont-rebei o el de Collegats.",
+        "infoLine4": "En aquest visor trobaràs els destacats del Geoparc Orígens.",
+        "infoContact": "Contacte",
+        "infoSuport": "Amb el suport de"
       },
       "switcher": {
         "wfsGroupPoi": "Punts de interès",
@@ -42,8 +48,40 @@
         "web": "Web",
         "link": "Més informació",
         "gmaps": "Google Maps",
-        "gpx": "Descarregar GPX",
-        "kml": "Descarregar KML"
+        "download": "Descarrega",
+        "gpx": "GPX",
+        "kml": "KML",
+        "intro": "INTRODUCCIÓ",
+        "pdf": "Descarrega ruta (PDF)"
+      },
+      "tipusPoi": {
+        "epicentre": "Epicentre",
+        "informacio_turistica": "Informació turística",
+        "centre_interpretacio": "Centre d'Interpretació",
+        "geologia": "Geologia",
+        "dinosaures": "Dinosaures",
+        "area_lleure": "Àrea de lleure",
+        "mirador": "Mirador",
+        "establiment_recomanat": "Establiment recomanat",
+        "jaciment_arqueologic": "Jaciment arqueològic",
+        "esglesia": "Església",
+        "castell": "Castell",
+        "llegenda": "Llegenda",
+        "exposicio_aire_lliure": "Exposició a l'aire lliure",
+        "patrimoni_Industrial": "Patrimoni industrial",
+        "caiac": "Caiac",
+        "parapent": "Parapent",
+        "rafting": "Rafting",
+        "telefèric": "Telefèric",
+        "via_ferrata": "Via Ferrata",
+        "vol_en_globus": "Vol en Globus",
+        "zona_de_bany": "Zona de bany"
+      },
+      "tipusRuta": {
+        "tren_dels_llacs": "Tren dels Llacs",
+        "altres_rutes": "Altres rutes",
+        "el_cinque_llac": "El Cinquè Llac",
+        "georuta": "Georuta"
       }
     }
   },
@@ -53,11 +91,17 @@
         "windowLayersTitle": "Gestor de capas",
         "windowTablePoisTitle": "Puntos de interés",
         "windowTableRutasTitle": "Rutas recomendadas",
-        "windowInfoTitle": "Información"
+        "windowInfoTitle": "Información",
+        "infoLine1": "",
+        "infoLine2": "",
+        "infoLine3": "",
+        "infoLine4": "",
+        "infoContact": "Contacto",
+        "infoSuport": "Con el soporte de"
       },
       "switcher": {
         "wfsGroupPoi": "Puntos de interés",
-        "wfsGroupRuta": "Georutas",
+        "wfsGroupRuta": "Rutas recomendadas",
         "wmsGroup": "Capas temáticas",
         "wmsGroup1": "Reserva Starlight",
         "wmsGroup2": "Red Natura 2000",
@@ -89,10 +133,42 @@
         "tipologia": "Tipología",
         "modalitat": "Modalitad",
         "web": "Web",
-        "link": "Més informació",
+        "link": "Más información",
         "gmaps": "Google Maps",
-        "gpx": "Descargar GPX",
-        "kml": "Descargar KML"
+        "download": "Descarga",
+        "gpx": "GPX",
+        "kml": "KML",
+        "intro": "INTRODUCCIÓN",
+        "pdf": "Descarga ruta (PDF)"
+      },
+      "tipusPoi": {
+        "epicentre": "Epicentre",
+        "informacio_turistica": "Informació turística",
+        "centre_interpretacio": "Centre d'Interpretació",
+        "geologia": "Geologia",
+        "dinosaures": "Dinosaures",
+        "area_lleure": "Àrea de lleure",
+        "mirador": "Mirador",
+        "establiment_recomanat": "Establiment recomanat",
+        "jaciment_arqueologic": "Jaciment arqueològic",
+        "esglesia": "Església",
+        "castell": "Castell",
+        "llegenda": "Llegenda",
+        "exposicio_aire_lliure": "Exposició a l'aire lliure",
+        "patrimoni_Industrial": "Patrimoni industrial",
+        "caiac": "Caiac",
+        "parapent": "Parapent",
+        "rafting": "Rafting",
+        "telefèric": "Telefèric",
+        "via_ferrata": "Via Ferrata",
+        "vol_en_globus": "Vol en Globus",
+        "zona_de_bany": "Zona de bany"
+      },
+      "tipusRuta": {
+        "tren_dels_llacs": "Tren dels Llacs",
+        "altres_rutes": "Altres rutes",
+        "el_cinque_llac": "El Cinquè Llac",
+        "georuta": "Georuta"
       }
     }
   }
