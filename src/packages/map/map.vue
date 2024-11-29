@@ -32,6 +32,16 @@
     </div>
   </div>
 
+  <div id="windowTablePoisRutas" class="window">
+    <h2>
+      <i class="fa fa-map-o"></i>
+      <span class="title">Punts de interès i Rutes recomanades</span>
+    </h2>
+    <div class="content">
+      <div id="datatable-pois-rutas"></div>
+    </div>
+  </div>
+
   <div id="windowInfo" class="window">
     <h2>
       <i class="fa fa-info-circle"></i>
@@ -597,6 +607,21 @@
             else {
               pageData.windowTableRutas.hide();
               $(".tableToggleRutas").removeClass("ol-active");
+            }
+          }
+        }),
+        tableTogglePoisRutas: new Toggle({ 
+          html: '<i class="fa fa-map-o fa-lg"></i>',
+          title: 'Rutes recomanades',
+          className: "tableTogglePoisRutas",
+          onToggle: function(active) {
+            if (active) {
+              hideWindows("tablePoisRutas");
+              pageData.windowTablePoisRutas.show();
+            }
+            else {
+              pageData.windowTablePoisRutas.hide();
+              $(".tableTogglePoisRutas").removeClass("ol-active");
             }
           }
         }),
@@ -1263,8 +1288,8 @@
 
             // gpx kml button
             htmlStr += i18next.t("dtRuta.download") + ": ";
-            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_cat') + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
-            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_cat') + '.kml" download>' + i18next.t("dtRuta.kml") + '</a></span></p> ';
+            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_2_cat') + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
+            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_2_cat') + '.kml" download>' + i18next.t("dtRuta.kml") + '</a></span></p> ';
 
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
             htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
@@ -1686,6 +1711,13 @@
         })
         pageData.map.addControl(pageData.windowTableRutas);
 
+        pageData.windowTablePoisRutas = new Overlay({
+          closeBox : true,
+          className: "slide-right window tableWindow",
+          content: document.getElementById("windowTablePoisRutas")
+        })
+        pageData.map.addControl(pageData.windowTablePoisRutas);
+
         pageData.windowInfo = new Overlay({
           closeBox : true,
           className: "slide-right window infoWindow",
@@ -1702,6 +1734,7 @@
         menuBar.addControl(actionBar);
         actionBar.addControl(pageData.tableTogglePois);
         actionBar.addControl(pageData.tableToggleRutas);
+        actionBar.addControl(pageData.tableTogglePoisRutas);
         actionBar.addControl(pageData.infoToggle);
 
         let languageBar = new Bar({ 
@@ -1739,12 +1772,15 @@
       function hideWindows(activeToggle) {
         pageData.windowTablePois.hide();
         pageData.windowTableRutas.hide();
+        pageData.windowTablePoisRutas.hide();
         pageData.windowInfo.hide();
         
         if (activeToggle !== "tablePois")
           pageData.tableTogglePois.setActive(false);
         else if (activeToggle !== "tableRutas")
           pageData.tableToggleRutas.setActive(false);
+        else if (activeToggle !== "tablePoisRutas")
+          pageData.tableTogglePoisRutas.setActive(false);
         else if (activeToggle !== "info")
           pageData.infoToggle.setActive(false);
       }
@@ -1793,6 +1829,7 @@
             pageData.windowLayers.show();
             initDtPois();
             initDtRutes();
+            initDtPoisRutes();
 
             if (window.mobilecheck()) {
               // close layer switcher
@@ -1855,17 +1892,20 @@
           pageData.lang = i18next.language;
         initDtPois();
         initDtRutes();
+        initDtPoisRutes();
 
         pageData.popup.hide();
 
         // menu
         pageData.tableTogglePois.setTitle(i18next.t('gui.windowTablePoisTitle'));
         pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
+        pageData.tableTogglePoisRutas.setTitle(i18next.t('gui.windowTablePoisRutasTitle'));
         pageData.infoToggle.setTitle(i18next.t('gui.windowInfoTitle'));
 
         // windows
         $("#windowTablePois .title").text(i18next.t('gui.windowTablePoisTitle'));
         $("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
+        //$("#windowTablePoisRutas .title").text(i18next.t('gui.windowTablePoisRutasTitle'));
         $("#windowInfo .title").text(i18next.t('gui.windowInfoTitle'));
 
         // info
@@ -1950,6 +1990,41 @@
               easing: easeOut,
               duration: 2000
             });
+          });
+        });
+      }
+
+      function initDtPoisRutes() {
+        $('#datatable-pois-rutas').html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="pois-rutas-table"></table>');
+        let datatable = $('#pois-rutas-table').DataTable({
+          info: false,
+          responsible: true,
+          search: true,
+          ajax: { 
+            url :"https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true", type : "GET",
+            dataSrc: 'features'
+          },
+          columns: [
+            { "data": "properties.nom_" + pageData.lang, "title" : "Nom", "class": "title", "render": function ( data, type, row ) { return "<span class='link' data-coords='[" + row.geometry.coordinates + "]'>" + data + " [Punt de interès]" + "</span>"; }},
+            { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtPoi.descripcio"), "class": "descripcio",},
+            { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.georuta"), "class": "ruta"},
+          ],
+        }).on( 'init.dt', function () {
+
+          console.log("rutas");
+
+          $.ajax({
+            url: "https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true",
+            dataType: 'json',
+            success: function(response){
+              console.log(response);
+            }
+          });
+
+          $("#datatable-pois-rutas").on("click", ".link", function() {
+            $(".tableWindow").hide();
+            //console.log($(this).data("coords"));
+            pageData.map.getView().animate({zoom: 15, center: fromLonLat($(this).data("coords")), duration: 2000});
           });
         });
       }
