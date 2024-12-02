@@ -1931,7 +1931,7 @@
             { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.georuta"), "class": "ruta"},
             /*{ "data": "properties.tematica_1_" + pageData.lang, "title" : i18next.t("dtPoi.temática"), "class": "tematica"},*/
             /*{ "data": "properties.tipus_" + pageData.lang, "title" : i18next.t("dtPoi.tipus"), "class": "tipus"},*/
-            { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }, "class": "web"},
+            /*{ "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtPoi.web"), "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }, "class": "web"},*/
           ],
         }).on( 'init.dt', function () {
           $("#datatable-pois").on("click", ".link", function() {
