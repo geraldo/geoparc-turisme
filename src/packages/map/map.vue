@@ -1217,13 +1217,9 @@
 
           // google maps button
           let geom = feature.getGeometry().flatCoordinates;
-/*          let lng = geom[0] + (geom[2]-geom[0])/2;
-          let lat = geom[1] + (geom[3]-geom[1])/2;
-          let center = toLonLat([lng, lat]);
-*/          
           let lonlat = toLonLat(geom);
-          console.log(geom, lonlat);
-          htmlStr += '<span class="coords"><a class="button" target="_blank" href="https://maps.google.com/?q=' + lonlat[1] + ',' + lonlat[0] + '"><i class="fa fa-map-marker" aria-hidden="true" title="' + i18next.t("dtRuta.gmaps") + '"></i></a></span></p>';
+          //console.log(geom, lonlat);
+          htmlStr += '<span class="coords"><a class="button" target="_blank" href="https://maps.google.com/?q=' + lonlat[1] + ',' + lonlat[0] + '">' + i18next.t("dtRuta.gmaps") + '</a></span></p>';
 
           htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
           htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
@@ -1271,18 +1267,23 @@
             htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a>' : '<p>';
 
             // google maps button
-            let geom = feature.getGeometry().getExtent();
+            /*let geom = feature.getGeometry().getExtent();
             let lng = geom[0] + (geom[2]-geom[0])/2;
             let lat = geom[1] + (geom[3]-geom[1])/2;
             let center = toLonLat([lng, lat]);
             console.log(geom, center);
-            htmlStr += '<span class="coords"><a class="button" target="_blank" href="https://maps.google.com/?q=' + center[1] + ',' + center[0] + '"><i class="fa fa-map-marker" aria-hidden="true" title="' + i18next.t("dtRuta.gmaps") + '"></i></a> ';
+            htmlStr += '<a class="button" target="_blank" href="https://maps.google.com/?q=' + center[1] + ',' + center[0] + '">' + i18next.t("dtRuta.gmaps") + '</a> ';*/
 
             // gpx kml button
-            htmlStr += i18next.t("dtRuta.download") + ": ";
-            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_2_cat') + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
-            htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_2_cat') + '.kml" download>' + i18next.t("dtRuta.kml") + '</a></span></p> ';
+            let tipo = feature.get('modalitat_cat');
+            if (tipo.indexOf("a peu") > -1) {
+              htmlStr += '<span class="coords">';
+              htmlStr += i18next.t("dtRuta.download") + ": ";
+              htmlStr += '<a class="button" href="downloads/' + feature.get('georuta_2_cat') + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
+              htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_2_cat') + '.kml" download>' + i18next.t("dtRuta.kml") + '</a></span>';
+            }
 
+            htmlStr += '</p> ';
             htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
             htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
             htmlStr += distancia ? '<p>' + i18next.t("dtRuta.distancia") + ': ' + distancia + '</br>' : '';
@@ -1306,7 +1307,7 @@
 
             data.features.forEach(function(feature) {
 
-              if (feature.properties.georuta_2_cat === "Georuta 6") {
+              if (feature.properties.georuta_cat === "Georuta 6") {
 
                 let point = pageData.map.getPixelFromCoordinate(fromLonLat(feature.geometry.coordinates[0][0]));
 
