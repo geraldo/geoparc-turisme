@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div id="windowTableRutas" class="window">
+  <!-- <div id="windowTableRutas" class="window">
     <h2>
       <i class="fa fa-map-o"></i>
       <span class="title">Rutes recomanades</span>
@@ -30,17 +30,7 @@
     <div class="content">
       <div id="datatable-rutas"></div>
     </div>
-  </div>
-
-  <div id="windowTablePoisRutas" class="window">
-    <h2>
-      <i class="fa fa-map-o"></i>
-      <span class="title">Punts de interès i Rutes recomanades</span>
-    </h2>
-    <div class="content">
-      <div id="datatable-pois-rutas"></div>
-    </div>
-  </div>
+  </div> -->
 
   <div id="windowInfo" class="window">
     <h2>
@@ -577,7 +567,7 @@
 
         windowLayers: null,
         windowTablePois: null,
-        windowTableRutas: null,
+        //windowTableRutas: null,
         windowInfo: null,
 
         tableTogglePois: new Toggle({ 
@@ -595,7 +585,7 @@
             }
           }
         }),
-        tableToggleRutas: new Toggle({ 
+        /*tableToggleRutas: new Toggle({ 
           html: '<i class="fa fa-map-o fa-lg"></i>',
           title: 'Rutes recomanades',
           className: "tableToggleRutas",
@@ -609,22 +599,7 @@
               $(".tableToggleRutas").removeClass("ol-active");
             }
           }
-        }),
-        tableTogglePoisRutas: new Toggle({ 
-          html: '<i class="fa fa-map-o fa-lg"></i>',
-          title: 'Rutes recomanades',
-          className: "tableTogglePoisRutas",
-          onToggle: function(active) {
-            if (active) {
-              hideWindows("tablePoisRutas");
-              pageData.windowTablePoisRutas.show();
-            }
-            else {
-              pageData.windowTablePoisRutas.hide();
-              $(".tableTogglePoisRutas").removeClass("ol-active");
-            }
-          }
-        }),
+        }),*/
         infoToggle: new Toggle({ 
           html: '<i class="fa fa-info-circle fa-lg"></i>',
           title: 'Informació',
@@ -648,14 +623,30 @@
             i18next.changeLanguage('ca');
           }
         }),
-        esToggle: new Toggle({ 
+        /*esToggle: new Toggle({ 
           html: 'ES',
           className: "lang es",
           title: "Castellano",
           onToggle: function() {
             i18next.changeLanguage('es');
           }
+        }),*/
+        enToggle: new Toggle({ 
+          html: 'EN',
+          className: "lang en",
+          title: "English",
+          onToggle: function() {
+            i18next.changeLanguage('en');
+          }
         }),
+        /*frToggle: new Toggle({ 
+          html: 'FR',
+          className: "lang fr",
+          title: "Français",
+          onToggle: function() {
+            i18next.changeLanguage('fr');
+          }
+        }),*/
 
         iconLayer: null,
         iconPoint: null,
@@ -999,7 +990,8 @@
          *****************************************/
         let hoverFeature;
         pageData.map.on("pointermove", (event) => {
-          if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowTableRutas").is(':visible') && !$("#windowInfo").is(':visible')) {
+          if (!pageData.popup.isOpened() && !$("#windowTablePois").is(':visible') && !$("#windowInfo").is(':visible')) {
+            //&& !$("#windowTableRutas").is(':visible') 
 
             // Change the cursor style to indicate that the cluster is clickable.
             pageData.map.getTargetElement().style.cursor = pageData.map.hasFeatureAtPixel(event.pixel, {
@@ -1427,7 +1419,7 @@
         $(document).keyup(function(e) {
           if (e.keyCode === 27) { // escape
             pageData.windowTablePois.hide();
-            pageData.windowTableRutas.hide();
+            //pageData.windowTableRutas.hide();
             pageData.windowInfo.hide();
             pageData.popup.hide();
             // turn off geolocate
@@ -1704,19 +1696,12 @@
         })
         pageData.map.addControl(pageData.windowTablePois);
 
-        pageData.windowTableRutas = new Overlay({
+        /*pageData.windowTableRutas = new Overlay({
           closeBox : true,
           className: "slide-right window tableWindow",
           content: document.getElementById("windowTableRutas")
         })
-        pageData.map.addControl(pageData.windowTableRutas);
-
-        pageData.windowTablePoisRutas = new Overlay({
-          closeBox : true,
-          className: "slide-right window tableWindow",
-          content: document.getElementById("windowTablePoisRutas")
-        })
-        pageData.map.addControl(pageData.windowTablePoisRutas);
+        pageData.map.addControl(pageData.windowTableRutas);*/
 
         pageData.windowInfo = new Overlay({
           closeBox : true,
@@ -1733,8 +1718,7 @@
         let actionBar = new Bar({ toggleOne: true, group: true });
         menuBar.addControl(actionBar);
         actionBar.addControl(pageData.tableTogglePois);
-        actionBar.addControl(pageData.tableToggleRutas);
-        actionBar.addControl(pageData.tableTogglePoisRutas);
+        //actionBar.addControl(pageData.tableToggleRutas);
         actionBar.addControl(pageData.infoToggle);
 
         let languageBar = new Bar({ 
@@ -1744,7 +1728,9 @@
         });
         menuBar.addControl(languageBar);
         languageBar.addControl(pageData.caToggle);
-        languageBar.addControl(pageData.esToggle);
+        //languageBar.addControl(pageData.esToggle);
+        languageBar.addControl(pageData.enToggle);
+        //languageBar.addControl(pageData.frToggle);
 
         /*let logoUnescoBtn = new Button({ 
           html: '<img src="logo-unesco.png" />',
@@ -1771,16 +1757,13 @@
 
       function hideWindows(activeToggle) {
         pageData.windowTablePois.hide();
-        pageData.windowTableRutas.hide();
-        pageData.windowTablePoisRutas.hide();
+        //pageData.windowTableRutas.hide();
         pageData.windowInfo.hide();
         
         if (activeToggle !== "tablePois")
           pageData.tableTogglePois.setActive(false);
-        else if (activeToggle !== "tableRutas")
-          pageData.tableToggleRutas.setActive(false);
-        else if (activeToggle !== "tablePoisRutas")
-          pageData.tableTogglePoisRutas.setActive(false);
+        /*else if (activeToggle !== "tableRutas")
+          pageData.tableToggleRutas.setActive(false);*/
         else if (activeToggle !== "info")
           pageData.infoToggle.setActive(false);
       }
@@ -1828,8 +1811,7 @@
             initMenu();
             pageData.windowLayers.show();
             initDtPois();
-            initDtRutes();
-            initDtPoisRutes();
+            //initDtRutes();
 
             if (window.mobilecheck()) {
               // close layer switcher
@@ -1876,6 +1858,8 @@
           pageData.caToggle.setActive(true);
         else if (lang === "es")
           pageData.esToggle.setActive(true);
+        else if (lang === "en")
+          pageData.enToggle.setActive(true);
         else if (lang === "fr")
           pageData.frToggle.setActive(true);
         else
@@ -1891,21 +1875,18 @@
         else
           pageData.lang = i18next.language;
         initDtPois();
-        initDtRutes();
-        initDtPoisRutes();
+        //initDtRutes();
 
         pageData.popup.hide();
 
         // menu
         pageData.tableTogglePois.setTitle(i18next.t('gui.windowTablePoisTitle'));
-        pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
-        pageData.tableTogglePoisRutas.setTitle(i18next.t('gui.windowTablePoisRutasTitle'));
+        //pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
         pageData.infoToggle.setTitle(i18next.t('gui.windowInfoTitle'));
 
         // windows
         $("#windowTablePois .title").text(i18next.t('gui.windowTablePoisTitle'));
-        $("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
-        //$("#windowTablePoisRutas .title").text(i18next.t('gui.windowTablePoisRutasTitle'));
+        //$("#windowTableRutas .title").text(i18next.t('gui.windowTableRutasTitle'));
         $("#windowInfo .title").text(i18next.t('gui.windowInfoTitle'));
 
         // info
@@ -1960,7 +1941,7 @@
         });
       }
 
-      function initDtRutes() {
+      /*function initDtRutes() {
         $('#datatable-rutas').html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="rutas-table"></table>');
         let datatable = $('#rutas-table').DataTable({
           info: false,
@@ -1973,12 +1954,9 @@
           columns: [
             { "data": "properties.georuta_" + pageData.lang, "title" : i18next.t("dtRuta.nom"), "class": "georuta", "render": function ( data, type, row ) { return "<span class='link' data-coords='" + JSON.stringify(row.bbox) + "'>" + data + "</span>"; }},
             { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtRuta.descripcio"), "class": "descripcio"},
-            /*{ "data": "properties.imatge_1", "title" : i18next.t("dtRuta.imatge"), "class": "imatge", "render": function ( data, type, row ) { return data!=="" ? "<img class='link' style='max-width:300px;' src='fotos/" + data + "' data-coords='" + JSON.stringify(row.bbox) + "'/>" : ""; }},*/
             { "data": "properties.desnivell_m", "title" : i18next.t("dtRuta.desnivell"), "class": "desnivell"},
             { "data": "properties.dificultat_" + pageData.lang, "title" : i18next.t("dtRuta.dificultat"), "class": "dificultat"},
             { "data": "properties.distancia_km", "title" : i18next.t("dtRuta.distancia"), "class": "distancia", "render": function ( data, type, row ) { return parseFloat(data).toLocaleString('es-ES', { decimal: ',', useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 }); }},
-            /*{ "data": "properties.tipologia_" + pageData.lang, "title" : i18next.t("dtRuta.tipologia"), "class": "tipologia"},
-            { "data": "properties.modalitat_" + pageData.lang, "title" : i18next.t("dtRuta.modalitat"), "class": "modalitat"},*/
             { "data": "properties.web_" + pageData.lang, "title" : i18next.t("dtRuta.web"), "class": "web", "render": function ( data, type, row ) { return data!=="" ? "<a target='_blank' href='" + data + "' title='" + data + "'><i class='fa fa-external-link' aria-hidden='true'></i></a>" : ""; }},
           ],
         }).on( 'init.dt', function () {
@@ -1992,42 +1970,7 @@
             });
           });
         });
-      }
-
-      function initDtPoisRutes() {
-        $('#datatable-pois-rutas').html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="pois-rutas-table"></table>');
-        let datatable = $('#pois-rutas-table').DataTable({
-          info: false,
-          responsible: true,
-          search: true,
-          ajax: { 
-            url :"https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true", type : "GET",
-            dataSrc: 'features'
-          },
-          columns: [
-            { "data": "properties.nom_" + pageData.lang, "title" : "Nom", "class": "title", "render": function ( data, type, row ) { return "<span class='link' data-coords='[" + row.geometry.coordinates + "]'>" + data + " [Punt de interès]" + "</span>"; }},
-            { "data": "properties.descripcio_" + pageData.lang, "title" : i18next.t("dtPoi.descripcio"), "class": "descripcio",},
-            { "data": "properties.nom_ruta_" + pageData.lang, "title" : i18next.t("dtPoi.georuta"), "class": "ruta"},
-          ],
-        }).on( 'init.dt', function () {
-
-          console.log("rutas");
-
-          $.ajax({
-            url: "https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true",
-            dataType: 'json',
-            success: function(response){
-              console.log(response);
-            }
-          });
-
-          $("#datatable-pois-rutas").on("click", ".link", function() {
-            $(".tableWindow").hide();
-            //console.log($(this).data("coords"));
-            pageData.map.getView().animate({zoom: 15, center: fromLonLat($(this).data("coords")), duration: 2000});
-          });
-        });
-      }
+      }*/
 
       /*
        * Init
