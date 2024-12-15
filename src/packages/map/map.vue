@@ -1438,7 +1438,7 @@
        * WFS styles
        *****************************************/
       function iconStyleFunction(feature) {
-        let tipus = feature.get('tipus_' + pageData.lang),
+        let tipus = feature.get('tipus_cat'),
             zIndex = 0;
 
         if (tipus === "epicentre")
@@ -1541,7 +1541,7 @@
             features = feature.get('features');
         //remove not selected categories
         for (var i = features.length - 1; i >= 0; --i) {
-          if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_" + pageData.lang))).hasClass("off")) {
+          if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
             size++;
           }
         }
@@ -1588,7 +1588,7 @@
         else if (size > 0) {
           feature.set('cluster', false);
           for (var i = features.length - 1; i >= 0; --i) {
-            if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_" + pageData.lang))).hasClass("off")) {
+            if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
               return iconStyleFunction(features[i]);
               break;
             }
