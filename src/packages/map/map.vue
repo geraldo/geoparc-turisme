@@ -43,7 +43,7 @@
       <p><a class="logo1" title="Geoparc Orígens als Pirineus Catalans" href="https://www.geoparcorigens.cat/"><img src="/logo-geoparc.jpg"></a> 
       <a class="logo2 logox" title="UNESCO Global Geoparks" href="https://en.unesco.org/global-geoparks"><img src="/logo-unesco.png"></a> 
       <a class="logox" href="https://www.visitgeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="/Spanish GGN esp.png" alt="" height="70"></a> 
-      <a class="logox" href="http://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="https://www.geoparcorigens.cat/wp-content/uploads/2022/05/EGNLogoNEW-292x300.jpg" alt="" class="wp-image-14990" width="73" height="75"></a></p>
+      <a class="logox" href="https://www.europeangeoparks.org/" target="_blank"><img decoding="async" loading="lazy" src="/EGN.png" alt="" height="80"></a></p>
       <h3 class="infoContact">Contacte</h3>
       <p>Orígens UNESCO Global Geopark<br>
       Carrer de Soldevila, 3<br>
@@ -613,6 +613,14 @@
               pageData.windowInfo.hide();
               $(".infoToggle").removeClass("ol-active");
             }
+          }
+        }),
+        surveyButton: new Button({ 
+          html: '<i class="fa fa-smile-o fa-lg"></i>',
+          title: 'Enqueste',
+          className: "survey",
+          handleClick: function() {
+            window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScA9OU8TstqnA4a9pLUEgUCn2jI31r90h6d5O0gp_CQeYldBA/viewform?usp=header";
           }
         }),
         caToggle: new Toggle({ 
@@ -1721,6 +1729,7 @@
         actionBar.addControl(pageData.tableTogglePois);
         //actionBar.addControl(pageData.tableToggleRutas);
         actionBar.addControl(pageData.infoToggle);
+        actionBar.addControl(pageData.surveyButton);
 
         let languageBar = new Bar({ 
           toggleOne: true, 
