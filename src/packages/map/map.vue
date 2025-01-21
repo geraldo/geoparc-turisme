@@ -631,14 +631,14 @@
             i18next.changeLanguage('ca');
           }
         }),
-        /*esToggle: new Toggle({ 
+        esToggle: new Toggle({ 
           html: 'ES',
           className: "lang es",
           title: "Castellano",
           onToggle: function() {
             i18next.changeLanguage('es');
           }
-        }),*/
+        }),
         enToggle: new Toggle({ 
           html: 'EN',
           className: "lang en",
@@ -985,8 +985,11 @@
               popupId = link.track('id');
         pageData.map.addInteraction(link);
 
-        if (openPopup === "georuta" && popupNum === 6) {
-          showPopupRutaInteractive(popupPoi);
+        if (openPopup === "georuta") {
+          if (popupNum === 6)
+            showPopupRutaInteractive(popupPoi);
+          else
+            showPopupRutaById(popupId);
         }
         else if (openPopup === "poi") {
           // for now only for testing
@@ -1200,7 +1203,7 @@
                 if (feature.get('georuta_2_cat') === 'Georuta 6')
                   showPopupRutaInteractive();
                 else
-                  showPopupRuta(evt);
+                  showPopupRuta(evt.pixel, evt.coordinate);
               }
               else {
                 pageData.popup.hide();
@@ -1240,14 +1243,18 @@
           if (Number.isInteger(parseInt(id))) {
 
             // get geojson for this POI num
-            $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true&id="+id, function() {})
+            $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&id="+id, function() {})
             .done(function(data) {
 
               data.features.forEach(function(feature) {
-                //if (f.properties.nom_ruta_cat === "Georuta 6") {
-                if (feature.id === id) {
+                if (feature.id == id) {
                   let format = new GeoJSON();
                   showPopupPoi(feature.geometry.coordinates, format.readFeature(feature));
+                  pageData.map.getView().animate({
+                    zoom: 15, 
+                    center: fromLonLat(feature.geometry.coordinates), 
+                    duration: 2000
+                  });
                 }
               });
             });
@@ -1257,8 +1264,10 @@
           }
         }
 
-        function showPopupRuta(evt) {
-          pageData.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+        function showPopupRuta(pixel, coord) {
+          console.log("showPopupRuta", pixel, coord);
+          pageData.map.forEachFeatureAtPixel(pixel, function (feature) {
+            console.log(feature);
             let title = feature.get('georuta_2_' + pageData.lang),
                 description = feature.get('descripcio_' + pageData.lang),
                 foto = feature.get('imatge_1'),
@@ -1300,11 +1309,26 @@
             htmlStr += modalidad ? i18next.t("dtRuta.modalitat") + ': ' + modalidad + '</br>' : '';
             htmlStr += dificultad ? i18next.t("dtRuta.dificultat") + ': ' + dificultad + '</p>' : '';
             htmlStr += '</div>';
-            pageData.popup.show(evt.coordinate, htmlStr);
+            pageData.popup.show(coord, htmlStr);
             pageData.tooltip.hide();
             return true;
           }, {
             hitTolerance: 5
+          });
+        }
+
+        function showPopupRutaById(id) {
+          // get georuta by id
+          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&limit=1000&visible=true&id=" + id, function() {})
+          .done(function(data) {
+
+            data.features.forEach(function(feature) {
+              let coord = feature.geometry.coordinates[0][0];
+              console.log(feature, coord);
+              let xy = fromLonLat(coord);
+              let pixel = pageData.map.getPixelFromCoordinate(xy);
+              showPopupRuta(pixel, xy);
+            });
           });
         }
 
@@ -1439,6 +1463,73 @@
             }
           }
         });
+
+        /*
+         * Pois Menu
+         *****************************************/
+        appendRutasMenu();
+
+        function appendPoisMenu() {
+
+          let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-open"><button></button><label for="museos-title"><i class="fa fa-eye"></i> Museus</label></li>';
+
+          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&tipus_cat=centre_interpretacio&limit=100", function() {})
+            .done(function(data) {
+
+              html += "<ul style='list-style:circle;'>";
+
+              data.features.forEach(function(feature) {
+                const name = feature.properties["nom_" + pageData.lang];
+                html += "<li class='poiLayer' data-id='" + feature.id + "'>" + name + "</li>";
+              });
+
+              html += "</ul></ul></div>";
+              $("#windowLayers .content").prepend(html);
+
+              $("._museos .poiLayer").bind("click", function() {
+                console.log("poi", $(this).data("id"));
+                showPopupPoiById($(this).data("id"));
+              });
+
+              $("._museos button").bind("click", function() {
+                $(this).parent().next().toggle();
+                $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
+              });
+            });
+        }
+
+        function appendRutasMenu() {
+
+          let html = '<div class="layer-switcher _rutes"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-eye"></i> Rutas Recomenades</label></li>';
+
+          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&limit=100", function() {})
+            .done(function(data) {
+
+              html += "<ul style='list-style:circle; display:none;'>";
+
+              data.features.forEach(function(feature) {
+                const name = feature.properties["georuta_2_" + pageData.lang];
+                html += "<li class='poiLayer' data-id='" + feature.id + "'>" + name + "</li>";
+              });
+
+              html += "</ul></ul></div>";
+              //html += "<script>function togglePoi() {}<script>"
+              $("#windowLayers .content").prepend(html);
+
+              console.log($("._rutes .poiLayer"));
+              $("._rutes .poiLayer").bind("click", function() {
+                console.log("ruta", $(this).data("id"));
+                //showPopupRutaById($(this).data("id"));
+              });
+
+              $("._rutes button").bind("click", function() {
+                $(this).parent().next().toggle();
+                $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
+              });
+
+              appendPoisMenu();
+            });
+        }
       }
 
 
@@ -1738,7 +1829,7 @@
         });
         menuBar.addControl(languageBar);
         languageBar.addControl(pageData.caToggle);
-        //languageBar.addControl(pageData.esToggle);
+        languageBar.addControl(pageData.esToggle);
         languageBar.addControl(pageData.enToggle);
         //languageBar.addControl(pageData.frToggle);
 
