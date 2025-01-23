@@ -1265,56 +1265,62 @@
           }
         }
 
-        function showPopupRuta(pixel, coord) {
-          console.log("showPopupRuta", pixel, coord);
-          pageData.map.forEachFeatureAtPixel(pixel, function (feature) {
-            console.log(feature);
-            let title = feature.get('georuta_2_' + pageData.lang),
-                description = feature.get('descripcio_' + pageData.lang),
-                foto = feature.get('imatge_1'),
-                autor = feature.get('imatge_1_autor'),
-                distancia = feature.get('distancia_km') + " km",
-                desnivel = feature.get('desnivell_m'),
-                tipologia = feature.get('tipologia_' + pageData.lang),
-                modalidad = feature.get('modalitat_' + pageData.lang),
-                dificultad = feature.get('dificultat_' + pageData.lang),
-                web = feature.get('web_' + pageData.lang);
+        function showPopupRuta(feature, coord) {
+          const props = feature.properties;
+          let title = props['georuta_2_' + pageData.lang],
+              description = props['descripcio_' + pageData.lang],
+              foto = props['imatge_1'],
+              autor = props['imatge_1_autor'],
+              distancia = props['distancia_km'] + " km",
+              desnivel = props['desnivell_m'],
+              tipologia = props['tipologia_' + pageData.lang],
+              modalidad = props['modalitat_' + pageData.lang],
+              dificultad = props['dificultat_' + pageData.lang],
+              web = props['web_' + pageData.lang];
 
-            let htmlStr = '<div class="padding"><h2>' + title + '</h2>';
-            htmlStr += description ? '<p>' + description + '</p>' : '';
-            htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a>' : '<p>';
+          let htmlStr = '<div class="padding"><h2>' + title + '</h2>';
+          htmlStr += description ? '<p>' + description + '</p>' : '';
+          htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a>' : '<p>';
 
-            // google maps button
-            /*let geom = feature.getGeometry().getExtent();
-            let lng = geom[0] + (geom[2]-geom[0])/2;
-            let lat = geom[1] + (geom[3]-geom[1])/2;
-            let center = toLonLat([lng, lat]);
-            console.log(geom, center);
-            htmlStr += '<a class="button" target="_blank" href="https://maps.google.com/?q=' + center[1] + ',' + center[0] + '">' + i18next.t("dtRuta.gmaps") + '</a> ';*/
+          // google maps button
+          /*let geom = feature.getGeometry().getExtent();
+          let lng = geom[0] + (geom[2]-geom[0])/2;
+          let lat = geom[1] + (geom[3]-geom[1])/2;
+          let center = toLonLat([lng, lat]);
+          console.log(geom, center);
+          htmlStr += '<a class="button" target="_blank" href="https://maps.google.com/?q=' + center[1] + ',' + center[0] + '">' + i18next.t("dtRuta.gmaps") + '</a> ';*/
 
-            // gpx kml button
-            let tipo = feature.get('modalitat_cat');
-            if (tipo.indexOf("a peu") > -1) {
-              htmlStr += '<span class="coords">';
-              htmlStr += i18next.t("dtRuta.download") + ": ";
-              htmlStr += '<a class="button" href="downloads/' + feature.get('georuta_2_cat') + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
-              htmlStr += ' <a class="button" href="downloads/' + feature.get('georuta_2_cat') + '.kml" download>' + i18next.t("dtRuta.kml") + '</a></span>';
-            }
+          // gpx kml button
+          let tipo = props['modalitat_cat'];
+          if (tipo.indexOf("a peu") > -1) {
+            htmlStr += '<span class="coords">';
+            htmlStr += i18next.t("dtRuta.download") + ": ";
+            htmlStr += '<a class="button" href="downloads/' + props['georuta_2_cat'] + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
+            htmlStr += ' <a class="button" href="downloads/' + props['georuta_2_cat'] + '.kml" download>' + i18next.t("dtRuta.kml") + '</a></span>';
+          }
 
-            htmlStr += '</p> ';
-            htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
-            htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
-            htmlStr += distancia ? '<p>' + i18next.t("dtRuta.distancia") + ': ' + distancia + '</br>' : '';
-            htmlStr += desnivel ? i18next.t("dtRuta.desnivell") + ': ' + desnivel + '</br>' : '';
-            htmlStr += tipologia ? i18next.t("dtRuta.tipologia") + ': ' + tipologia + '</br>' : '';
-            htmlStr += modalidad ? i18next.t("dtRuta.modalitat") + ': ' + modalidad + '</br>' : '';
-            htmlStr += dificultad ? i18next.t("dtRuta.dificultat") + ': ' + dificultad + '</p>' : '';
-            htmlStr += '</div>';
-            pageData.popup.show(coord, htmlStr);
-            pageData.tooltip.hide();
-            return true;
-          }, {
-            hitTolerance: 5
+          htmlStr += '</p> ';
+          htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
+          htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
+          htmlStr += distancia ? '<p>' + i18next.t("dtRuta.distancia") + ': ' + distancia + '</br>' : '';
+          htmlStr += desnivel ? i18next.t("dtRuta.desnivell") + ': ' + desnivel + '</br>' : '';
+          htmlStr += tipologia ? i18next.t("dtRuta.tipologia") + ': ' + tipologia + '</br>' : '';
+          htmlStr += modalidad ? i18next.t("dtRuta.modalitat") + ': ' + modalidad + '</br>' : '';
+          htmlStr += dificultad ? i18next.t("dtRuta.dificultat") + ': ' + dificultad + '</p>' : '';
+          htmlStr += '</div>';
+          pageData.popup.show(coord, htmlStr);
+          pageData.tooltip.hide();
+
+          // zoom to ruta
+          const format = new GeoJSON();
+          const features = format.readFeatures(feature, {
+            dataProjection: 'EPSG:4326',
+            featureProjection: 'EPSG:3857'
+          });          
+          pageData.map.getView().fit(features[0].getGeometry(), {
+            easing: easeOut,
+            duration: 2000,
+            padding: [100, 100, 100, 100]
           });
         }
 
@@ -1325,10 +1331,8 @@
 
             data.features.forEach(function(feature) {
               let coord = feature.geometry.coordinates[0][0];
-              console.log(feature, coord);
               let xy = fromLonLat(coord);
-              let pixel = pageData.map.getPixelFromCoordinate(xy);
-              showPopupRuta(pixel, xy);
+              showPopupRuta(feature, xy);
             });
           });
         }
@@ -1468,12 +1472,12 @@
         /*
          * Pois Menu
          *****************************************/
-        //appendRutasMenu();
-        appendPoisMenu();
+        appendRutasMenu();
+        //appendPoisMenu();
 
         function appendPoisMenu() {
 
-          let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-open"><button></button><label for="museos-title"><i class="fa fa-eye"></i> Museus</label></li>';
+          let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-open"><button></button><label for="museos-title"><i class="fa fa-location-arrow"></i> Museus</label></li>';
 
           $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&tipus_cat=centre_interpretacio&limit=100&sortby=ordre", function() {})
             .done(function(data) {
@@ -1502,7 +1506,7 @@
 
         function appendRutasMenu() {
 
-          let html = '<div class="layer-switcher _rutes"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-eye"></i> Rutas Recomenades</label></li>';
+          let html = '<div class="layer-switcher _rutes"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-location-arrow"></i> Rutas Recomenades</label></li>';
 
           $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&limit=100&sortby=ordre", function() {})
             .done(function(data) {
