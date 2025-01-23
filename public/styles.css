@@ -531,6 +531,22 @@ img.leyenda.off {
   margin-left: 20px;
 }
 
+.layer-switcher._rutes {
+  margin-top: 1em;
+}
+
+#layerSwitcher ._punts-de-inter__00e8s {
+  margin-top: 1em;
+}
+
+.layer-switcher._museos ul ul, .layer-switcher._rutes ul ul {
+  list-style:circle;
+}
+
+.layer-switcher._museos ul ul li, .layer-switcher._rutes ul ul li {
+  margin-left: 18px;
+}
+
 /*
  * tooltip, popup
  * ************************/

@@ -506,7 +506,7 @@
         qgisInvisibleWmsLayers: new LayerGroup({}),
         qgisWfsLayersPoi: new LayerGroup({
           title: 'Punts de interès',
-          fold: 'open'
+          fold: 'close'
         }),
         qgisWfsLayersRuta: new LayerGroup({
           title: 'Rutes recomanades',
@@ -625,8 +625,9 @@
         }),
         caToggle: new Toggle({ 
           html: 'CA',
-          className: "lang ca",
+          className: "lang",
           title: "Català",
+          active: true,
           onToggle: function() {
             i18next.changeLanguage('ca');
           }
@@ -647,14 +648,14 @@
             i18next.changeLanguage('en');
           }
         }),
-        /*frToggle: new Toggle({ 
+        frToggle: new Toggle({ 
           html: 'FR',
           className: "lang fr",
           title: "Français",
           onToggle: function() {
             i18next.changeLanguage('fr');
           }
-        }),*/
+        }),
 
         iconLayer: null,
         iconPoint: null,
@@ -1467,16 +1468,17 @@
         /*
          * Pois Menu
          *****************************************/
-        appendRutasMenu();
+        //appendRutasMenu();
+        appendPoisMenu();
 
         function appendPoisMenu() {
 
           let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-open"><button></button><label for="museos-title"><i class="fa fa-eye"></i> Museus</label></li>';
 
-          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&tipus_cat=centre_interpretacio&limit=100", function() {})
+          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&tipus_cat=centre_interpretacio&limit=100&sortby=ordre", function() {})
             .done(function(data) {
 
-              html += "<ul style='list-style:circle;'>";
+              html += "<ul>";
 
               data.features.forEach(function(feature) {
                 const name = feature.properties["nom_" + pageData.lang];
@@ -1502,10 +1504,10 @@
 
           let html = '<div class="layer-switcher _rutes"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-eye"></i> Rutas Recomenades</label></li>';
 
-          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&limit=100", function() {})
+          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&limit=100&sortby=ordre", function() {})
             .done(function(data) {
 
-              html += "<ul style='list-style:circle; display:none;'>";
+              html += "<ul style='display:none;'>";
 
               data.features.forEach(function(feature) {
                 const name = feature.properties["georuta_2_" + pageData.lang];
@@ -1519,7 +1521,7 @@
               console.log($("._rutes .poiLayer"));
               $("._rutes .poiLayer").bind("click", function() {
                 console.log("ruta", $(this).data("id"));
-                //showPopupRutaById($(this).data("id"));
+                showPopupRutaById($(this).data("id"));
               });
 
               $("._rutes button").bind("click", function() {
@@ -1830,30 +1832,8 @@
         menuBar.addControl(languageBar);
         languageBar.addControl(pageData.caToggle);
         languageBar.addControl(pageData.esToggle);
+        languageBar.addControl(pageData.frToggle);
         languageBar.addControl(pageData.enToggle);
-        //languageBar.addControl(pageData.frToggle);
-
-        /*let logoUnescoBtn = new Button({ 
-          html: '<img src="logo-unesco.png" />',
-          className: "logo logo2",
-          title: "UNESCO Global Geoparks",
-          handleClick: function() { 
-            window.location.href = "https://en.unesco.org/global-geoparks";
-          }
-        });
-        actionBar.addControl(logoUnescoBtn);
-
-        let logoBtn = new Button({ 
-          html: '<img src="logo-geoparc.jpg" />',
-          className: "logo",
-          title: "Geoparc Orígens als Pirineus Catalans",
-          handleClick: function() { 
-            //pageData.map.getView().setCenter(coordsInit);
-            //pageData.map.getView().setZoom(zoomInit);
-            window.location.href = "https://www.geoparcorigens.cat/";
-          }
-        });
-        actionBar.addControl(logoBtn);*/
       }
 
       function hideWindows(activeToggle) {

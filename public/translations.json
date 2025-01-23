@@ -261,5 +261,93 @@
         "georuta": "Georoute" 
       }
     }
+  },
+  "fr": {
+    "translation": {
+      "gui": {
+        "windowLayersTitle": "Gestionnaire de couches",
+        "windowTablePoisTitle": "Points d'intérêt",
+        "windowTableRutasTitle": "Itinéraires recommandés",
+        "windowTablePoisRutasTitle": "Points d'intérêt et itinéraires recommandés",
+        "windowInfoTitle": "Informations",
+        "infoLine1": "Le Géoparc Orígens est un territoire spectaculaire reconnu par l'UNESCO depuis 2018.",
+        "infoLine2": "Ici, vous pouvez faire un véritable voyage dans le temps pour découvrir les origines et l'évolution de la Terre et de la vie.",
+        "infoLine3": "Vous pouvez y vivre des expériences variées et impressionnantes, comme suivre la piste des derniers dinosaures qui ont vécu en Europe ou traverser des gorges spectaculaires comme celles de Mont-rebei ou de Collegats.",
+        "infoLine4": "Dans cette visionneuse, vous trouverez les points forts du Géoparc Orígens.",
+        "infoContact": "Contact",
+        "infoSuport": "Avec le soutien de"
+      },
+      "switcher": {
+        "wfsGroupPoi": "Points d'intérêt",
+        "wfsGroupRuta": "Itinéraires recommandés",
+        "wmsGroup": "Couches thématiques",
+        "wmsGroup1": "Réserve Starlight",
+        "wmsGroup2": "Réseau Natura 2000",
+        "wmsGroup3": "Parc Nacional d'Aigüestortes i Estany de Sant Maurici",
+        "wmsGroup4": "Réserve de Boumort",
+        "baseGroup": "Couches de référence",
+        "baseGroupTopo": "Carte de base (ICGC)",
+        "baseGroupOrto": "Orthophoto (ICGC)"
+      },
+      "dtPoi": {
+        "nom": "Nom",
+        "descripcio": "Description",
+        "imatge": "Image",
+		"autor": "Photo",
+        "georuta": "Géoroute",
+        "temática": "Thème",
+        "tipus": "Type",
+        "web": "Web",
+        "link": "Plus d'informations"
+      },
+      "dtRuta": {
+        "nom": "Nom",
+        "descripcio": "Description",
+        "imatge": "Image",
+        "autor": "Auteur",
+        "desnivell": "Dénivelé [m]",
+        "dificultat": "Difficulté",
+        "distancia": "Distance [km]",
+        "tipologia": "Typologie",
+        "modalitat": "Modalité",
+        "web": "Web",
+        "link": "Plus d'informations",
+        "gmaps": "Google Maps",
+        "download": "Télécharger",
+        "gpx": "GPX",
+        "kml": "KML",
+        "intro": "INTRODUCTION",
+        "pdf": "Télécharger l'itinéraire (PDF)"
+      },
+      "tipusPoi": {
+        "epicentre": "Epicentre",
+        "informacio_turistica": "Office de tourisme",
+        "centre_interpretacio": "Centre d'interprétation",
+        "geologia": "Géologie",
+        "dinosaures": "Dinosaures",
+        "area_lleure": "Aire de loisirs",
+        "mirador": "Belvédère",
+        "establiment_recomanat": "Établissement recommandé",
+        "jaciment_arqueologic": "Site archéologique",
+        "esglesia": "Église",
+        "castell": "Château",
+        "llegenda": "Légende",
+        "exposicio_aire_lliure": "Exposition en plein air",
+        "patrimoni_Industrial": "Patrimoine industriel",
+        "caiac": "Kayak",
+        "parapent": "Parapente",
+        "rafting": "Rafting",
+        "telefèric": "Téléphérique",
+        "via_ferrata": "Via Ferrata",
+        "vol_en_globus": "Vol en ballon",
+        "zona_de_bany": "Zone de baignade"
+      },
+      "tipusRuta": {
+        "tren_dels_llacs": "Train des lacs",
+        "altres_rutes": "Autres itinéraires",
+        "el_cinque_llac": "Le Cinquième Lac",
+        "georuta": "Géoroute"
+      }
+    }
   }
 }
