@@ -3,7 +3,7 @@
     "translation": {
       "gui": {
         "windowLayersTitle": "Gestor de capes",
-        "windowTablePoisTitle": "Punts de interès",
+        "windowTablePoisTitle": "Museus",
         "windowTableRutasTitle": "Rutes recomanades",
         "windowTablePoisRutasTitle": "Punts de interès i Rutes recomanades",
         "windowInfoTitle": "Informació",
@@ -17,6 +17,7 @@
       "switcher": {
         "wfsGroupPoi": "Punts de interès",
         "wfsGroupRuta": "Rutes recomanades",
+        "wfsGroupPatrimoni": "Patrimoni",
         "wmsGroup": "Capes temàtiques",
         "wmsGroup1": "Reserva Starlight",
         "wmsGroup2": "Xarxa Natura 2000",
@@ -70,6 +71,7 @@
         "llegenda": "Llegenda",
         "exposicio_aire_lliure": "Exposició a l'aire lliure",
         "patrimoni_Industrial": "Patrimoni industrial",
+        "arbre_monumental": "Arbre monumental",
         "caiac": "Caiac",
         "parapent": "Parapent",
         "rafting": "Rafting",
@@ -90,7 +92,7 @@
     "translation": {
       "gui": {
         "windowLayersTitle": "Gestor de capas",
-        "windowTablePoisTitle": "Puntos de interés",
+        "windowTablePoisTitle": "Museos",
         "windowTableRutasTitle": "Rutas recomendadas",
         "windowTablePoisRutasTitle": "Puntos de interés y Rutas recomendadas",
         "windowInfoTitle": "Información",
@@ -104,6 +106,7 @@
       "switcher": {
         "wfsGroupPoi": "Puntos de interés",
         "wfsGroupRuta": "Rutas recomendadas",
+        "wfsGroupPatrimoni": "Patrimonio",
         "wmsGroup": "Capas temáticas",
         "wmsGroup1": "Reserva Starlight",
         "wmsGroup2": "Red Natura 2000",
@@ -158,6 +161,7 @@
         "llegenda": "Leyenda",
         "exposicio_aire_lliure": "Exposición al aire libre",
         "patrimoni_Industrial": "Patrimonio industrial",
+        "arbre_monumental": "Arbre monumental",
         "caiac": "Kayak",
         "parapent": "Parapente",
         "rafting": "Rafting",
@@ -178,7 +182,7 @@
     "translation": {
       "gui": {
         "windowLayersTitle": "Layer manager",
-        "windowTablePoisTitle": "POIs",
+        "windowTablePoisTitle": "Museums",
         "windowTableRutasTitle": "Recommended routes",
         "windowTablePoisRutasTitle": "POIs and recommended routes",
         "windowInfoTitle": "Information",
@@ -192,6 +196,7 @@
       "switcher": {
         "wfsGroupPoi": "Points of interest",
         "wfsGroupRuta": "Recommended routes",
+        "wfsGroupPatrimoni": "Heritage",
         "wmsGroup": "Thematic layers",
         "wmsGroup1": "Starlight Reserve",
         "wmsGroup2": "Natura 2000 network",
@@ -246,6 +251,7 @@
         "llegenda": "Legend",
         "exposicio_aire_lliure": "Outdoor exhibition",
         "patrimoni_Industrial": "Industrial heritage",
+        "arbre_monumental": "Arbre monumental",
         "caiac": "Kayak",
         "parapent": "Paragliding",
         "rafting": "Rafting",
@@ -266,7 +272,7 @@
     "translation": {
       "gui": {
         "windowLayersTitle": "Gestionnaire de couches",
-        "windowTablePoisTitle": "Points d'intérêt",
+        "windowTablePoisTitle": "Musées",
         "windowTableRutasTitle": "Itinéraires recommandés",
         "windowTablePoisRutasTitle": "Points d'intérêt et itinéraires recommandés",
         "windowInfoTitle": "Informations",
@@ -280,6 +286,7 @@
       "switcher": {
         "wfsGroupPoi": "Points d'intérêt",
         "wfsGroupRuta": "Itinéraires recommandés",
+        "wfsGroupPatrimoni": "Patrimoine",
         "wmsGroup": "Couches thématiques",
         "wmsGroup1": "Réserve Starlight",
         "wmsGroup2": "Réseau Natura 2000",
@@ -293,7 +300,7 @@
         "nom": "Nom",
         "descripcio": "Description",
         "imatge": "Image",
-		"autor": "Photo",
+		    "autor": "Photo",
         "georuta": "Géoroute",
         "temática": "Thème",
         "tipus": "Type",
@@ -334,6 +341,7 @@
         "llegenda": "Légende",
         "exposicio_aire_lliure": "Exposition en plein air",
         "patrimoni_Industrial": "Patrimoine industriel",
+        "arbre_monumental": "Arbre monumental",
         "caiac": "Kayak",
         "parapent": "Parapente",
         "rafting": "Rafting",

@@ -102,18 +102,18 @@
   const tipusPoi = {
     "Epicentre": "epicentre",
     "Informació turística": "informacio_turistica",
-    "Centre d'Interpretació": "centre_interpretacio",
     "Geologia": "geologia",
     "Dinosaures": "dinosaures",
-    "Àrea de lleure": "area_lleure",
     "Mirador": "mirador",
-    "Establiment recomanat": "establiment_recomanat",
     "Jaciment arqueològic": "jaciment_arqueologic",
     "Església": "esglesia",
     "Castell": "castell",
     "Llegenda": "llegenda",
     "Exposició a l'aire lliure": "exposicio_aire_lliure",
     "Patrimoni industrial": "patrimoni_Industrial",
+    "Arbre monumental": "arbre_monumental",
+    "Establiment recomanat": "establiment_recomanat",
+    "Àrea de lleure": "area_lleure",
     "Caiac": "caiac",
     "Parapent": "parapent",
     "Rafting": "rafting",
@@ -390,13 +390,13 @@
           layer = "principalLayer";
       for (let tipo in tipusPoi) {
         html += "<li class='" + layer + " poiLayer " + makeSafeForCSS(tipusPoi[tipo]) + "'><img class='leyenda' src='simbols/" + tipusPoi[tipo] + ".svg'/> " + i18next.t("tipusPoi."+tipusPoi[tipo]) +"</li>";
-        if (i === 7) {
+        if (i === 1) {
           html += "</ul>";
           $("#layerSwitcher li.group ul").first().append(html);
-          html = '<li class="group ' + makeSafeForCSS("Cultura") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> Cultura</label><ul>';
+          html = '<li class="group ' + makeSafeForCSS("Cultura") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> ' + i18next.t("switcher.wfsGroupPatrimoni") + '</label><ul>';
           layer = "culturaLayer";
         }
-        else if (i === 13) {
+        else if (i === 11) {
           html += "</ul></li>";
           $("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
           html = '<li class="group ' + makeSafeForCSS("Activitats") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> Activitats</label><ul>';
@@ -1204,7 +1204,7 @@
                 if (feature.get('georuta_2_cat') === 'Georuta 6')
                   showPopupRutaInteractive();
                 else
-                  showPopupRuta(evt.pixel, evt.coordinate);
+                  showPopupRuta(feature, feature.values_, evt.coordinate);
               }
               else {
                 pageData.popup.hide();
@@ -1265,8 +1265,7 @@
           }
         }
 
-        function showPopupRuta(feature, coord) {
-          const props = feature.properties;
+        function showPopupRuta(feature, props, coord) {
           let title = props['georuta_2_' + pageData.lang],
               description = props['descripcio_' + pageData.lang],
               foto = props['imatge_1'],
@@ -1313,11 +1312,11 @@
 
           // zoom to ruta
           const format = new GeoJSON();
-          const features = format.readFeatures(feature, {
+          const f = format.readFeature(feature, {
             dataProjection: 'EPSG:4326',
             featureProjection: 'EPSG:3857'
           });          
-          pageData.map.getView().fit(features[0].getGeometry(), {
+          pageData.map.getView().fit(f.getGeometry(), {
             easing: easeOut,
             duration: 2000,
             padding: [100, 100, 100, 100]
@@ -1332,7 +1331,7 @@
             data.features.forEach(function(feature) {
               let coord = feature.geometry.coordinates[0][0];
               let xy = fromLonLat(coord);
-              showPopupRuta(feature, xy);
+              showPopupRuta(feature, feature.properties, xy);
             });
           });
         }
@@ -1477,12 +1476,12 @@
 
         function appendPoisMenu() {
 
-          let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-open"><button></button><label for="museos-title"><i class="fa fa-location-arrow"></i> Museus</label></li>';
+          let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-eye"></i> ' + i18next.t('gui.windowTablePoisTitle') + '</label></li>';
 
           $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&tipus_cat=centre_interpretacio&limit=100&sortby=ordre", function() {})
             .done(function(data) {
 
-              html += "<ul>";
+              html += "<ul style='display:none;'>";
 
               data.features.forEach(function(feature) {
                 const name = feature.properties["nom_" + pageData.lang];
@@ -1506,7 +1505,7 @@
 
         function appendRutasMenu() {
 
-          let html = '<div class="layer-switcher _rutes"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-location-arrow"></i> Rutas Recomenades</label></li>';
+          let html = '<div class="layer-switcher _rutes"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="rutas-title"><i class="fa fa-eye"></i> ' + i18next.t('gui.windowTableRutasTitle') + '</label></li>';
 
           $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&limit=100&sortby=ordre", function() {})
             .done(function(data) {
@@ -1836,8 +1835,8 @@
         menuBar.addControl(languageBar);
         languageBar.addControl(pageData.caToggle);
         languageBar.addControl(pageData.esToggle);
-        languageBar.addControl(pageData.frToggle);
         languageBar.addControl(pageData.enToggle);
+        languageBar.addControl(pageData.frToggle);
       }
 
       function hideWindows(activeToggle) {
@@ -1968,6 +1967,8 @@
         pageData.tableTogglePois.setTitle(i18next.t('gui.windowTablePoisTitle'));
         //pageData.tableToggleRutas.setTitle(i18next.t('gui.windowTableRutasTitle'));
         pageData.infoToggle.setTitle(i18next.t('gui.windowInfoTitle'));
+        $("label[for='museos-title']").html('<i class="fa fa-eye"></i> ' + i18next.t('gui.windowTablePoisTitle'));
+        $("label[for='rutas-title']").html('<i class="fa fa-eye"></i> ' + i18next.t('gui.windowTableRutasTitle'));
 
         // windows
         $("#windowTablePois .title").text(i18next.t('gui.windowTablePoisTitle'));
