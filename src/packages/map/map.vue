@@ -105,13 +105,13 @@
     "Geologia": "geologia",
     "Dinosaures": "dinosaures",
     "Mirador": "mirador",
+    "Arbre monumental": "arbre_monumental",
     "Jaciment arqueològic": "jaciment_arqueologic",
     "Església": "esglesia",
     "Castell": "castell",
     "Llegenda": "llegenda",
     "Exposició a l'aire lliure": "exposicio_aire_lliure",
     "Patrimoni industrial": "patrimoni_Industrial",
-    "Arbre monumental": "arbre_monumental",
     "Establiment recomanat": "establiment_recomanat",
     "Àrea de lleure": "area_lleure",
     "Caiac": "caiac",
@@ -407,6 +407,12 @@
       html += "</ul></li>";
       $("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
 
+      // hide group rutes recomendades and cabezera punts de interes
+      $("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).hide();
+      $("#layerSwitcher li.group._punts-de-inter__00e8s > label").hide();
+      $("#layerSwitcher li.group._punts-de-inter__00e8s > button").hide();
+      $("#layerSwitcher li.group._punts-de-inter__00e8s > input").hide();
+
       // turn off Cultura i Activitats
       //groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label"), "culturaLayer");
       //groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Activitats")+" label"), "activitatsLayer");
@@ -506,7 +512,7 @@
         qgisInvisibleWmsLayers: new LayerGroup({}),
         qgisWfsLayersPoi: new LayerGroup({
           title: 'Punts de interès',
-          fold: 'close'
+          fold: 'open'
         }),
         qgisWfsLayersRuta: new LayerGroup({
           title: 'Rutes recomanades',
@@ -1559,7 +1565,7 @@
       }
 
       function rutaStyleFunction(feature, resolution) {
-        if (feature.get('tipologia_' + pageData.lang) === 'Georuta') {
+        if (feature.get('tipologia_cat') === 'Georuta') {
           return new Style({
             stroke: new Stroke({
               color: '#e7bd14',
@@ -1568,7 +1574,7 @@
             })
           });
         }
-        else if (feature.get('tipologia_' + pageData.lang) === 'El Cinquè Llac') {
+        else if (feature.get('tipologia_cat') === 'El Cinquè Llac') {
           return new Style({
             stroke: new Stroke({
               color: '#cd3a37',
@@ -1577,7 +1583,7 @@
             })
           });
         }
-        else if (feature.get('tipologia_' + pageData.lang) === 'altres rutes') {
+        else if (feature.get('tipologia_cat') === 'altres rutes') {
           return new Style({
             stroke: new Stroke({
               color: '#b19395',
@@ -1586,7 +1592,16 @@
             })
           });
         }
-        else if (feature.get('tipologia_' + pageData.lang) === 'Tren dels Llacs') {
+        else if (feature.get('tipologia_cat') === 'ruta_aquatica') {
+          return new Style({
+            stroke: new Stroke({
+              color: '#1e005d',
+              lineDash: [4,4],
+              width: 3
+            })
+          });
+        }
+        else if (feature.get('tipologia_cat') === 'Tren dels Llacs') {
           let offset = 5;
           return [
             new Style({
@@ -1596,42 +1611,6 @@
                 width: 2
               })
             })
-            /*new Style({
-              stroke: new Stroke({
-                color: '#232323',
-                width: 1
-              })
-            }),
-            new Style({
-              stroke: new Stroke({
-                color: "#8B4513",
-                width: 2*offset,
-                lineDash: [1.5,10],
-                lineCap: 'butt',
-                lineJoin: 'bevel'
-              }),
-              geometry: function (feature) { 
-                let coords = feature.getGeometry().getCoordinates();
-                console.log(coords);
-                coords = ol_coordinate_offsetCoords(coords, offset*resolution);
-                console.log(coords);
-                return new LineString(coords);
-              }
-            }),
-            new Style({
-              stroke: new Stroke({
-                color: "#8B4513",
-                width: -2*offset,
-                lineDash: [1.5,10],
-                lineCap: 'butt',
-                lineJoin: 'bevel'
-              }),
-              geometry: function (feature) { 
-                let coords = feature.getGeometry().getCoordinates();
-                coords = ol_coordinate_offsetCoords(coords, offset*resolution);
-                return new LineString(coords);
-              }
-            })*/
           ]
         }
       }
@@ -1985,7 +1964,7 @@
 
         // layerswitcher
         pageData.qgisWfsLayersPoi.set("title", i18next.t('switcher.wfsGroupPoi'));
-        pageData.qgisWfsLayersRuta.set("title", i18next.t('switcher.wfsGroupRuta'));
+        //pageData.qgisWfsLayersRuta.set("title", i18next.t('switcher.wfsGroupRuta'));
         pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
         //pageData.baseLayers.set("title", i18next.t('switcher.baseGroup'));
         //pageData.baseLayerTopo.set("title", i18next.t('switcher.baseGroupTopo'));        
