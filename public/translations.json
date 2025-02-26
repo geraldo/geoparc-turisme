@@ -35,7 +35,7 @@
         "temática": "Temática",
         "tipus": "Tipus",
         "web": "Web",
-        "link": "Més informació"
+        "link": "Más info"
       },
       "dtRuta": {
         "nom": "Nom",
@@ -48,12 +48,12 @@
         "tipologia": "Tipología",
         "modalitat": "Modalitat",
         "web": "Web",
-        "link": "Més informació",
-        "gmaps": "Google Maps",
+        "link": "Más info",
+        "gmaps": "Maps",
         "download": "Descarrega",
         "gpx": "GPX",
         "kml": "KML",
-        "intro": "INTRODUCCIÓ",
+        "intro": "Georuta El Carrilet",
         "pdf": "Descarrega ruta (PDF)"
       },
       "tipusPoi": {
@@ -125,7 +125,7 @@
         "temática": "Temática",
         "tipus": "Tipo",
         "web": "Web",
-        "link": "Més información"
+        "link": "Más info"
       },
       "dtRuta": {
         "nom": "Nombre",
@@ -138,12 +138,12 @@
         "tipologia": "Tipología",
         "modalitat": "Modalidad",
         "web": "Web",
-        "link": "Más información",
-        "gmaps": "Google Maps",
+        "link": "Más info",
+        "gmaps": "Maps",
         "download": "Descarga",
         "gpx": "GPX",
         "kml": "KML",
-        "intro": "INTRODUCCIÓN",
+        "intro": "Georuta El Carrilet",
         "pdf": "Descarga ruta (PDF)"
       },
       "tipusPoi": {
@@ -215,7 +215,7 @@
         "temática": "Theme",
         "tipus": "Type",
         "web": "Web",
-        "link": "More information"
+        "link": "More info"
       },
       "dtRuta": {
         "nom": "Name",
@@ -228,12 +228,12 @@
         "tipologia": "Typology",
         "modalitat": "Modality",
         "web": "Web",
-        "link": "More information",
-        "gmaps": "Google Maps",
+        "link": "More info",
+        "gmaps": "Maps",
         "download": "Download",
         "gpx": "GPX",
         "kml": "KML",
-        "intro": "INTRODUCTION",
+        "intro": "Georoute El Carrilet",
         "pdf": "Download route (PDF)"
       },
       "tipusPoi": {
@@ -305,7 +305,7 @@
         "temática": "Thème",
         "tipus": "Type",
         "web": "Web",
-        "link": "Plus d'informations"
+        "link": "Plus d'info"
       },
       "dtRuta": {
         "nom": "Nom",
@@ -318,12 +318,12 @@
         "tipologia": "Typologie",
         "modalitat": "Modalité",
         "web": "Web",
-        "link": "Plus d'informations",
-        "gmaps": "Google Maps",
+        "link": "Plus d'info",
+        "gmaps": "Maps",
         "download": "Télécharger",
         "gpx": "GPX",
         "kml": "KML",
-        "intro": "INTRODUCTION",
+        "intro": "Géoroute El Carrilet",
         "pdf": "Télécharger l'itinéraire (PDF)"
       },
       "tipusPoi": {

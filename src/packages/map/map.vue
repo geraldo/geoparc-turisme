@@ -446,11 +446,11 @@
         $(this).toggleClass("off");
       });
 
-      $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").unbind("click");
+      /*$("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").unbind("click");
       $("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").click(function() {
         groupToggle($(this), "principalLayer");
         //nonClusterLayer.setVisible(!$(this).hasClass("off"));
-      });
+      });*/
       $("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label").unbind("click");
       $("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label").click(function() {
         groupToggle($(this), "culturaLayer");
@@ -524,6 +524,7 @@
         clusterCircles: null,
         clickFeature: null,
         clickResolution: null,
+        selectedFeature: null,
 
         nonClusterLayer: null,
         nonClusterLayers: [],
@@ -1174,6 +1175,7 @@
                     if (features[0] !== hoverFeature) {
                       hoverFeature = features[0];
                       pageData.popup.hide();
+                      pageData.selectedFeature = null;
                     }
                     if (features.length > 0) {
                       let feature = null;
@@ -1188,6 +1190,7 @@
                       }
                       else {
                         pageData.popup.hide();
+                        pageData.selectedFeature = null;
                         return true;
                       }
 
@@ -1223,6 +1226,8 @@
         });
 
         function showPopupPoi(coords, feature) {
+          pageData.selectedFeature = feature.get("id");
+
           let title = feature.get('nom_' + pageData.lang),
               description = feature.get('descripcio_' + pageData.lang),
               foto = feature.get('imatge_1'),
@@ -1231,13 +1236,14 @@
 
           let htmlStr = '<div class="padding"><h2>' + title + '</h2>';
           htmlStr += description ? '<p>' + description + '</p>' : '';
-          htmlStr += web ? '<p><a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a>' : '';
+          htmlStr += '<p>';
+          htmlStr += web ? '<a class="button" target="_blank" href="' + web + '">' + i18next.t("dtRuta.link") + '</a>' : '';
 
           // google maps button
           let geom = feature.getGeometry().flatCoordinates;
           let lonlat = toLonLat(geom);
           //console.log(geom, lonlat);
-          htmlStr += '<span class="coords"><a class="button" target="_blank" href="https://maps.google.com/?q=' + lonlat[1] + ',' + lonlat[0] + '">' + i18next.t("dtRuta.gmaps") + '</a></span></p>';
+          htmlStr += ' <span class="coords"><a class="button" target="_blank" href="https://maps.google.com/?q=' + lonlat[1] + ',' + lonlat[0] + '"><i class="fa fa-map-marker"></i> ' + i18next.t("dtRuta.gmaps") + '</a></span></p>';
 
           htmlStr += foto ? '<img src="fotos/' + foto + '"/>' : '';
           htmlStr += autor ? '<p class="autor">' + i18next.t("dtRuta.autor") + ': ' + autor + '</p>' : '';
@@ -1477,8 +1483,8 @@
         /*
          * Pois Menu
          *****************************************/
-        appendRutasMenu();
-        //appendPoisMenu();
+        //appendRutasMenu();
+        appendPoisMenu();
 
         function appendPoisMenu() {
 
@@ -1495,7 +1501,8 @@
               });
 
               html += "</ul></ul></div>";
-              $("#windowLayers .content").prepend(html);
+              //$("#windowLayers .content").prepend(html);
+              $(".group._punts-de-inter__00e8s").append(html);
 
               $("._museos .poiLayer").bind("click", function() {
                 console.log("poi", $(this).data("id"));
@@ -1507,6 +1514,8 @@
                 $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
               });
             });
+
+            appendRutasMenu();
         }
 
         function appendRutasMenu() {
@@ -1525,7 +1534,8 @@
 
               html += "</ul></ul></div>";
               //html += "<script>function togglePoi() {}<script>"
-              $("#windowLayers .content").prepend(html);
+              //$("#windowLayers .content").prepend(html);
+              $(".group._punts-de-inter__00e8s").append(html);
 
               console.log($("._rutes .poiLayer"));
               $("._rutes .poiLayer").bind("click", function() {
@@ -1537,8 +1547,6 @@
                 $(this).parent().next().toggle();
                 $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
               });
-
-              appendPoisMenu();
             });
         }
       }
@@ -1554,14 +1562,23 @@
         if (tipus === "epicentre")
           zIndex = 1;
 
-        return new Style({
+        let params = {
           geometry: feature.getGeometry(),
           image: new Icon({
             scale: 0.08,
             src: "simbols/" + tipus + ".svg"
           }),
           zIndex: zIndex
-        })
+        };
+
+        if (pageData.selectedFeature === feature.get("id")) {
+          params.stroke = new Stroke({
+            color: '#ff0000',
+            width: 3
+          })
+        }
+
+        return new Style(params);
       }
 
       function rutaStyleFunction(feature, resolution) {

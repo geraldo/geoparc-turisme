@@ -331,10 +331,6 @@ a.button, #exportPdf {
   cursor: pointer;
 }
 
-.coords {
-  float: right;
-}
-
 /*
  * layer switcher
  * ************************/
@@ -545,6 +541,10 @@ img.leyenda.off {
 
 .layer-switcher._museos ul ul li, .layer-switcher._rutes ul ul li {
   margin-left: 18px;
+}
+
+.layer-switcher._museos {
+  margin-top: 1em;
 }
 
 /*
@@ -829,10 +829,6 @@ img.leyenda.off {
   .window.tableWindow {
     width: 100%;
     right: auto;
-  }
-
-  .coords {
-    float: none;
   }
 
   a.button {
