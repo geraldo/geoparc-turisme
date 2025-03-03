@@ -1198,8 +1198,15 @@
                         let poiNum = feature.get('nom_' + pageData.lang).split("-")[0];
                         showPopupRutaInteractive(poiNum);
                       }
-                      else
+                      else {
+                        const view = pageData.map.getView();
+                        view.animate({
+                          duration: 1000,
+                          zoom: view.getZoom()+0.1
+                        });
                         showPopupPoi(evt.coordinate, feature);
+                        
+                      }
                     }
                   });
                 }
@@ -1559,30 +1566,35 @@
       /*
        * WFS styles
        *****************************************/
-      function iconStyleFunction(feature) {
+      function iconStyleFunction(feature, circle=false) {
         let tipus = feature.get('tipus_cat'),
             zIndex = 0;
 
         if (tipus === "epicentre")
           zIndex = 1;
 
-        let params = {
-          geometry: feature.getGeometry(),
+        let style = new Style({
           image: new Icon({
             scale: 0.08,
             src: "simbols/" + tipus + ".svg"
           }),
           zIndex: zIndex
-        };
+        });
 
-        if (pageData.selectedFeature === feature.get("id")) {
-          params.stroke = new Stroke({
-            color: '#ff0000',
-            width: 3
-          })
+        if (circle && pageData.selectedFeature === feature.get("id")) {
+          style = [style, new Style({
+            image: new Circle({
+              radius: 18,
+              stroke: new Stroke({
+                color: '#ff0000',
+                width: 5
+              }),
+              zIndex: zIndex
+            })
+          })];
         }
 
-        return new Style(params);
+        return style;
       }
 
       function rutaStyleFunction(feature, resolution) {
@@ -1693,7 +1705,7 @@
           feature.set('cluster', false);
           for (var i = features.length - 1; i >= 0; --i) {
             if (!$("li.poiLayer." + makeSafeForCSS(features[i].get("tipus_cat"))).hasClass("off")) {
-              return iconStyleFunction(features[i]);
+              return iconStyleFunction(features[i], true);
               break;
             }
           }
