@@ -1304,7 +1304,7 @@
           // gpx kml button
           let tipo = props['modalitat_cat'];
           if (tipo.indexOf("a peu") > -1) {
-            htmlStr += '<span class="coords">';
+            htmlStr += ' <span class="coords">';
             htmlStr += i18next.t("dtRuta.download") + ": ";
             htmlStr += '<a class="button" href="downloads/' + props['georuta_2_cat'] + '.gpx" download>' + i18next.t("dtRuta.gpx") + '</a> ';
             htmlStr += ' <a class="button" href="downloads/' + props['georuta_2_cat'] + '.kml" download>' + i18next.t("dtRuta.kml") + '</a></span>';
@@ -1433,7 +1433,11 @@
                           orientation: 'portrait', 
                           //putOnlyUsedFonts: true 
                         },
-                        pagebreak: { after: '.accordion-content' }
+                        pagebreak: {
+                          mode: ['avoid-all', 'css', 'legacy'],
+                          after: '.accordion-content'
+                        },
+                        //margin: 10
                       });
 
                       console.log("not");
