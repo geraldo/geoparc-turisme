@@ -1578,7 +1578,42 @@
                 });
                 $(this).parent().toggleClass("off");
               });
+
+              checkInitial();
             });
+        }
+
+        function checkInitial() {
+          // check of initial interactions
+          const link = new Link();
+          const showPois = link.track('show');
+
+          console.log(showPois);
+
+          if (showPois === "museus") {
+            if ($("._museos label") !== undefined)
+              $("._museos label").removeClass("off");
+            if ($("._rutes label") !== undefined)
+              $("._rutes label").addClass("off");
+            if ($("._cultura label") !== undefined)
+              $("._cultura label").addClass("off");
+            if ($("._activitats label") !== undefined)
+              $("._activitats label").addClass("off");
+
+            pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
+          }
+          else if (showPois === "rutes") {
+            if ($("._rutes label") !== undefined)
+              $("._rutes label").removeClass("off");
+            if ($("._museos label") !== undefined)
+              $("._museos label").addClass("off");
+            if ($("._cultura label") !== undefined)
+              $("._cultura label").addClass("off");
+            if ($("._activitats label") !== undefined)
+              $("._activitats label").addClass("off");
+
+            pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
+          }
         }
       }
 
