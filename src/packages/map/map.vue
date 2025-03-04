@@ -130,6 +130,8 @@
   };
   const nonClusterIds = [119, 5, 38, 43, 49, 59, 68, 87, 98, 105, 110, 118, 127, 144];
   //const museosIds = [290, 291, 5, 98, 99, 106, 105, 110, 118, 121, 125, 136, 137, 147, 144, 167, 38, 43, 292, 49, 53, 54, 55, 59, 68, 87];
+  const patrimoniTipus = ["geologia", "dinosaures", "mirador", "arbre_monumental", "jaciment_arqueologic", "esglesia", "castell", "llegenda", "exposicio_aire_lliure", "patrimoni_Industrial"];
+  const activitatsTipus = ["establiment_recomanat", "area_lleure", "caiac", "parapent", "rafting", "telefèric", "via_ferrata", "vol_en_globus", "zona_de_bany"];
 
   function makeSafeForCSS(name) {
     if (name)
@@ -1625,41 +1627,55 @@
         let tipus = feature.get('tipus_cat'),
             zIndex = 0;
 
+        if (tipus == "centre_interpretacio" && $("._museos label").hasClass("off")) {
+          // hide museos icons
+          return null;
+        }
+
+        if (patrimoniTipus.includes(tipus) && $("._cultura label").hasClass("off")) {
+          // hide patrimoni icons
+          return null;
+        }
+
+        if (activitatsTipus.includes(tipus) && $("._activitats label").hasClass("off")) {
+          // hide activitats icons
+          return null;
+        }
+
         if (tipus === "epicentre")
           zIndex = 1;
 
-        let style = null;
+        let style = new Style({
+          image: new Icon({
+            scale: 0.08,
+            src: "simbols/" + tipus + ".svg"
+          }),
+          zIndex: zIndex
+        });
 
-        // hide museos icons
-        if (tipus != "centre_interpretacio" || !$("._museos label").hasClass("off")) {
-
-          style = new Style({
-            image: new Icon({
-              scale: 0.08,
-              src: "simbols/" + tipus + ".svg"
-            }),
-            zIndex: zIndex
-          });
-
-          // highlight selected feature
-          if (circle && pageData.selectedFeature === feature.get("id")) {
-            style = [style, new Style({
-              image: new Circle({
-                radius: 18,
-                stroke: new Stroke({
-                  color: '#ff0000',
-                  width: 5
-                }),
-                zIndex: zIndex
-              })
-            })];
-          }
+        // highlight selected feature
+        if (circle && pageData.selectedFeature === feature.get("id")) {
+          style = [style, new Style({
+            image: new Circle({
+              radius: 18,
+              stroke: new Stroke({
+                color: '#ff0000',
+                width: 5
+              }),
+              zIndex: zIndex
+            })
+          })];
         }
 
         return style;
       }
 
       function rutaStyleFunction(feature, resolution) {
+        if ($("._rutes label").hasClass("off")) {
+          // hide rutes
+          return null;
+        }
+
         if (feature.get('tipologia_cat') === 'Georuta') {
           return new Style({
             stroke: new Stroke({
@@ -1726,6 +1742,12 @@
 
         if (size > 1) {
           feature.set('cluster', true);
+
+          if ($("._cultura label").hasClass("off") && $("._activitats label").hasClass("off")) {
+            // hide cluster icons for activitats y patrimoni
+            return null;
+          }
+
           return [
             new Style({
               image: new Circle({
