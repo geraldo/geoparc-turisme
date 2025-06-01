@@ -64,6 +64,7 @@
 
   import { ref, reactive, shallowReactive, toRefs, toRef, onMounted, onBeforeUnmount } from 'vue';
 
+  import OSM from 'ol/source/OSM.js';
   import { Map, View, Feature, Collection, Overlay as OverlayOL } from 'ol';
   import { Cluster, XYZ as xyzSource, Vector as VectorSource, TileWMS, VectorTile as VectorTileSource } from 'ol/source';
   import { Group as LayerGroup, Tile as TileLayer, Vector as VectorLayer, VectorTile } from 'ol/layer';
@@ -311,7 +312,7 @@
           input.checked = lyr.getVisible();
           input.indeterminate = lyr.get('indeterminate');
           input.onchange = function (e) {
-            if (lyrTitle !== "Punts de interès" || lyrTitle !== "Puntos de interés") {
+            if (lyrTitle !== "Punts de interès" || lyrTitle !== "Puntos de interés" || lyrTitle !== "Points of interest" || lyrTitle !== "Points d'intérêt") {
               const target = e.target;
               LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
               render(lyr);
@@ -401,20 +402,35 @@
         }
         else if (i === 11) {
           html += "</ul></li>";
-          $("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
+          //$("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
+          $("#layerSwitcher li.group._rutes-recomanades").before(html);
           html = '<li class="group ' + makeSafeForCSS("Activitats") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> Activitats</label><ul>';
           layer = "activitatsLayer";
         }
         i++;
       }
       html += "</ul></li>";
-      $("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
+      //$("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
+      $("#layerSwitcher li.group._rutes-recomanades").before(html);
 
       // hide group rutes recomendades and cabezera punts de interes
-      $("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).hide();
+      //$("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).hide();
+      $("#layerSwitcher li.group._rutes-recomanades").hide();
       $("#layerSwitcher li.group._punts-de-inter__00e8s > label").hide();
       $("#layerSwitcher li.group._punts-de-inter__00e8s > button").hide();
       $("#layerSwitcher li.group._punts-de-inter__00e8s > input").hide();
+
+      $("#layerSwitcher li.group._puntos-de-inter__00e9s > label").hide();
+      $("#layerSwitcher li.group._puntos-de-inter__00e9s > button").hide();
+      $("#layerSwitcher li.group._puntos-de-inter__00e9s > input").hide();
+
+      $("#layerSwitcher li.group._points-of-interest > label").hide();
+      $("#layerSwitcher li.group._points-of-interest > button").hide();
+      $("#layerSwitcher li.group._points-of-interest > input").hide();
+
+      $("#layerSwitcher li.group._points-d__0027int__00e9r__00eat > label").hide();
+      $("#layerSwitcher li.group._points-d__0027int__00e9r__00eat > button").hide();
+      $("#layerSwitcher li.group._points-d__0027int__00e9r__00eat > input").hide();
 
       // turn off Cultura i Activitats
       //groupToggle($("#layerSwitcher li.group."+makeSafeForCSS("Cultura")+" label"), "culturaLayer");
@@ -909,6 +925,9 @@
             //pageData.baseLayers,
             pageData.baseLayerOrto,
             pageData.baseLayerContext,
+            new TileLayer({
+              source: new OSM(),
+            }),
             //pageData.baseLayerVector,
             pageData.qgisWmsLayers,
             pageData.qgisInvisibleWmsLayers,
@@ -1499,126 +1518,124 @@
          *****************************************/
         //appendRutasMenu();
         appendPoisMenu();
-
-        function appendPoisMenu() {
-
-          let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-eye"></i> ' + i18next.t('gui.windowTablePoisTitle') + '</label></li>';
-
-          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&tipus_cat=centre_interpretacio&limit=100&sortby=ordre", function() {})
-            .done(function(data) {
-
-              html += "<ul style='display:none;'>";
-
-              data.features.forEach(function(feature) {
-                const name = feature.properties["nom_" + pageData.lang];
-                html += "<li class='poiLayer' data-id='" + feature.id + "'>" + name + "</li>";
-              });
-
-              html += "</ul></ul></div>";
-              //$("#windowLayers .content").prepend(html);
-              $(".group._punts-de-inter__00e8s").append(html);
-
-              // zoom to poi
-              $("._museos .poiLayer").bind("click", function() {
-                console.log("poi", $(this).data("id"));
-                showPopupPoiById($(this).data("id"));
-              });
-
-              // fold group
-              $("._museos button").bind("click", function() {
-                $(this).parent().next().toggle();
-                $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
-              });
-
-              // show/hide group
-              $("._museos .fa-eye").bind("click", function() {
-                //pageData.poisLayer.getSource().changed();
-                pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
-                $(this).parent().toggleClass("off");
-              });
-            });
-
-            appendRutasMenu();
-        }
-
-        function appendRutasMenu() {
-
-          let html = '<div class="layer-switcher _rutes"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="rutas-title"><i class="fa fa-eye"></i> ' + i18next.t('gui.windowTableRutasTitle') + '</label></li>';
-
-          $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&limit=100&sortby=ordre", function() {})
-            .done(function(data) {
-
-              html += "<ul style='display:none;'>";
-
-              data.features.forEach(function(feature) {
-                const name = feature.properties["georuta_2_" + pageData.lang];
-                html += "<li class='poiLayer' data-id='" + feature.id + "'>" + name + "</li>";
-              });
-
-              html += "</ul></ul></div>";
-              //html += "<script>function togglePoi() {}<script>"
-              //$("#windowLayers .content").prepend(html);
-              $(".group._punts-de-inter__00e8s").append(html);
-
-              // zoom to ruta
-              console.log($("._rutes .poiLayer"));
-              $("._rutes .poiLayer").bind("click", function() {
-                console.log("ruta", $(this).data("id"));
-                showPopupRutaById($(this).data("id"));
-              });
-
-              // fold group
-              $("._rutes button").bind("click", function() {
-                $(this).parent().next().toggle();
-                $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
-              });
-
-              // show/hide group
-              $("._rutes .fa-eye").bind("click", function() {
-                pageData.rutasLayers.forEach(function(ruta) {
-                  ruta.setVisible(!ruta.isVisible());
-                });
-                $(this).parent().toggleClass("off");
-              });
-
-              checkInitial();
-            });
-        }
-
-        function checkInitial() {
-          // check of initial interactions
-          const link = new Link();
-          const showPois = link.track('show');
-
-          console.log(showPois);
-
-          if (showPois === "museus") {
-            if ($("._museos label") !== undefined)
-              $("._museos label").removeClass("off");
-            if ($("._rutes label") !== undefined)
-              $("._rutes label").addClass("off");
-            if ($("._cultura label") !== undefined)
-              $("._cultura label").addClass("off");
-            if ($("._activitats label") !== undefined)
-              $("._activitats label").addClass("off");
-
-            pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
-          }
-          else if (showPois === "rutes") {
-            if ($("._rutes label") !== undefined)
-              $("._rutes label").removeClass("off");
-            if ($("._museos label") !== undefined)
-              $("._museos label").addClass("off");
-            if ($("._cultura label") !== undefined)
-              $("._cultura label").addClass("off");
-            if ($("._activitats label") !== undefined)
-              $("._activitats label").addClass("off");
-
-            pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
-          }
-        }
       }
 
+      function appendPoisMenu() {
+
+        let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-eye"></i> ' + i18next.t('gui.windowTablePoisTitle') + '</label></li>';
+
+        $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/origens_turisme/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&tipus_cat=centre_interpretacio&limit=100&sortby=ordre", function() {})
+          .done(function(data) {
+
+            html += "<ul style='display:none;'>";
+
+            data.features.forEach(function(feature) {
+              const name = feature.properties["nom_" + pageData.lang];
+              html += "<li class='poiLayer' data-id='" + feature.id + "'>" + name + "</li>";
+            });
+
+            html += "</ul></ul></div>";
+            //$("#windowLayers .content").prepend(html);
+            //$(".group._punts-de-inter__00e8s").append(html);
+            $(".group." + makeSafeForCSS(i18next.t("switcher.wfsGroupPoi"))).append(html);
+
+            // zoom to poi
+            $("._museos .poiLayer").bind("click", function() {
+              console.log("poi", $(this).data("id"));
+              showPopupPoiById($(this).data("id"));
+            });
+
+            // fold group
+            $("._museos button").bind("click", function() {
+              $(this).parent().next().toggle();
+              $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
+            });
+
+            // show/hide group
+            $("._museos .fa-eye").bind("click", function() {
+              //pageData.poisLayer.getSource().changed();
+              pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
+              $(this).parent().toggleClass("off");
+            });
+          });
+
+          appendRutasMenu();
+      }
+
+      function appendRutasMenu() {
+
+        let html = '<div class="layer-switcher _rutes"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="rutas-title"><i class="fa fa-eye"></i> ' + i18next.t('gui.windowTableRutasTitle') + '</label></li>';
+
+        $.getJSON("https://mapa.psig.es/qgisserver/wfs3/collections/Rutes recomanades/items.json?MAP=" + pageData.qgisProjectFile + "&visible=true&limit=100&sortby=ordre", function() {})
+          .done(function(data) {
+
+            html += "<ul style='display:none;'>";
+
+            data.features.forEach(function(feature) {
+              const name = feature.properties["georuta_2_" + pageData.lang];
+              html += "<li class='poiLayer' data-id='" + feature.id + "'>" + name + "</li>";
+            });
+
+            html += "</ul></ul></div>";
+            //html += "<script>function togglePoi() {}<script>"
+            //$("#windowLayers .content").prepend(html);
+            //$(".group._punts-de-inter__00e8s").append(html);
+            $(".group." + makeSafeForCSS(i18next.t("switcher.wfsGroupPoi"))).append(html);
+
+            // zoom to ruta
+            $("._rutes .poiLayer").bind("click", function() {
+              console.log("ruta", $(this).data("id"));
+              showPopupRutaById($(this).data("id"));
+            });
+
+            // fold group
+            $("._rutes button").bind("click", function() {
+              $(this).parent().next().toggle();
+              $(this).parent().toggleClass("layer-switcher-close").toggleClass("layer-switcher-open");
+            });
+
+            // show/hide group
+            $("._rutes .fa-eye").bind("click", function() {
+              pageData.rutasLayers.forEach(function(ruta) {
+                ruta.setVisible(!ruta.isVisible());
+              });
+              $(this).parent().toggleClass("off");
+            });
+
+            checkInitial();
+          });
+      }
+
+      function checkInitial() {
+        // check of initial interactions
+        const link = new Link();
+        const showPois = link.track('show');
+
+        if (showPois === "museus") {
+          if ($("._museos label") !== undefined)
+            $("._museos label").removeClass("off");
+          if ($("._rutes label") !== undefined)
+            $("._rutes label").addClass("off");
+          if ($("._cultura label") !== undefined)
+            $("._cultura label").addClass("off");
+          if ($("._activitats label") !== undefined)
+            $("._activitats label").addClass("off");
+
+          pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
+        }
+        else if (showPois === "rutes") {
+          if ($("._rutes label") !== undefined)
+            $("._rutes label").removeClass("off");
+          if ($("._museos label") !== undefined)
+            $("._museos label").addClass("off");
+          if ($("._cultura label") !== undefined)
+            $("._cultura label").addClass("off");
+          if ($("._activitats label") !== undefined)
+            $("._activitats label").addClass("off");
+
+          pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
+        }
+      }
 
       /*
        * WFS styles
@@ -1984,6 +2001,7 @@
                 //console.log(i18next.language, Cookies.get('lang'));
 
                 translateContent();
+                appendPoisMenu();
               });
             });
 
