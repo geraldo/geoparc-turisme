@@ -923,12 +923,24 @@
           }), 
           layers: [
             //pageData.baseLayers,
-            pageData.baseLayerOrto,
-            pageData.baseLayerContext,
             new TileLayer({
               source: new OSM(),
             }),
+            //pageData.baseLayerOrto,
+            //pageData.baseLayerContext,
             //pageData.baseLayerVector,
+
+            new VectorLayer({
+              source: new VectorSource({
+                url: './limit_geoparc.geojson',
+                format: new GeoJSON(),
+              }),
+              style: {
+                'stroke-color': 'rgba(178, 176, 25, 1)',
+                'stroke-width': 3,
+              },
+            }),
+
             pageData.qgisWmsLayers,
             pageData.qgisInvisibleWmsLayers,
             pageData.qgisWfsLayersRuta,
