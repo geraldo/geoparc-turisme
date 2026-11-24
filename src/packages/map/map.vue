@@ -71,7 +71,7 @@
   import { ScaleLine, FullScreen, defaults as defaultControls, Control, Rotate } from 'ol/control';
   import { Point, Polygon, LineString, Geometry } from 'ol/geom';
   import { Style, Icon, Text, Circle, Fill, Stroke } from 'ol/style';
-  import { createEmpty, extend, getHeight, getWidth } from 'ol/extent';
+  import { createEmpty, extend, getHeight, getWidth, getTopLeft } from 'ol/extent';
   import { get as getProjection, getPointResolution, fromLonLat, toLonLat, transformExtent, METERS_PER_UNIT } from 'ol/proj';
   import { getLength, getArea } from 'ol/sphere';
   import { unByKey } from 'ol/Observable';
@@ -506,7 +506,7 @@
   export default {
     name: 'ol-map',
     setup(props, context){
-      let pageData = reactive({
+      let pageData = shallowReactive({
         cookieOptions: { sameSite: 'strict', secure: true },
         lang: "cat",
 
@@ -555,24 +555,31 @@
         rasterLayer: null,
 
         baseLayerOrto: new TileLayer({
-          title: 'Ortofoto (ICGC)',
-          baseLayer: true,
+          title: 'Ortofoto (by ICGC)',
+          type: 'base',
           visible: false,
-          source: new xyzSource({
-            maxZoom: 19,
-            url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-orto-estandard/MON3857NW/{z}/{x}/{y}.png",
-            attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
+          source: new TileWMS({
+            url: 'https://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms',
+            params: {
+              'LAYERS': 'ortofoto_color_provisional',
+              'VERSION': '1.1.1'
+            },
+            attributions: 'Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3',
           })
         }),
 
-        baseLayerContext: new TileLayer({
-          title: 'Topogràfic (ICGC)',
-          baseLayer: true,
-          //visible: false,
-          source: new xyzSource({
-            maxZoom: 19,
-            url: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/MON3857NW/{z}/{x}/{y}.png",
-            attributions: ["Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-3"]
+        baseLayerTopo: new TileLayer({
+          name: 'baseLayerTopo',
+          title: 'Topogràfic 1:5.000 (by ICGC)',
+          type: 'base',
+          visible: true,
+          source: new TileWMS({
+            url: 'https://geoserveis.icgc.cat/servei/catalunya/topografia-territorial/wmsservice?',
+            params: {
+              'LAYERS': 'topografia-territorial', 
+              'VERSION': '1.1.1'
+            },
+            attributions: 'Institut Cartogràfic i Geològic de Catalunya CC-BY-SA-4',
           })
         }),
 
@@ -586,10 +593,10 @@
           preview: "https://geoserveis.icgc.cat/servei/catalunya/contextmaps/wmts/contextmaps-mapa-estandard/MON3857NW/10/512/349.png"
         }),*/
 
-        /*baseLayers: new LayerGroup({
+        baseLayers: new LayerGroup({
           title: 'Capes de referència',
-          fold: 'close'
-        }),*/
+          //fold: 'close',
+        }),
 
         windowLayers: null,
         windowTablePois: null,
@@ -922,12 +929,10 @@
             pinchRotate: false
           }), 
           layers: [
-            //pageData.baseLayers,
-            new TileLayer({
+            pageData.baseLayers,
+            /*new TileLayer({
               source: new OSM(),
-            }),
-            //pageData.baseLayerOrto,
-            //pageData.baseLayerContext,
+            }),*/
             //pageData.baseLayerVector,
 
             new VectorLayer({
@@ -962,13 +967,13 @@
         //olms(pageData.map, "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_estandard.json");
         //olms(pageData.map, "./myICGCstyle.json");
 
-        //pageData.baseLayers.setLayers(new Collection([pageData.baseLayerOrto,pageData.baseLayerTopo]));
-        pageData.map.addControl(new LayerSwitcherImage({
+        pageData.baseLayers.setLayers(new Collection([pageData.baseLayerOrto,pageData.baseLayerTopo]));
+        /*pageData.map.addControl(new LayerSwitcherImage({
           collapsed: false,
           displayInLayerSwitcher: function(layer) {
             return (layer.get("baseLayer")); 
           }
-        }));
+        }));*/
 
         pageData.map.addControl(new ScaleLine());
 
@@ -2113,11 +2118,11 @@
         pageData.qgisWfsLayersPoi.set("title", i18next.t('switcher.wfsGroupPoi'));
         //pageData.qgisWfsLayersRuta.set("title", i18next.t('switcher.wfsGroupRuta'));
         pageData.qgisWmsLayers.set("title", i18next.t('switcher.wmsGroup'));
-        //pageData.baseLayers.set("title", i18next.t('switcher.baseGroup'));
-        //pageData.baseLayerTopo.set("title", i18next.t('switcher.baseGroupTopo'));        
-        //pageData.baseLayerOrto.set("title", i18next.t('switcher.baseGroupOrto'));
-        //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(1) label").text(i18next.t('switcher.baseGroupTopo'));
-        //$("#layerSwitcher .base-group ul li.layer li:span:nth-of-type(2) label").text(i18next.t('switcher.baseGroupOrto'));
+        pageData.baseLayers.set("title", i18next.t('switcher.baseGroup'));
+        pageData.baseLayerTopo.set("title", i18next.t('switcher.baseGroupTopo'));        
+        pageData.baseLayerOrto.set("title", i18next.t('switcher.baseGroupOrto'));
+        $("#layerSwitcher .base-group ul li.group li.layer label").text(i18next.t('switcher.baseGroupTopo'));
+        $("#layerSwitcher .base-group ul li.group li.layer label").text(i18next.t('switcher.baseGroupOrto'));
         LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, pageData.nonClusterLayer, pageData.paradesLayer, document.getElementById("layerSwitcher"), { reverse: true });
         LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer, pageData.nonClusterLayer);
       }

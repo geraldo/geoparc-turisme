@@ -370,7 +370,8 @@ a.button, #exportPdf {
 .layer-switcher ul ul {
   padding-left: 0;
 }
-.layer-switcher li.group + li.group {
+.layer-switcher li.group + li.group,
+.layer-switcher li.group._capes-de-refer__00e8ncia {
   margin-top: 1em;
 }
 .layer-switcher li.group > label {
@@ -441,9 +442,9 @@ li.layer._limit-administratiu img.legend:nth-of-type(3) {
 .layer-switcher li.group > label {
   padding-left: 20px;
 }
-.layer-switcher li.base-group > label {
+/*.layer-switcher li.base-group > label {
   padding-left: 0;
-}
+}*/
 .hidden {
   display: none;
 }
@@ -493,13 +494,14 @@ img.leyenda.off {
   right: auto;
 }
 
-.ol-control.ol-layerswitcher-image button {
+.ol-control.ol-layerswitcher-image button,
+.ol-control.ol-layerswitcher-image .panel-container {
   display: none;
 }
 
 .layer._punts-de-inter__00e8s,
-.layer._topogr__00e0fic-__0028_i_c_g_c__0029,
-.layer._ortofoto-__0028_i_c_g_c__0029,
+#layerSwitcher > ul > li.layer._topogr__00e0fic-__0028_i_c_g_c__0029,
+#layerSwitcher > ul > li.layer._ortofoto-__0028_i_c_g_c__0029,
 .layer._openstreetmap {
   display: none !important;
 }
