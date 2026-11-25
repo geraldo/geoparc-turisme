@@ -312,11 +312,13 @@
           input.checked = lyr.getVisible();
           input.indeterminate = lyr.get('indeterminate');
           input.onchange = function (e) {
-            if (lyrTitle !== "Punts de interès" || lyrTitle !== "Puntos de interés" || lyrTitle !== "Points of interest" || lyrTitle !== "Points d'intérêt") {
-              const target = e.target;
-              LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
-              render(lyr);
-              LayerSwitcherWithLegend.addPois(map, poisLayer, nonClusterLayer);
+            if (!window.mobilecheck()) {
+              if (lyrTitle !== "Punts de interès" || lyrTitle !== "Puntos de interés" || lyrTitle !== "Points of interest" || lyrTitle !== "Points d'intérêt") {
+                const target = e.target;
+                LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
+                render(lyr);
+                LayerSwitcherWithLegend.addPois(map, poisLayer, nonClusterLayer);
+              }
             }
           };
           li.appendChild(input);
@@ -326,7 +328,10 @@
             li.classList.add('off');
           }
         }
-        label.innerHTML =  fa + '"></i> ' + lyrTitle;
+        //if (lyrTitle !== "Capes de referència")
+          label.innerHTML =  fa + '"></i> ' + lyrTitle;
+        //else
+        //  label.innerHTML =  lyrTitle;
         li.appendChild(label);
         const ul = document.createElement('ul');
         li.appendChild(ul);
@@ -446,23 +451,27 @@
 
       // interaction
       $("#layerSwitcher li.poiLayer").click(function() {
-        // toggle selected initiative icons
-        $(this).toggleClass("off");
+        if (!window.mobilecheck()) {
+          // toggle selected initiative icons
+          $(this).toggleClass("off");
 
-        //if ($(this).hasClass("epicentre"))
-          //nonClusterLayer.setVisible(!nonClusterLayer.getVisible());
-        //else
-          poisLayer.getSource().changed();
+          //if ($(this).hasClass("epicentre"))
+            //nonClusterLayer.setVisible(!nonClusterLayer.getVisible());
+          //else
+            poisLayer.getSource().changed();
 
-        // close spiderfier
-        let view = map.getView();
-        if (view.getResolution() <= view.getMinResolution())
-          view.setZoom(view.getZoom()-0.01);
+          // close spiderfier
+          let view = map.getView();
+          if (view.getResolution() <= view.getMinResolution())
+            view.setZoom(view.getZoom()-0.01);
+        }
       });
 
       $("#layerSwitcher li.layer").click(function() {
-        // toggle selected initiative icons
-        $(this).toggleClass("off");
+        if (!window.mobilecheck()) {
+          // toggle selected initiative icons
+          $(this).toggleClass("off");
+        }
       });
 
       /*$("#layerSwitcher li.group."+makeSafeForCSS("Punts de interès")+" label").unbind("click");
@@ -480,21 +489,23 @@
       });
 
       function groupToggle(ele, layer) {
-        ele.toggleClass("off");
-        ele.children().eq(0).toggleClass("fa-eye");
-        ele.children().eq(0).toggleClass("fa-eye-slash");
-        if (ele.hasClass("off")) {
-          $("#layerSwitcher li."+layer).addClass("off");
-        }
-        else {
-          $("#layerSwitcher li."+layer).removeClass("off");
-        }
-        poisLayer.getSource().changed();
+        if (!window.mobilecheck()) {
+          ele.toggleClass("off");
+          ele.children().eq(0).toggleClass("fa-eye");
+          ele.children().eq(0).toggleClass("fa-eye-slash");
+          if (ele.hasClass("off")) {
+            $("#layerSwitcher li."+layer).addClass("off");
+          }
+          else {
+            $("#layerSwitcher li."+layer).removeClass("off");
+          }
+          poisLayer.getSource().changed();
 
-        // close spiderfier
-        let view = map.getView();
-        if (view.getResolution() <= view.getMinResolution())
-          view.setZoom(view.getZoom()-0.01);
+          // close spiderfier
+          let view = map.getView();
+          if (view.getResolution() <= view.getMinResolution())
+            view.setZoom(view.getZoom()-0.01);
+        }
       }
     }
   }
@@ -1571,11 +1582,13 @@
             });
 
             // show/hide group
-            $("._museos .fa-eye").bind("click", function() {
-              //pageData.poisLayer.getSource().changed();
-              pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
-              $(this).parent().toggleClass("off");
-            });
+            if (!window.mobilecheck()) {
+              $("._museos .fa-eye").bind("click", function() {
+                //pageData.poisLayer.getSource().changed();
+                pageData.map.getView().setZoom(pageData.map.getView().getZoom()+0.01);
+                $(this).parent().toggleClass("off");
+              });
+            }
           });
 
           appendRutasMenu();
@@ -1614,12 +1627,14 @@
             });
 
             // show/hide group
-            $("._rutes .fa-eye").bind("click", function() {
-              pageData.rutasLayers.forEach(function(ruta) {
-                ruta.setVisible(!ruta.isVisible());
+            if (!window.mobilecheck()) {
+              $("._rutes .fa-eye").bind("click", function() {
+                pageData.rutasLayers.forEach(function(ruta) {
+                  ruta.setVisible(!ruta.isVisible());
+                });
+                $(this).parent().toggleClass("off");
               });
-              $(this).parent().toggleClass("off");
-            });
+            }
 
             checkInitial();
           });
@@ -1923,6 +1938,25 @@
         })
         pageData.map.addControl(pageData.windowLayers);
 
+        const layersEl = document.getElementById("windowLayers");
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        layersEl.addEventListener("touchstart", (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+          touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        layersEl.addEventListener("touchend", (e) => {
+          const deltaX = e.changedTouches[0].screenX - touchStartX;
+          const deltaY = e.changedTouches[0].screenY - touchStartY;
+
+          // Swipe right: moved > 50px horizontally and more horizontal than vertical
+          if (deltaX > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+            closeLayersWindow();
+          }
+        }, { passive: true });
+
         LayerSwitcherWithLegend.renderPanel(pageData.map, pageData.poisLayer, pageData.nonClusterLayer, pageData.paradesLayer, document.getElementById("layerSwitcher"), { reverse: true });
         LayerSwitcherWithLegend.addPois(pageData.map, pageData.poisLayer, pageData.nonClusterLayer);
 
@@ -1969,6 +2003,12 @@
         languageBar.addControl(pageData.esToggle);
         languageBar.addControl(pageData.enToggle);
         languageBar.addControl(pageData.frToggle);
+      }
+
+      function closeLayersWindow() {
+        $(".layersWindow").removeClass("open");
+        $(".layer-control").removeClass("open");
+        $(".menuBar").removeClass("open");
       }
 
       function hideWindows(activeToggle) {
