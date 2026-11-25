@@ -14,7 +14,7 @@
 
   <div id="windowTablePois" class="window">
     <h2>
-      <i class="fa fa-map-marker"></i>
+      <i class="fa fa-search"></i>
       <span class="title">Punts de interès</span>
     </h2>
     <div class="content">
@@ -604,7 +604,7 @@
         windowInfo: null,
 
         tableTogglePois: new Toggle({ 
-          html: '<i class="fa fa-map-marker fa-lg"></i>',
+          html: '<i class="fa fa-search fa-lg"></i>',
           title: 'Punts de interès',
           className: "tableTogglePois",
           onToggle: function(active) {
@@ -736,7 +736,9 @@
             if (layer.name === "@Parades ferrocarril") {
               pageData.paradesLayer = thisLayer;
             }
-            pageData.invisibleWmsLayers.push(thisLayer);
+            if (layer.name !== "@Limit Geoparc") {
+              pageData.invisibleWmsLayers.push(thisLayer);
+            }
           }
           else {
             layers.push(defineQgisLayer(layer));
@@ -941,8 +943,8 @@
                 format: new GeoJSON(),
               }),
               style: {
-                'stroke-color': 'rgba(178, 176, 25, 1)',
-                'stroke-width': 3,
+                'stroke-color': 'rgb(79, 28, 35)',
+                'stroke-width': 5,
               },
             }),
 
@@ -1071,7 +1073,7 @@
                   pageData.tooltip.show(
                     event.coordinate,
                     //feature.getGeometry().getCoordinates(),
-                    '<div><div class="imgDiv"><img src="fotos/' + features[0].get('imatge_1') + '"/></div><h2>' + features[0].get('nom_' + pageData.lang) + '</h2></div>'
+                    '<div><h2>' + features[0].get('nom_' + pageData.lang) + '</h2></div>'
                   );
                 else
                   pageData.tooltip.hide();
@@ -1124,7 +1126,7 @@
                   pageData.tooltip.show(
                     event.coordinate,
                     //feature.getGeometry().getCoordinates(),
-                    '<div><div class="imgDiv"><img src="fotos/' + feature.get('imatge_1') + '"/></div><h2>' + feature.get('nom_' + pageData.lang) + '</h2></div>'
+                    '<div><h2>' + feature.get('nom_' + pageData.lang) + '</h2></div>'
                   );
                 }
                 else
@@ -1713,7 +1715,7 @@
         if (feature.get('tipologia_cat') === 'Georuta') {
           return new Style({
             stroke: new Stroke({
-              color: '#e7bd14',
+              color: '#cd3a37',
               lineDash: [4,4],
               width: 3
             })
@@ -1722,7 +1724,7 @@
         else if (feature.get('tipologia_cat') === 'El Cinquè Llac') {
           return new Style({
             stroke: new Stroke({
-              color: '#cd3a37',
+              color: '#0019ff',
               lineDash: [6,6],
               width: 3
             })
