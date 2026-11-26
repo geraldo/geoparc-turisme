@@ -312,6 +312,7 @@
           input.checked = lyr.getVisible();
           input.indeterminate = lyr.get('indeterminate');
           input.onchange = function (e) {
+            console.log(e.target);
             if (!window.mobilecheck()) {
               if (lyrTitle !== "Punts de interès" || lyrTitle !== "Puntos de interés" || lyrTitle !== "Points of interest" || lyrTitle !== "Points d'intérêt") {
                 const target = e.target;
@@ -409,7 +410,7 @@
           html += "</ul></li>";
           //$("#layerSwitcher li.group." + makeSafeForCSS(i18next.t("switcher.wfsGroupRuta"))).before(html);
           $("#layerSwitcher li.group._rutes-recomanades").before(html);
-          html = '<li class="group ' + makeSafeForCSS("Activitats") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> Activitats</label><ul>';
+          html = '<li class="group ' + makeSafeForCSS("Activitats") + ' layer-switcher-fold layer-switcher-close"><button></button><label><i class="fa fa-eye"></i> ' + i18next.t("switcher.wfsGroupActivitats") + '</label><ul>';
           layer = "activitatsLayer";
         }
         i++;
@@ -1204,6 +1205,8 @@
                       // Zoom to the extent of the cluster members.
                       view.fit(extent, {duration: 1000, padding: [50, 50, 50, 50]});
                     }
+
+                    pageData.popup.hide();
                   }
                 }
               });
@@ -1253,11 +1256,16 @@
                       else {
                         const view = pageData.map.getView();
                         view.animate({
-                          duration: 1000,
-                          zoom: view.getZoom()+0.1
+                          duration: 500,
+                          //zoom: view.getZoom()+0.1
+                          zoom: 14.1
+                        });
+                        view.animate({
+                          duration: 500,
+                          //zoom: view.getZoom()+0.1
+                          zoom: 14
                         });
                         showPopupPoi(evt.coordinate, feature);
-                        
                       }
                     }
                   });
@@ -1551,6 +1559,8 @@
       }
 
       function appendPoisMenu() {
+
+        console.log("menu");
 
         let html = '<div class="layer-switcher _museos"><ul><li class="group layer-switcher-fold layer-switcher-close"><button></button><label for="museos-title"><i class="fa fa-eye"></i> ' + i18next.t('gui.windowTablePoisTitle') + '</label></li>';
 
